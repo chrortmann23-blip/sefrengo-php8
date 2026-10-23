@@ -1,0 +1,515 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<modul version='0.4' date='1792759065'>
+   <name>Sprachauswahl</name>
+   <cat>System</cat>
+   <version>2.1</version>
+   <author>1</author>
+   <created>1066927900</created>
+   <lastmodified>1215637017</lastmodified>
+   <deletable>1</deletable>
+   <description>Ermöglicht die Auswahl der Sprachversionen einer Seite.</description>
+   <input>&lt;?php
+/******************************************************************************
+ @author:	Andreas Lechner (cliff), Peter Fuchs (renard)
+ @link		http://www.cms4you.at
+******************************************************************************/
+
+//configmode
+$mip_form['99']['desc'] = 'Konfigurationsmodus';
+$mip_form['99']['cat'] = 'option';
+$mip_form['99']['size'] = '1';
+$mip_form['99']['option_desc'][] = 'Normal';
+$mip_form['99']['option_val'][] =  '';
+$mip_form['99']['option_desc'][] = 'Ausgeblendet';
+$mip_form['99']['option_val'][] =  'hidden';
+$mip_form['99']['cms_var'] = 'MOD_VAR[99]';
+$mip_form['99']['cms_val'] = $cms_mod['value']['99'];
+$mip_form['99']['flag'] = 'reload';
+mip_formsp($mip_form['99']);//configmode
+echo '&lt;br /&gt;';
+
+//hidden config
+if ($cms_mod['value']['99'] == 'hidden') {
+	foreach ($cms_mod['value'] AS $ke=&gt;$va) {
+		if ($ke != '99') {
+		?&gt;
+			&lt;input name=&quot;MOD_VAR[&lt;?php echo $ke; ?&gt;]&quot; type=&quot;hidden&quot; value=&quot;&lt;?php echo htmlentities($va);?&gt;&quot;&gt;
+		&lt;?php
+		}
+	}
+//simple, advanced and all config (not hidden config)
+} else if ($cms_mod['value']['99'] == '' || $cms_mod['value']['99'] == 'advanced') {
+
+	$sql = &quot;SELECT b.idlang, b.name, b.description FROM &quot;.$cms_db['clients_lang'].&quot; AS a, &quot;.$cms_db['lang'].&quot; AS b WHERE a.idlang=b.idlang AND a.idclient='&quot;.$client.&quot;' ORDER BY b.idlang ASC&quot;;
+
+	$db-&gt;query($sql);
+	$num_langs = $db-&gt;num_rows();
+ 
+	if ($db-&gt;affected_rows()) {
+
+		$counter_langs = 0;
+			
+		while ($db-&gt;next_record()) {
+
+			// config pulldown lang list
+			$frm_opt_list[$counter_langs]['desc']	= htmlentities($db-&gt;f('name'), ENT_COMPAT, 'utf-8');
+			$frm_opt_list[$counter_langs]['val']	= $db-&gt;f('idlang');
+
+			$counter_langs++;
+		}
+	}
+
+	// number of columns
+	$cms_mod['value']['0'] = $num_langs;
+	$mip_form['0']['cat'] = 'hidden';
+	$mip_form['0']['cms_var'] = 'MOD_VAR[0]';
+	$mip_form['0']['cms_val'] = $cms_mod['value']['0'];
+
+	// font 1
+	$mip_form['1']['desc'] = 'Schriftart für {font1}';
+	$mip_form['1']['cat'] = 'app_css';
+	$mip_form['1']['output_cat'] = 'option';
+	$mip_form['1']['cms_var'] = 'MOD_VAR[1]';
+	$mip_form['1']['cms_val'] = $cms_mod['value']['1'];
+	$mip_form['1']['cms_val_default'] = '';
+	$mip_form['1']['type'] = '';
+
+	// font 2
+	$mip_form['2']['desc'] = 'Schriftart für {font2}';
+	$mip_form['2']['cat'] = 'app_css';
+	$mip_form['2']['output_cat'] = 'option';
+	$mip_form['2']['cms_var'] = 'MOD_VAR[2]';
+	$mip_form['2']['cms_val'] = $cms_mod['value']['2'];
+	$mip_form['2']['cms_val_default'] = '';
+	$mip_form['2']['type'] = '';
+
+	// font 3
+	$mip_form['3']['desc'] = 'Schriftart für {font3}';
+	$mip_form['3']['cat'] = 'app_css';
+	$mip_form['3']['output_cat'] = 'option';
+	$mip_form['3']['cms_var'] = 'MOD_VAR[3]';
+	$mip_form['3']['cms_val'] = $cms_mod['value']['3'];
+	$mip_form['3']['cms_val_default'] = '';
+	$mip_form['3']['type'] = '';
+	
+	// link to page or display current page in different language?
+	$mip_form['5']['cat'] = 'txt';
+	$mip_form['5']['type'] = '';
+	$mip_form['5']['desc'] = &quot;Link zu einer anderen Seite &lt;small&gt;(idside / leer -&gt; Link auf die gleiche Seite)&lt;/small&gt;&quot;;
+	$mip_form['5']['cms_var'] = 'MOD_VAR[5]';
+	$mip_form['5']['cms_val'] = $cms_mod['value']['5'];
+	$mip_form['5']['cms_val_default'] = '';
+	$mip_form['5']['tab'] = '0';
+
+	// show current language, too?
+	$mip_form['6']['desc'] = 'Aktuelle Sprache mit anzeigen?';
+	$mip_form['6']['cat'] = 'chk';
+	$mip_form['6']['option_var']['0'] = 'MOD_VAR[6]';
+	$mip_form['6']['option_val']['0'] = $cms_mod['value']['6'];
+	$mip_form['6']['option_desc']['0'] = 'ja';
+	$mip_form['6']['option_val_select']['0'] = 'true';
+
+	// show not available languages, too?
+	$mip_form['7']['desc'] = 'Nicht verfügbare Sprachen mit ausgeben?';
+	$mip_form['7']['cat'] = 'chk';
+	$mip_form['7']['option_var']['0'] = 'MOD_VAR[7]';
+	$mip_form['7']['option_val']['0'] = $cms_mod['value']['7'];
+	$mip_form['7']['option_desc']['0'] = 'ja';
+	$mip_form['7']['option_val_select']['0'] = 'true';
+
+	// show not available languages in backend, too?
+	$mip_form['8']['desc'] = 'Nicht verfügbare Sprachen im Backend anzeigen?';
+	$mip_form['8']['cat'] = 'chk';
+	$mip_form['8']['option_var']['0'] = 'MOD_VAR[8]';
+	$mip_form['8']['option_val']['0'] = $cms_mod['value']['8'];
+	$mip_form['8']['option_desc']['0'] = 'ja';
+	$mip_form['8']['option_val_select']['0'] = 'true';
+
+	// surrounding template for languages
+	$mip_form['10']['desc'] = 'Template Sprachen (außen):&lt;br&gt;&lt;small&gt;Zwingend erforderlich Templatevariable: {content}&lt;/small&gt;';
+	$mip_form['10']['cat'] = 'txtarea';
+	$mip_form['10']['rows'] = '3';
+	$mip_form['10']['type'] = 'long';
+	$mip_form['10']['cms_var'] = 'MOD_VAR[10]';
+	$mip_form['10']['cms_val'] = $cms_mod['value']['10'];
+	$mip_form['10']['cms_val_default'] = '{content}';
+
+	// take the master Tpl
+	$mip_form['11']['desc'] = 'Master Templates für alle Sprachen verwenden?';
+	$mip_form['11']['cat'] = 'chk';
+	$mip_form['11']['option_var']['0'] = 'MOD_VAR[11]';
+	$mip_form['11']['option_val']['0'] = $cms_mod['value']['11'];
+	$mip_form['11']['option_desc']['0'] = 'ja';
+	$mip_form['11']['option_val_select']['0'] = 'true';
+
+	// show all languages 
+	$mip_form['12']['desc'] = 'Alle Sprachen anzeigen (Automatisch Erweitern)?';
+	$mip_form['12']['cat'] = 'chk';
+	$mip_form['12']['option_var']['0'] = 'MOD_VAR[12]';
+	$mip_form['12']['option_val']['0'] = $cms_mod['value']['12'];
+	$mip_form['12']['option_desc']['0'] = 'ja';
+	$mip_form['12']['option_val_select']['0'] = 'true';
+
+	// master template lang available 
+	$mip_form['20']['cat'] = 'txtarea';
+	$mip_form['20']['rows'] = '3';
+	$mip_form['20']['type'] = 'long'; 
+	$mip_form['20']['desc'] = 'Template wenn Sprachen-Elemente verfügbar und NICHT Aktiv ist(wird pro sprache in {content} eingefügt):&lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {font1}, {font2}, {font3}, {url}, {idlang}, {name}, {description}, {rewrite_key}, {id}, {parity}&lt;/small&gt;';
+	$mip_form['20']['cms_var'] = &quot;MOD_VAR[20]&quot;;
+	$mip_form['20']['cms_val'] = $cms_mod['value']['20']; 
+	$mip_form['20']['cms_val_default'] = '&lt;a href=&quot;{url}&quot;&gt;{name}&lt;/a&gt;&lt;br&gt;';
+	$mip_form['20']['tab'] = '0';
+
+	// master template lang active 
+	$mip_form['21']['cat'] = 'txtarea';
+	$mip_form['21']['rows'] = '3';
+	$mip_form['21']['type'] = 'long'; 
+	$mip_form['21']['desc'] = '&lt;b&gt;Master Templates:&lt;/b&gt;&lt;br&gt;&lt;br&gt;Template wenn Sprachen-Elemente verfügbar und Aktiv ist (wird pro sprache in {content} eingefügt):&lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {font1}, {font2}, {font3}, {url}, {idlang}, {name}, {description}, {rewrite_key}, {id}, {parity}&lt;/small&gt;';
+	$mip_form['21']['cms_var'] = &quot;MOD_VAR[21]&quot;;
+	$mip_form['21']['cms_val'] = $cms_mod['value']['21']; 
+	$mip_form['21']['cms_val_default'] = '&lt;a href=&quot;{url}&quot;&gt;{name}&lt;/a&gt;&lt;br&gt;';
+	$mip_form['21']['tab'] = '0';
+
+	// master template lang not available 
+	$mip_form['22']['cat'] = 'txtarea';
+	$mip_form['22']['rows'] = '3';
+	$mip_form['22']['type'] = 'long'; 
+	$mip_form['22']['desc'] = 'Template wenn Sprachen-Elemente nicht verfügbare  (wird pro sprache in {content} eingefügt):&lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {font1}, {font2}, {font3}, {idlang}, {name}, {description}, {rewrite_key}, {id}, {parity}&lt;/small&gt;';
+	$mip_form['22']['cms_var'] = &quot;MOD_VAR[22]&quot;;
+	$mip_form['22']['cms_val'] = $cms_mod['value']['22']; 
+	$mip_form['22']['cms_val_default'] = '&lt;a href=&quot;{url}&quot;&gt;{name}&lt;/a&gt;&lt;br&gt;';
+	$mip_form['22']['tab'] = '0';
+
+	mip_formsp($mip_form['0']); //hidden
+
+	mip_forms_tabpane_beginp();
+
+	mip_forms_tabitem_beginp('Allgemeine Einstellungen');
+
+		mip_formsp($mip_form['1']);
+		mip_formsp($mip_form['2']);
+		mip_formsp($mip_form['3']);
+		mip_formsp($mip_form['5']);
+		mip_formsp($mip_form['6']);
+		mip_formsp($mip_form['7']);
+		mip_formsp($mip_form['8']);
+		mip_formsp($mip_form['11']);
+		mip_formsp($mip_form['12']);
+
+		echo '&lt;br /&gt;';
+
+		mip_formsp($mip_form['10']);
+
+		echo '&lt;br /&gt;';
+
+		mip_formsp($mip_form['21']);
+		mip_formsp($mip_form['20']);
+		mip_formsp($mip_form['22']);
+
+	mip_forms_tabitem_endp();
+
+	$ecount = 100;
+
+	// count the language
+	for ($i=0; $i &lt; $cms_mod['value']['0']; $i++) {
+
+		$frm_view				= $ecount;
+		$frm_lang				= $ecount+1;
+		$frm_lang_available		= $ecount+2;
+		$frm_lang_active		= $ecount+3;
+		$frm_lang_not_available = $ecount+4;
+
+		// activate language
+		$mip_form[$frm_view]['cat'] = 'chk';
+		$mip_form[$frm_view]['desc'] = 'Sprache anzeigen?';
+		$mip_form[$frm_view]['option_var']['0'] = &quot;MOD_VAR[$frm_view]&quot;;
+		$mip_form[$frm_view]['option_val']['0'] = $cms_mod['value'][$frm_view];
+		$mip_form[$frm_view]['option_desc']['0'] = 'ja';
+		$mip_form[$frm_view]['option_val_select']['0'] = '1';
+
+		// list languages
+		if (is_array($frm_opt_list)) {
+			$mip_form[$frm_lang]['cat'] = 'option';
+			$mip_form[$frm_lang]['type'] = '';
+			$mip_form[$frm_lang]['desc'] = 'Auswahl der Sprache:';
+			$mip_form[$frm_lang]['cms_var'] = &quot;MOD_VAR[$frm_lang]&quot;;
+			$mip_form[$frm_lang]['cms_val'] = $cms_mod['value'][$frm_lang];
+			$mip_form[$frm_lang]['cms_val_default'] = '';
+			$index = 0;
+			foreach ($frm_opt_list AS $lang_va) {
+				$mip_form[$frm_lang]['option_desc'][$index] = $lang_va['desc'];
+				$mip_form[$frm_lang]['option_val'][$index] = $lang_va['val'];
+				$index++;
+			}
+			$mip_form[$frm_lang]['size'] = 1;
+			$mip_form[$frm_lang]['tab'] = '0';
+		}
+
+		// template lang available 
+		$mip_form[$frm_lang_available]['cat'] = 'txtarea';
+		$mip_form[$frm_lang_available]['rows'] = '3';
+		$mip_form[$frm_lang_available]['type'] = 'long'; 
+		$mip_form[$frm_lang_available]['desc'] = 'Template wenn Sprachen-Elemente verfügbar und NICHT Aktiv ist(wird pro sprache in {content} eingefügt):&lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {font1}, {font2}, {font3}, {url}, {idlang}, {name}, {description}, {rewrite_key}, {id}, {parity}&lt;/small&gt;';
+		$mip_form[$frm_lang_available]['cms_var'] = &quot;MOD_VAR[$frm_lang_available]&quot;;
+		$mip_form[$frm_lang_available]['cms_val'] = $cms_mod['value'][$frm_lang_available]; 
+		if ($cms_mod['value']['20'] == '') {
+			$mip_form[$frm_lang_available]['cms_val_default'] = $mip_form['20']['cms_val_default'];
+		} else {
+			$mip_form[$frm_lang_available]['cms_val_default'] = $cms_mod['value']['20'];
+		}
+		$mip_form[$frm_lang_available]['tab'] = '0';
+
+		// template lang active 
+		$mip_form[$frm_lang_active]['cat'] = 'txtarea';
+		$mip_form[$frm_lang_active]['rows'] = '3';
+		$mip_form[$frm_lang_active]['type'] = 'long'; 
+		$mip_form[$frm_lang_active]['desc'] = 'Template wenn Sprachen-Elemente verfügbar und Aktiv ist (wird pro sprache in {content} eingefügt):&lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {font1}, {font2}, {font3}, {url}, {idlang}, {name}, {description}, {rewrite_key}, {id}, {parity}&lt;/small&gt;';
+		$mip_form[$frm_lang_active]['cms_var'] = &quot;MOD_VAR[$frm_lang_active]&quot;;
+		$mip_form[$frm_lang_active]['cms_val'] = $cms_mod['value'][$frm_lang_active];
+		if ($cms_mod['value']['21'] == '') {
+			$mip_form[$frm_lang_active]['cms_val_default'] = $mip_form['21']['cms_val_default'];
+		} else {
+			$mip_form[$frm_lang_active]['cms_val_default'] = $cms_mod['value']['21'];
+		}
+		$mip_form[$frm_lang_active]['tab'] = '0';
+
+		// template lang not available 
+		$mip_form[$frm_lang_not_available]['cat'] = 'txtarea';
+		$mip_form[$frm_lang_not_available]['rows'] = '3';
+		$mip_form[$frm_lang_not_available]['type'] = 'long'; 
+		$mip_form[$frm_lang_not_available]['desc'] = 'Template wenn Sprachen-Elemente nicht verfügbare  (wird pro sprache in {content} eingefügt):&lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {font1}, {font2}, {font3}, {idlang}, {name}, {description}, {rewrite_key}, {id}, {parity}&lt;/small&gt;';
+		$mip_form[$frm_lang_not_available]['cms_var'] = &quot;MOD_VAR[$frm_lang_not_available]&quot;;
+		$mip_form[$frm_lang_not_available]['cms_val'] = $cms_mod['value'][$frm_lang_not_available];
+		if ($cms_mod['value']['22'] == '') {
+			$mip_form[$frm_lang_not_available]['cms_val_default'] = $mip_form['22']['cms_val_default'];
+		} else {
+			$mip_form[$frm_lang_not_available]['cms_val_default'] = $cms_mod['value']['22'];
+		}
+		$mip_form[$frm_lang_not_available]['tab'] = '0';
+
+		mip_forms_tabitem_beginp('Sprache '.($i+1));
+			mip_formsp($mip_form[$frm_view]);
+			mip_formsp($mip_form[$frm_lang]);
+			mip_formsp($mip_form[$frm_lang_active]);
+			mip_formsp($mip_form[$frm_lang_available]);
+			mip_formsp($mip_form[$frm_lang_not_available]);
+		mip_forms_tabitem_endp();
+
+		$ecount = $ecount+10;
+	}
+}
+
+unset($mip_form);
+?&gt;</input>
+   <output>&lt;CMSPHP&gt;
+/******************************************************************************
+ @author:	Andreas Lechner (cliff), Peter Fuchs (renard)
+ @link		http://www.cms4you.at
+******************************************************************************/
+&lt;/CMSPHP&gt;
+
+&lt;CMSPHP:CACHE&gt;
+echo '&lt;CMSPHP&gt;';
+if (is_array($cms_mod['value'])) {
+	foreach($cms_mod['value'] AS $k =&gt; $v){
+		echo '$mvars[&quot;'.$k.'&quot;] = &quot;'. addslashes($v) .'&quot;;'.&quot;\n&quot;;
+	}
+}
+echo '&lt;/CMSPHP&gt;';
+&lt;/CMSPHP:CACHE&gt;
+
+&lt;CMSPHP&gt;
+// get idcatside
+if ($mvars['5'] != '') {
+	$newidcatside = $mvars['5'];
+} else {
+	$newidcatside = $idcatside;
+}
+
+if (!is_array($langs_data)) {
+
+	$sql = &quot;SELECT b.idlang, b.name, b.description, b.rewrite_key FROM  &quot;.$cms_db['clients_lang'].&quot; AS a, &quot;.$cms_db['lang'].&quot; AS b WHERE a.idlang=b.idlang AND a.idclient='&quot;.$client.&quot;'&quot;;
+
+	$db-&gt;query($sql);
+	if ($db-&gt;affected_rows()) {
+		while ($db-&gt;next_record()) {
+			$langs_data[$db-&gt;f('idlang')]['idlang']			= $db-&gt;f('idlang');
+			$langs_data[$db-&gt;f('idlang')]['name']			= htmlentities($db-&gt;f('name'), ENT_COMPAT, 'utf-8');
+			$langs_data[$db-&gt;f('idlang')]['description']	= htmlentities($db-&gt;f('description'), ENT_COMPAT, 'utf-8');			
+			$langs_data[$db-&gt;f('idlang')]['rewrite_key']	= htmlentities($db-&gt;f('rewrite_key'), ENT_COMPAT, 'utf-8');			
+		}
+	}
+}
+
+if (!is_array($langs_online)) {
+
+	$sql2 = &quot; AND (  (b.online &amp; 0x03) = 0x01 OR (  (b.online &amp; 0x02) = 0x02 AND ( UNIX_TIMESTAMP(NOW()) BETWEEN b.start AND b.end))) &quot;;
+	$sql2 .=  ( $perm-&gt;have_perm(2, 'area_frontend', 0) ) ?  '': ' AND (b.online &amp; 0x04) = 0x00 ';
+	$sql = &quot;SELECT b.idlang, c.name FROM ((&quot;.$cms_db['cat_side'].&quot; AS a INNER JOIN &quot;.$cms_db['side_lang'].&quot; AS b ON a.idside = b.idside) INNER JOIN &quot;.$cms_db['lang'].&quot; AS c ON b.idlang = c.idlang) INNER JOIN &quot;.$cms_db['side']. &quot; AS d ON a.idside = d.idside WHERE (a.idcatside=&quot; . $newidcatside. &quot; ) AND (d.idclient=&quot; . $client . &quot;) &quot;.$sql2;
+	
+	$db-&gt;query($sql);
+	if ($db-&gt;affected_rows()) {
+		while ($db-&gt;next_record()) {
+			$langs_online[] = $db-&gt;f('idlang');
+		}
+	}
+}
+
+// create link
+if (!function_exists('createLinkUrl')) {
+	function createLinkUrl($langid, $newidcatside, $is_online) {
+		global $cfg_client, $sess, $view;
+		// backend view
+		if (isset($view) &amp;&amp; $view != &quot;&quot;) {
+			if ($is_online == &quot;1&quot;) {
+				return $sess-&gt;url($cfg_client[&quot;contentfile&quot;].'?idcatside='.$newidcatside.'&amp;lang='.$langid.'&amp;view='.$view);
+			}
+		// frontend view
+		} else {
+			if ($is_online == &quot;1&quot;) {
+				// apache mod_rewrite support = 1
+				if ($cfg_client['url_rewrite'] == '1') {
+					$url_rewrite_in = array(
+						&quot;'(?&lt;!/)&quot;.$cfg_client['contentfile'].&quot;\?idcat=([1-9][0-9]*)(&amp;|&amp;amp;)lang=([1-9][0-9]?)'&quot;,
+						&quot;'(?&lt;!/)&quot;.$cfg_client['contentfile'].&quot;\?idcatside=([1-9][0-9]*)(&amp;|&amp;amp;)lang=([1-9][0-9]?)'&quot;
+					);
+					$url_rewrite_out = array(
+						&quot;cat\\1-\\3.html&quot;,
+						&quot;page\\1-\\3.html&quot;
+					);
+					$linkUrl = $sess-&gt;url($cfg_client[&quot;contentfile&quot;].'?idcatside='.$newidcatside.'&amp;amp;lang='.$langid);
+					$linkUrl = preg_replace($url_rewrite_in, $url_rewrite_out, $linkUrl);
+				// apache mod_rewrite support = 2
+				} elseif ($cfg_client['url_rewrite'] == '2') {
+					$linkUrl = rewriteGetPageUrl($newidcatside, $langid, true);
+				} else {
+					$linkUrl = $sess-&gt;url($cfg_client[&quot;contentfile&quot;].'?idcatside='.$newidcatside.'&amp;amp;lang='.$langid);
+				}
+
+				return $linkUrl;
+			}
+		}
+	}
+}
+
+// process element template
+$elements = '';
+$ecount = 100;
+$my_langs_all = sf_count($langs_data);
+
+for ($index = 0; $index &lt; $my_langs_all; $index++) {
+
+	$frm_view				= $ecount;
+	$frm_lang				= $ecount+1;
+	$frm_lang_available		= $ecount+2;
+	$frm_lang_active		= $ecount+3;
+	$frm_lang_not_available = $ecount+4;
+
+	$my_flag_sort = false;
+
+	// sort
+	if ((isset($langs_data [$mvars[$frm_lang]]['idlang'])) &amp;&amp; ($mvars[$frm_view] == 1 || (isset($cms_side['view']) &amp;&amp; $mvars['8'] == 'true'))) {
+		// from config
+		$my_flag_sort = true;
+		$my_lang_id = $mvars[$frm_lang];
+	} elseif($mvars['7'] == 'true' || (isset($cms_side['view']) &amp;&amp; $mvars['8'] == 'true' &amp;&amp; $mvars['12'] == 'true')) {
+		// from backend
+		$my_array_key = sf_array_keys($langs_data);
+		$my_lang_id = $my_array_key[0]; 
+	} else {
+		$my_lang_id = '';
+	}
+
+	// lang available
+	if (((!empty($langs_online) &amp;&amp; (sf_in_array($my_lang_id, $langs_online))) || (isset($cms_side['view']) &amp;&amp; ( ($mvars['7'] == 'true' &amp;&amp; ($mvars['12'] == 'true' || $my_flag_sort == true)) || $mvars['8'] == 'true'))) &amp;&amp; $my_lang_id != '') {
+		$is_available = 1;
+	} else {
+		$is_available = 0;
+	}
+
+	$my_flag_count = false;
+	
+	// what template
+	if ($mvars['6'] == 'true' &amp;&amp; $my_lang_id == $lang &amp;&amp; $is_available == 1) {
+
+		$my_flag_count = true;
+
+		if ($mvars['11'] == 'true' || ($mvars['12'] == 'true' &amp;&amp; !$my_flag_sort)) {
+			// master tpl
+			$template = $mvars['21'];
+		} else {
+			$template = $mvars[$frm_lang_active];
+		}
+
+	} elseif (($my_lang_id != $lang &amp;&amp; $is_available == 1) || ($my_lang_id != $lang &amp;&amp; $is_available == 1 &amp;&amp; isset($cms_side['view']) &amp;&amp; ( ($mvars['7'] == 'true' &amp;&amp; ($mvars['12'] == 'true' || $my_flag_sort == true)) || $mvars['8'] == 'true') )) {
+
+		$my_flag_count = true;
+
+		if ($mvars['11'] == 'true' || ($mvars['12'] == 'true' &amp;&amp; !$my_flag_sort)) {
+			// master tpl
+			$template = $mvars['20'];
+		} else {
+			$template = $mvars[$frm_lang_available];
+		}
+
+	} elseif ($is_available == 0 &amp;&amp; ($mvars['7'] == 'true' &amp;&amp; ($mvars['12'] == 'true' || $my_flag_sort == true))) {
+
+		$my_flag_count = true;
+
+		if ($mvars['11'] == 'true' || ($mvars['12'] == 'true' &amp;&amp; !$my_flag_sort)) {
+			// master tpl
+			$template = $mvars['22'];
+		} else {
+			$template = $mvars[$frm_lang_not_available];
+		}
+
+	} else {
+		$template = '';
+	}
+
+	if ($my_flag_count) {
+		if ($index == 0) {
+			$my_counter = 1;
+		} else {
+			$my_counter++;
+		}
+	}
+
+	if ($my_counter % 2 != 0) {
+		$my_parity = 'odd';
+	} else {
+		$my_parity = 'even';
+	}
+
+	$template = str_replace(&quot;{font1}&quot;, $mvars['1'], $template);
+	$template = str_replace(&quot;{font2}&quot;, $mvars['2'], $template);
+	$template = str_replace(&quot;{font3}&quot;, $mvars['3'], $template);
+	$template = str_replace(&quot;{url}&quot;, createLinkUrl($my_lang_id, $newidcatside, $is_available), $template);
+	$template = str_replace(&quot;{idlang}&quot;, $langs_data[$my_lang_id]['idlang'], $template);
+	$template = str_replace(&quot;{name}&quot;, $langs_data[$my_lang_id]['name'], $template);
+	$template = str_replace(&quot;{description}&quot;, $langs_data[$my_lang_id]['description'], $template);
+	$template = str_replace(&quot;{rewrite_key}&quot;, $langs_data[$my_lang_id]['rewrite_key'], $template);
+	$template = str_replace(&quot;{id}&quot;, $my_counter, $template);
+	$template = str_replace(&quot;{parity}&quot;, $my_parity, $template);
+
+	$elements .= $template;
+
+	// dual language edition prevent
+	if ($my_lang_id != '') {
+		unset($langs_data[$my_lang_id]);
+	}
+
+	$ecount = $ecount+10;
+}
+
+// process global template
+$globaltemplate = str_replace(&quot;{content}&quot;, $elements, $mvars['10']);
+echo $globaltemplate;
+unset($globaltemplate,$newidcatside,$elements,$template,$is_available,$langs_data,$langs_online,$sql,$mvars);
+&lt;/CMSPHP&gt;</output>
+   <config></config>
+   <repository_id>mod:d3cac1d21bfb93f3a602c393202cd379:1dc9cdab</repository_id>
+   <install_sql></install_sql>
+   <uninstall_sql></uninstall_sql>
+   <update_sql></update_sql>
+</modul>

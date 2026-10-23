@@ -1,0 +1,1186 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<modul version='0.4' date='1792759064'>
+   <name>Listen-Navigation</name>
+   <cat>Navigation</cat>
+   <version>1.2</version>
+   <author>1</author>
+   <created>1153347642</created>
+   <lastmodified>1177010768</lastmodified>
+   <deletable>1</deletable>
+   <description></description>
+   <input>&lt;?php
+// VALREF
+// 01 Startordner
+// 02 Anzeigeart (Ordner mit Seiten, nur Ordner, nur Seiten)
+// 03 Komplette Ordnerstruktur anzeigen
+// 04 Startseiten anzeigen
+// 05 Anzahl darzustellender Ebenen
+// 06 Ausgeschlossene Seiten und Ordner auch im Backend verbergen
+// 07 Ordner ausschliessen
+// 08 Seiten ausschliessen
+// 09 Ordner nur als aktiv markieren, wenn Startseite angezeigt wird
+// 11 Pfad als aktiv verfolgen
+// 12 Einleitung/Ende der Navigation verbergen, falls Navigation &quot;leer&quot;
+// 13 Startnummer Tabindex
+// 14 Sortierung
+// 15 Richtung der Sortierung
+// 16 Erst Ordner, dann Seiten anzeigen
+// 17 Bei Ordnerlinks immer Link zur Startseite des Ordners generieren (neu2)
+// 20 Template: Einleitung der Navigation
+// 21 Template: Ende der Navigation
+// 22 Template: Seite
+// 23 Template: Aktuelle Seite
+// 24 Template: Ordner
+// 25 Template: Aktiver Ordner
+// 26 Template: Ebene
+// 27 Template: Ordner, wenn als aktiv verfolgt (neu)
+// 28 In folgenden Ordnern keine Seiten anzeigen (neu)
+// 29 Rootlevel verschieben (neu)
+// 30 Routing (neu)
+
+
+// 99 Configmode
+
+//Hinweis: $mod nicht in der Modulkonfiguration verwenden!
+
+$mip_form['99']['desc'] = 'Konfigurationsmodus';
+$mip_form['99']['cat'] = 'option';
+$mip_form['99']['size'] = '1';
+$mip_form['99']['option_desc'][0] = 'Normal';
+$mip_form['99']['option_val'][0] =  '';
+$mip_form['99']['option_desc'][1] = 'Erweitert';
+$mip_form['99']['option_val'][1] =  'advanced';
+$mip_form['99']['option_desc'][2] = 'Ausgeblendet';
+$mip_form['99']['option_val'][2] =  'hidden';
+$mip_form['99']['cms_var'] = 'MOD_VAR[99]';
+$mip_form['99']['cms_val'] = $cms_mod['value'][99];
+$mip_form['99']['flag'] = 'reload';
+
+$listnavi['show_in_standard_mode'] = array(1,2,3,4,14,15,16);
+
+
+// Defaultwerte setzen
+if ($cms_mod['value'][1] == '')
+{
+	$cms_mod['value'][1] = 'root';
+}
+
+$mip_form['14']['cms_val_default'] = 'sortindex';
+$mip_form['15']['cms_val_default'] = 'SORT_ASC';
+
+$mip_form['2']['cms_val_default'] = 'folders_and_pages';
+$mip_form['3']['cms_val_default'] = '';
+$mip_form['5']['cms_val_default'] = '0';
+
+$mip_form['1']['desc'] = 'Startordner:';
+$mip_form['1']['cat'] = 'app_cat';
+$mip_form['1']['output_cat'] = 'option';
+$mip_form['1']['cms_var'] = 'MOD_VAR[1]';
+$mip_form['1']['cms_val'] = $cms_mod['value'][1];
+$mip_form['1']['size'] = '5';
+$mip_form['1']['flag'] = 'reload';
+
+$mip_form['29']['cat'] = 'txt';
+$mip_form['29']['type'] = '';
+$mip_form['29']['desc'] = 'Angezeigter Startebene von Ordnern manipulieren&lt;small&gt;(leer oder 0 = deaktiviert, 1 = Ordner ab Ebene eins, 2 = Ordner ab Ebene zwei,...)&lt;/small&gt;:';
+$mip_form['29']['cms_var'] = 'MOD_VAR[29]';
+$mip_form['29']['cms_val'] = $cms_mod['value'][29];
+
+$mip_form['2']['desc'] = 'Anzeigeart:';
+$mip_form['2']['cat'] = 'option';
+$mip_form['2']['cms_var'] = 'MOD_VAR[2]';
+$mip_form['2']['cms_val'] = $cms_mod['value'][2];
+$mip_form['2']['option_desc'][0] = 'Ordner mit Seiten';
+$mip_form['2']['option_desc'][1] = 'nur Ordner';
+$mip_form['2']['option_desc'][2] = 'nur Seiten';
+$mip_form['2']['option_val'][0] = 'folders_and_pages';
+$mip_form['2']['option_val'][1] = 'folders';
+if ($cms_mod['value'][1] != 'root')
+{
+	$mip_form['2']['option_val'][2] = 'pages';
+}
+$mip_form['2']['flag'] = 'reload';
+
+$mip_form['6']['desc'] = 'Ausgeschlossene Seiten und Ordner auch im Backend verbergen:';
+$mip_form['6']['cat'] = 'chk';
+$mip_form['6']['option_var'][0] = 'MOD_VAR[6]';
+$mip_form['6']['option_val'][0] = $cms_mod['value'][6];
+$mip_form['6']['option_desc'][0] = 'ja';
+$mip_form['6']['option_val_select'][0] = 'true';
+
+$mip_form['12']['desc'] = 'Einleitung/Ende der Navigation anzeigen, falls Navigation &amp;quot;leer&amp;quot;';
+$mip_form['12']['cat'] = 'chk';
+$mip_form['12']['option_var'][0] = 'MOD_VAR[12]';
+$mip_form['12']['option_val'][0] = $cms_mod['value'][12];
+$mip_form['12']['option_desc'][0] = 'ja';
+$mip_form['12']['option_val_select'][0] = 'true';
+
+$mip_form['13']['cat'] = 'txt';
+$mip_form['13']['type'] = '';
+$mip_form['13']['desc'] = 'Startnummer f&amp;uuml;r tabindex:';
+$mip_form['13']['cms_var'] = 'MOD_VAR[13]';
+$mip_form['13']['cms_val'] = $cms_mod['value'][13];
+
+$mip_form['14']['desc'] = 'Sortierung:';
+$mip_form['14']['cat'] = 'option';
+$mip_form['14']['cms_var'] = 'MOD_VAR[14]';
+$mip_form['14']['cms_val'] = $cms_mod['value'][14];
+$mip_form['14']['option_desc'][0] = 'Standard (wie Backend)';
+$mip_form['14']['option_desc'][1] = 'Name';
+$mip_form['14']['option_desc'][2] = 'Erstellungsdatum';
+$mip_form['14']['option_desc'][3] = '&amp;Auml;nderungsdatum';
+$mip_form['14']['option_val'][0] = 'sortindex';
+$mip_form['14']['option_val'][1] = 'name';
+$mip_form['14']['option_val'][2] = 'created';
+$mip_form['14']['option_val'][3] = 'lastmodified';
+
+$mip_form['15']['cat'] = 'radio';
+$mip_form['15']['cms_var'] = 'MOD_VAR[15]';
+$mip_form['15']['cms_val'] = $cms_mod['value'][15];
+$mip_form['15']['option_desc'][0] = 'aufsteigend';
+$mip_form['15']['option_val'][0] = 'SORT_ASC';
+$mip_form['15']['option_desc'][1] = 'absteigend';
+$mip_form['15']['option_val'][1] = 'SORT_DESC';
+
+if ($cms_mod['value'][2] == 'folders_and_pages')
+{
+	$mip_form['16']['desc'] = 'Erst Ordner, dann Seiten anzeigen:';
+	$mip_form['16']['cat'] = 'chk';
+	$mip_form['16']['option_var'][0] = 'MOD_VAR[16]';
+	$mip_form['16']['option_val'][0] = $cms_mod['value'][16];
+	$mip_form['16']['option_desc'][0] = 'ja';
+	$mip_form['16']['option_val_select'][0] = 'true';
+}
+else
+{
+	$mip_form['16']['cat'] = 'hidden';
+	$mip_form['16']['cms_var'] = 'MOD_VAR[16]';
+	$mip_form['16']['cms_val'] = $cms_mod['value'][16];
+
+}
+
+$mip_form['20']['cat'] = 'txtarea';
+$mip_form['20']['type'] = 'long';
+$mip_form['20']['rows'] = '3';
+$mip_form['20']['desc'] = 'Einleitung der Navigation:&lt;br/&gt;&lt;small&gt;M&amp;ouml;gliche Templatevariablen: {name}, {link}, {desc}, {id}, {tabindex}. (Beziehen sich auf den Startordner)&lt;/small&gt;';
+$mip_form['20']['cms_var'] = 'MOD_VAR[20]';
+$mip_form['20']['cms_val'] = $cms_mod['value'][20];
+
+$mip_form['21']['cat'] = 'txtarea';
+$mip_form['21']['type'] = 'long';
+$mip_form['21']['rows'] = '3';
+$mip_form['21']['desc'] = 'Ende der Navigation:&lt;br/&gt;&lt;small&gt;M&amp;ouml;gliche Templatevariablen: {name}, {link}, {desc}, {id}, {tabindex}. (Beziehen sich auf den Startordner)&lt;/small&gt;';
+$mip_form['21']['cms_var'] = 'MOD_VAR[21]';
+$mip_form['21']['cms_val'] = $cms_mod['value'][21];
+
+$mip_form['26']['cat'] = 'txtarea';
+$mip_form['26']['type'] = 'long';
+$mip_form['26']['rows'] = '3';
+$mip_form['26']['desc'] = 'Ebene:&lt;br/&gt;&lt;small&gt;M&amp;ouml;gliche Templatevariablen: {layer}, {id}&lt;/small&gt;';
+$mip_form['26']['cms_var'] = 'MOD_VAR[26]';
+$mip_form['26']['cms_val'] = $cms_mod['value'][26];
+$mip_form['26']['cms_val_default'] = '&lt;ul&gt;
+{layer}&lt;/ul&gt;
+';
+
+
+$mip_form['30']['cat'] = 'txtarea';
+$mip_form['30']['type'] = 'long';
+$mip_form['30']['rows'] = '3';
+$mip_form['30']['desc'] = 'Routing des aktiven Status:&lt;br/&gt;&lt;small&gt;Leitet den Aktivstatus einer Seite oder einer Kategorie um auf eine andere Seite oder Kategorie. Pro Zeile kann eine Route erstellt werden. Beispiele&lt;br /&gt;
+idcat:2 &gt; idcat:1 &lt;i&gt;(Ist idcat 2 aktiv, wird stattdessen idcat 1 als aktiv gekennzeichnet)&lt;/i&gt;&lt;br /&gt;
+idcat:5 &gt; idcatside:11 &lt;i&gt;(Ist idcat 5 aktiv, wird stattdessen idcatside 11 als aktiv gekennzeichnet)&lt;/i&gt;&lt;br /&gt;
+idcatside:2 &gt; idcat:3 &lt;i&gt;(Ist idcatside 2 aktiv, wird stattdessen idcat 3 als aktiv gekennzeichnet)&lt;/i&gt;&lt;br /&gt;
+idcatside:17 &gt; idcatside:11 &lt;i&gt;(Ist idcatside 17 aktiv, wird stattdessen idcatside 11 als aktiv gekennzeichnet)&lt;/i&gt;&lt;/small&gt;';
+$mip_form['30']['cms_var'] = 'MOD_VAR[30]';
+$mip_form['30']['cms_val'] = $cms_mod['value']['30'];
+
+if ($cms_mod['value'][2] != 'pages')
+{
+	$mip_form['3']['desc'] = 'Komplette Ordnerstruktur anzeigen:';
+	$mip_form['3']['cat'] = 'chk';
+	$mip_form['3']['option_var'][0] = 'MOD_VAR[3]';
+	$mip_form['3']['option_val'][0] = $cms_mod['value'][3];
+	$mip_form['3']['option_desc'][0] = 'ja';
+	$mip_form['3']['option_val_select'][0] = 'true';
+
+	$mip_form['5']['cat'] = 'txt';
+	$mip_form['5']['type'] = '';
+	$mip_form['5']['desc'] = 'Anzahl darzustellender Ebenen &lt;small&gt;(0: alle)&lt;/small&gt;:';
+	$mip_form['5']['cms_var'] = 'MOD_VAR[5]';
+	$mip_form['5']['cms_val'] = $cms_mod['value'][5];
+
+	$mip_form['7']['cat'] = 'txt';
+	$mip_form['7']['type'] = '';
+	$mip_form['7']['desc'] = 'Ordner ausschlie&amp;szlig;en &lt;small&gt;(idcat kommasepariert angeben)&lt;/small&gt;:';
+	$mip_form['7']['cms_var'] = 'MOD_VAR[7]';
+	$mip_form['7']['cms_val'] = $cms_mod['value'][7];
+
+	$mip_form['9']['desc'] = 'Ordner nur als aktiv markieren, wenn Startseite angezeigt wird';
+	$mip_form['9']['cat'] = 'chk';
+	$mip_form['9']['option_var'][0] = 'MOD_VAR[9]';
+	$mip_form['9']['option_val'][0] = $cms_mod['value'][9];
+	$mip_form['9']['option_desc'][0] = 'ja';
+	$mip_form['9']['option_val_select'][0] = 'true';
+
+	$mip_form['11']['desc'] = 'Pfad als aktiv verfolgen';
+	$mip_form['11']['cat'] = 'chk';
+	$mip_form['11']['option_var'][0] = 'MOD_VAR[11]';
+	$mip_form['11']['option_val'][0] = $cms_mod['value'][11];
+	$mip_form['11']['option_desc'][0] = 'ja';
+	$mip_form['11']['option_val_select'][0] = 'true';
+	
+	$mip_form['17']['desc'] = 'Bei Ordnerlinks immer Link zur Startseite des Ordners generieren&lt;br /&gt; &lt;small&gt;(statt Link zum Ordner)&lt;/small&gt;';
+	$mip_form['17']['cat'] = 'chk';
+	$mip_form['17']['option_var']['0'] = 'MOD_VAR[17]';
+	$mip_form['17']['option_val']['0'] = $dedi_mod['value']['17'];
+	$mip_form['17']['option_desc']['0'] = 'ja';
+	$mip_form['17']['option_val_select']['0'] = 'true';
+
+	$mip_form['24']['cat'] = 'txtarea';
+	$mip_form['24']['type'] = 'long';
+	$mip_form['24']['rows'] = '3';
+	$mip_form['24']['desc'] = 'Ordner:&lt;br/&gt;&lt;small&gt;M&amp;ouml;gliche Templatevariablen: {name}, {link}, {desc}, {id}, {tabindex}, {depth}, {first}...[{else}...]{/first}, {last}...[{else}...]{/last}, {folder}&lt;/small&gt;';
+	$mip_form['24']['cms_var'] = 'MOD_VAR[24]';
+	$mip_form['24']['cms_val'] = $cms_mod['value'][24];
+	$mip_form['24']['cms_val_default'] = '&lt;li&gt;&lt;a href=&quot;{link}&quot;&gt;{name}&lt;/a&gt;{folder}&lt;/li&gt;
+';
+
+
+	$mip_form['25']['cat'] = 'txtarea';
+	$mip_form['25']['type'] = 'long';
+	$mip_form['25']['rows'] = '3';
+	$mip_form['25']['desc'] = 'Aktiver Ordner:&lt;br/&gt;&lt;small&gt;M&amp;ouml;gliche Templatevariable: {name}, {link}, {desc}, {id}, {tabindex}, {depth}, {first}...[{else}...]{/first}, {last}...[{else}...]{/last}, {folder}&lt;/small&gt;';
+	$mip_form['25']['cms_var'] = 'MOD_VAR[25]';
+	$mip_form['25']['cms_val'] = $cms_mod['value'][25];
+	$mip_form['25']['cms_val_default'] = '&lt;li&gt;&lt;a href=&quot;{link}&quot;&gt;{name}&lt;/a&gt;{folder}&lt;/li&gt;
+';	
+
+  $mip_form['27']['cat'] = 'txtarea';
+	$mip_form['27']['type'] = 'long';
+	$mip_form['27']['rows'] = '3';
+	$mip_form['27']['desc'] = 'Verfolgter Ordner:&lt;br/&gt;&lt;small&gt;M&amp;ouml;gliche Templatevariable: {name}, {link}, {desc}, {id}, {tabindex}, {first}...{/first}, {last}...{/last}, {folder}&lt;/small&gt;';
+	$mip_form['27']['cms_var'] = 'MOD_VAR[27]';
+	$mip_form['27']['cms_val'] = $cms_mod['value'][27];
+	$mip_form['27']['cms_val_default'] = '&lt;li&gt;&lt;a href=&quot;{link}&quot;&gt;{name}&lt;/a&gt;{folder}&lt;/li&gt;
+';	
+
+}
+else
+{
+	$mip_form['3']['cat'] = 'hidden';
+	$mip_form['3']['cms_var'] = 'MOD_VAR[3]';
+	$mip_form['3']['cms_val'] = $cms_mod['value']['3'];
+
+	$mip_form['5']['cat'] = 'hidden';
+	$mip_form['5']['cms_var'] = 'MOD_VAR[5]';
+	$mip_form['5']['cms_val'] = $cms_mod['value']['5'];
+
+	$mip_form['7']['cat'] = 'hidden';
+	$mip_form['7']['cms_var'] = 'MOD_VAR[7]';
+	$mip_form['7']['cms_val'] = $cms_mod['value']['7'];
+
+	$mip_form['9']['cat'] = 'hidden';
+	$mip_form['9']['cms_var'] = 'MOD_VAR[9]';
+	$mip_form['9']['cms_val'] = $cms_mod['value']['9'];
+
+	$mip_form['11']['cat'] = 'hidden';
+	$mip_form['11']['cms_var'] = 'MOD_VAR[11]';
+	$mip_form['11']['cms_val'] = $cms_mod['value']['11'];
+
+	$mip_form['17']['cat'] = 'hidden';
+	$mip_form['17']['cms_var'] = 'MOD_VAR[17]';
+	$mip_form['17']['cms_val'] = $cms_mod['value']['17'];
+	
+	$mip_form['24']['cat'] = 'hidden';
+	$mip_form['24']['cms_var'] = 'MOD_VAR[24]';
+	$mip_form['24']['cms_val'] = $cms_mod['value']['24'];
+
+	$mip_form['25']['cat'] = 'hidden';
+	$mip_form['25']['cms_var'] = 'MOD_VAR[25]';
+	$mip_form['25']['cms_val'] = $cms_mod['value']['25'];
+
+	$mip_form['27']['cat'] = 'hidden';
+	$mip_form['27']['cms_var'] = 'MOD_VAR[27]';
+	$mip_form['27']['cms_val'] = $cms_mod['value']['27'];
+	
+}
+
+if ($cms_mod['value'][2] != 'folders')
+{
+	$mip_form['4']['desc'] = 'Startseiten anzeigen';
+	$mip_form['4']['cat'] = 'option';
+    $mip_form['4']['cms_var'] = 'MOD_VAR[4]';
+    $mip_form['4']['cms_val'] = $cms_mod['value']['4'];	
+    $mip_form['4']['option_desc'][0] = 'Nein';
+    $mip_form['4']['option_desc'][1] = 'Ja';
+    $mip_form['4']['option_desc'][2] = 'Bei mehr als einer Seite';
+    $mip_form['4']['option_val'][0] = '';
+    $mip_form['4']['option_val'][1] = 'true';
+    $mip_form['4']['option_val'][2] = 'gt1';
+	
+	$mip_form['8']['cat'] = 'txt';
+	$mip_form['8']['type'] = '';
+	$mip_form['8']['desc'] = 'Seiten ausschlie&amp;szlig;en &lt;small&gt;(idcatside kommasepariert angeben)&lt;/small&gt;:';
+	$mip_form['8']['cms_var'] = 'MOD_VAR[8]';
+	$mip_form['8']['cms_val'] = $cms_mod['value']['8'];
+
+	$mip_form['22']['cat'] = 'txtarea';
+	$mip_form['22']['type'] = 'long';
+	$mip_form['22']['rows'] = '3';
+	$mip_form['22']['desc'] = 'Seite:&lt;br/&gt;&lt;small&gt;M&amp;ouml;gliche Templatevariable: {name}, {link}, {desc}, {summary}, {id}, {tabindex}, {depth}, {first}...[{else}...]{/first}, {last}...[{else}...]{/last}&lt;/small&gt;';
+	$mip_form['22']['cms_var'] = 'MOD_VAR[22]';
+	$mip_form['22']['cms_val'] = $cms_mod['value']['22'];
+	$mip_form['22']['cms_val_default'] = '&lt;li&gt;&lt;a href=&quot;{link}&quot;&gt;{name}&lt;/a&gt;&lt;/li&gt;
+';
+
+	$mip_form['23']['cat'] = 'txtarea';
+	$mip_form['23']['type'] = 'long';
+	$mip_form['23']['rows'] = '3';
+	$mip_form['23']['desc'] = 'Aktuelle Seite:&lt;br/&gt;&lt;small&gt;M&amp;ouml;gliche Templatevariable: {name}, {link}, {desc}, {summary}, {id}, {tabindex}, {depth}, {first}...[{else}...]{/first}, {last}...[{else}...]{/last}&lt;/small&gt;';
+	$mip_form['23']['cms_var'] = 'MOD_VAR[23]';
+	$mip_form['23']['cms_val'] = $cms_mod['value']['23'];
+	$mip_form['23']['cms_val_default'] = '&lt;li&gt;&lt;a href=&quot;{link}&quot;&gt;{name}&lt;/a&gt;&lt;/li&gt;
+';
+
+	$mip_form['28']['cat'] = 'txt';
+	$mip_form['28']['type'] = '';
+	$mip_form['28']['desc'] = 'In folgenden Ordnern keine Seiten anzeigen &lt;small&gt;(idcat kommasepariert angeben)&lt;/small&gt;:';
+	$mip_form['28']['cms_var'] = 'MOD_VAR[28]';
+	$mip_form['28']['cms_val'] = $cms_mod['value'][28];
+}
+else
+{
+	$mip_form['4']['cat'] = 'hidden';
+	$mip_form['4']['cms_var'] = 'MOD_VAR[4]';
+	$mip_form['4']['cms_val'] = $cms_mod['value']['4'];
+
+	$mip_form['8']['cat'] = 'hidden';
+	$mip_form['8']['cms_var'] = 'MOD_VAR[8]';
+	$mip_form['8']['cms_val'] = $cms_mod['value']['8'];
+
+	$mip_form['22']['cat'] = 'hidden';
+	$mip_form['22']['cms_var'] = 'MOD_VAR[22]';
+	$mip_form['22']['cms_val'] = $cms_mod['value']['22'];
+
+	$mip_form['23']['cat'] = 'hidden';
+	$mip_form['23']['cms_var'] = 'MOD_VAR[23]';
+	$mip_form['23']['cms_val'] = $cms_mod['value']['23'];
+
+	$mip_form['28']['cat'] = 'hidden';
+	$mip_form['28']['cms_var'] = 'MOD_VAR[28]';
+	$mip_form['28']['cms_val'] = $cms_mod['value']['28'];	
+}
+
+
+mip_formsp($mip_form['99']);	// Konfigurationsmodus
+
+if ($cms_mod['value'][99] != 'advanced')
+{
+	foreach($mip_form AS $listnavi['id']=&gt;$listnavi['mip'])
+	{
+		if (($cms_mod['value'][99] == 'hidden') || !sf_in_array($listnavi['id'], $listnavi['show_in_standard_mode']))
+		{
+			$mip_form[$listnavi['id']]['cat'] = 'hidden';
+			$mip_form[$listnavi['id']]['cms_var'] = 'MOD_VAR[' . $listnavi['id'] . ']';
+			$mip_form[$listnavi['id']]['cms_val'] = $cms_mod['value'][$listnavi['id']];
+		}
+	}
+}
+
+mip_formsp($mip_form['1']);		// Startordner
+mip_formsp($mip_form['29']);		// Rootlevel verschieben
+mip_formsp($mip_form['2']);		// Anzeigeart (Ordner mit Seiten, nur Ordner, nur Seiten)
+mip_formsp($mip_form['14']);		// Sortierung
+mip_formsp($mip_form['15']);		// Richtung der Sortierung
+mip_formsp($mip_form['16']);		// Erst Ordner, dann Seiten anzeigen
+mip_formsp($mip_form['17']);		// Bei Ordnerlinks immer Link zur Startseite des Ordners generieren (statt Link zum Ordner)
+mip_formsp($mip_form['3']);		// Komplette Ordnerstruktur anzeigen
+mip_formsp($mip_form['5']);		// Anzahl darzustellender Ebenen
+mip_formsp($mip_form['4']);		// Startseiten anzeigen
+mip_formsp($mip_form['9']);		// Ordner nur als aktiv markieren, wenn Startseite angezeigt wird
+mip_formsp($mip_form['11']);		// Pfad als aktiv verfolgen
+mip_formsp($mip_form['7']);		// Ordner ausschliessen
+mip_formsp($mip_form['28']);		// Ordner ohne Seiten anzeigen
+mip_formsp($mip_form['8']);		// Seiten ausschliessen
+mip_formsp($mip_form['6']);		// Ausgeschlossene Seiten und Ordner auch im Backend verbergen
+mip_formsp($mip_form['12']);		// Einleitung/Ende der Navigation verbergen, falls Navigation &quot;leer&quot;
+mip_formsp($mip_form['13']);		// Startnummer Tabindex
+mip_formsp($mip_form['30']);		// Routing
+mip_formsp($mip_form['20']);		// Template: Einleitung der Navigation
+mip_formsp($mip_form['21']);		// Template: Ende der Navigation
+mip_formsp($mip_form['26']);		// Template: Ebene
+mip_formsp($mip_form['22']);		// Template: Seite
+mip_formsp($mip_form['23']);		// Template: Aktuelle Seite
+mip_formsp($mip_form['24']);		// Template: Ordner
+mip_formsp($mip_form['25']);		// Template: Aktiver Ordner
+mip_formsp($mip_form['27']);		// Template: Ordner, wenn als aktiv verfolgt
+
+unset($mip_form);
+?&gt;</input>
+   <output>&lt;CMSPHP&gt;
+
+&lt;CMSPHP:CACHE&gt;
+
+
+
+$ln_routing['idcatside'] = $idcatside;
+$ln_routing['idcat'] = $idcat;
+$ln_routing['routings'] = array();
+$ln_routing['idcat_temp'] = $ln_routing['idcatside_temp'] = false;
+$ln_routing['raw'] = trim( str_replace(' ', '', &quot;MOD_VALUE[30]&quot;));
+
+if (strlen($ln_routing['raw']) &gt; 14) {
+  $ln_routing['raw_vals'] = explode(&quot;\n&quot;, $ln_routing['raw']);
+  foreach ($ln_routing['raw_vals'] AS $v) {
+    $pieces = explode('&gt;', $v);
+    $ln_routing['routings'][ $pieces['0'] ] = $pieces['1'];
+  }
+}
+
+
+//source idcatside
+if (sf_array_key_exists('idcatside:'.$idcatside, $ln_routing['routings'])) {
+  //idcatside to idcatside
+  if( strstr ( $ln_routing['routings']['idcatside:'.$idcatside], 'idcatside')) {
+    $ln_routing['idcatside_temp'] = (int) str_replace('idcatside:', '', $ln_routing['routings']['idcatside:'.$idcatside]);
+	if ($ln_routing['idcatside_temp'] &gt; 0) {
+	  $idcatside = $ln_routing['idcatside_temp'];
+	  $idcat = $con_side[$idcatside]['idcat'];
+	}
+  //idcatside to idcat
+  } else {
+  	$ln_routing['idcat_temp'] = (int) str_replace('idcat:', '', $ln_routing['routings']['idcatside:'.$idcatside]);
+    if ($ln_routing['idcat_temp'] &gt; 0) {
+		$idcat = $ln_routing['idcat_temp'];
+		$idcatside = $SF_catinfos-&gt;getIdcatsideStartpage($idcat);
+    }
+  }
+// source idcat
+} else if (sf_array_key_exists('idcat:'.$idcat, $ln_routing['routings'])) {
+	//idcat to idcatside
+	if( strstr ( $ln_routing['routings']['idcat:'.$idcat], 'idcatside')) {
+	    $ln_routing['idcatside_temp'] = (int) str_replace('idcatside:', '', $ln_routing['routings']['idcat:'.$idcat]);
+	    if ($ln_routing['idcatside_temp'] &gt; 0) {
+			$idcatside = $ln_routing['idcatside_temp'];
+			$idcat = $con_side[$idcatside]['idcat'];
+	    }
+	//idcat to idcat
+	} else {
+		$ln_routing['idcat_temp'] = (int) str_replace('idcat:', '', $ln_routing['routings']['idcat:'.$idcat]);
+		if ($ln_routing['idcat_temp'] &gt; 0) {
+		  $idcat = $ln_routing['idcat_temp'];
+		  $idcatside = $SF_catinfos-&gt;getIdcatsideStartpage($idcat);
+		}
+	}
+}
+
+
+&lt;/CMSPHP:CACHE&gt;
+
+
+
+//Description of cats
+if(! function_exists('get_cat_desc')){
+    function get_cat_desc($a)
+{
+global $db,$cms_db;
+$sql  = &quot;SELECT
+			*
+		FROM 
+	   &quot;.$cms_db['cat_lang'].&quot; 
+		WHERE idcatlang = '&quot;.$a.&quot;'&quot;;
+$db-&gt;query($sql);
+$db-&gt;next_record();
+return $db-&gt;f('description'); 
+}}
+
+//Descritpion of pages
+if(! function_exists('get_side_desc')){
+    function get_side_desc($a,$which)
+{
+global $db,$cms_db;
+$sql  = &quot;SELECT
+			*
+		FROM 
+	   &quot;.$cms_db['side_lang'].&quot; LEFT JOIN
+		&quot;.$cms_db['cat_side'].&quot; USING(IDSIDE)
+		WHERE 
+idcatside = '&quot;.$a.&quot;'&quot;;
+$db-&gt;query($sql);
+$db-&gt;next_record();
+
+if ($which == 'desc') {
+return $db-&gt;f('meta_description'); }
+elseif ($which == 'summary'){
+return $db-&gt;f('summary'); }
+}}
+
+
+
+
+
+
+//global $evil_global_variable_for_easy_tabindex_implementation, $mod;
+$evil_global_variable_for_easy_tabindex_implementation = 1;
+
+$mod['desc'] = array();
+
+// idcat des Start-Ordners besorgen
+&lt;CMSPHP:CACHE&gt;
+if(! function_exists('nav_negotiate_startlevel') ){
+function nav_negotiate_startlevel( $current_cat, $startlevel ){
+        global $con_tree;
+
+        //echo &quot;$cat, $searcharray &lt;br /&gt;&quot;;//return false;
+        if (empty($current_cat) || $current_cat == 0 || ! is_int($current_cat) || ! is_int($startlevel)  ) {
+                return $current_cat;
+        }
+
+        $levels = array();
+        sf_array_push($levels, $current_cat);
+        $cat = $current_cat;
+        while(true) {
+                $cat = (int) $con_tree[$cat]['parent'];
+                sf_array_push($levels, $cat);
+                if ($cat == 0) break;
+        }
+        $levels_rev = array_reverse($levels);
+        //print_r($levels_rev);exit;
+
+        if ($levels_rev[$startlevel] &gt; 0) {
+                return $levels_rev[$startlevel];
+        } else {
+                return $current_cat;
+        }
+}}
+
+
+if ($cms_mod['value'][1] == 'root')
+{
+        $cms_mod['value'][1] = '0';
+}
+elseif ($cms_mod['value'][1] == 'this')
+{
+        $cms_mod['value'][1] = $idcat;
+}
+
+$mod['startlevel']  = (int) &quot;MOD_VALUE[29]&quot;;
+if ($mod['startlevel'] &gt; 0) {
+  $cms_mod['value'][1] = (string) nav_negotiate_startlevel( (int) $idcat, $mod['startlevel']);
+}
+
+if (!$cms_mod['value'][14])
+{
+	// Update von einer Version kleiner als 0.9-dev =&gt; Diese Variablen wurden noch nicht durch die Modulkonfiguration gesetzt
+	$cms_mod['value'][14] = 'sortindex';
+	$cms_mod['value'][15] = 'SORT_ASC';
+}
+
+
+// Anzahl darzustellender Ebenen auf 0 setzen, falls unsinnige Werte angegeben wurden
+if (!is_numeric($cms_mod['value'][5]) || ($cms_mod['value'][5] &lt; 0))
+{
+	$cms_mod['value'][5] = 0;
+}
+
+// Startnummer fuer tabindex auf 1 setzen, falls unsinnige Werte angegeben wurden
+if (!is_numeric($cms_mod['value'][13]) || ($cms_mod['value'][13] &lt; 1))
+{
+	$cms_mod['value'][13] = 1;
+}
+&lt;/CMSPHP:CACHE&gt;
+
+
+/*
+ * Hilfs-Funktionen
+ */
+
+function print_folder_&lt;CMSPHP:CACHE&gt;echo $cms_mod['container']['id'];&lt;/CMSPHP:CACHE&gt;($folder, $depth)
+{
+	&lt;CMSPHP:CACHE&gt;
+	if ($cms_mod['value'][16] == 'true')
+	{
+	&lt;/CMSPHP:CACHE&gt;
+		$output = print_folder_helper_folders_&lt;CMSPHP:CACHE&gt;echo $cms_mod['container']['id'];&lt;/CMSPHP:CACHE&gt;($folder, $depth);
+		$output .= print_folder_helper_pages_&lt;CMSPHP:CACHE&gt;echo $cms_mod['container']['id'];&lt;/CMSPHP:CACHE&gt;($folder, $depth);
+	&lt;CMSPHP:CACHE&gt;
+	}
+	else
+	{
+	&lt;/CMSPHP:CACHE&gt;
+		$output = print_folder_helper_pages_&lt;CMSPHP:CACHE&gt;echo $cms_mod['container']['id'];&lt;/CMSPHP:CACHE&gt;($folder, $depth);
+		$output .= print_folder_helper_folders_&lt;CMSPHP:CACHE&gt;echo $cms_mod['container']['id'];&lt;/CMSPHP:CACHE&gt;($folder, $depth);
+	&lt;CMSPHP:CACHE&gt;
+	}
+	&lt;/CMSPHP:CACHE&gt;
+	
+	if (strlen($output) &gt; 0)
+	{
+		$tpl = str_replace('{id}', $folder['idcat'], &quot;MOD_VALUE[26]&quot;); 
+		$output = str_replace('{layer}', $output, $tpl);
+	}
+	
+	return $output;
+}
+
+
+function print_folder_helper_pages_&lt;CMSPHP:CACHE&gt;echo $cms_mod['container']['id'];&lt;/CMSPHP:CACHE&gt;($folder, $depth)
+{
+	global $evil_global_variable_for_easy_tabindex_implementation, $con_side, $mod, $sess;
+	
+	$cats_no_pages = explode(&quot;,&quot;, trim(str_replace(' ', '', &quot;MOD_VALUE[28]&quot;)));
+	
+	// Seiten ausgeben
+	if (isset($folder['pages']))
+	{  
+	  $pagevals = array_values($folder['pages']);
+	  if(! in_array($con_side[ $pagevals['0'] ]['idcat'],$cats_no_pages) || ('MOD_VALUE[6]' != 'true' &amp;&amp; $sess-&gt;name == 'sefrengo' ) )
+    {
+	   
+  		foreach ($folder['pages'] as $idcatside)
+  		{
+  			$template = ($idcatside == &lt;CMSPHP:CACHE&gt;echo $idcatside;&lt;/CMSPHP:CACHE&gt;) ? &quot;MOD_VALUE[23]&quot; : &quot;MOD_VALUE[22]&quot;;
+  			$item = str_replace('{name}', htmlspecialchars($con_side[$idcatside]['name'], ENT_COMPAT, 'UTF-8'), $template);
+  			$item = str_replace('{desc}', htmlspecialchars(get_side_desc($idcatside,'desc'), ENT_COMPAT, 'UTF-8'), $item);
+  			$item = str_replace('{summary}', htmlspecialchars(get_side_desc($idcatside,'summary'), ENT_COMPAT, 'UTF-8'), $item);
+  			$item = str_replace('{link}', $con_side[$idcatside]['link'], $item);
+  			$item = str_replace('{id}', $idcatside, $item);
+  			$item = str_replace('{depth}', $depth, $item);
+  			if (strstr($item, '{tabindex}') !== false)
+  			{
+  				$item = str_replace('{tabindex}', $evil_global_variable_for_easy_tabindex_implementation++, $item);
+  			}
+  
+  			&lt;CMSPHP:CACHE&gt;
+  			if (strstr($cms_mod['value'][22], '{first}') || strstr($cms_mod['value'][23], '{first}'))
+  			{
+  			&lt;/CMSPHP:CACHE&gt;
+  				if ($folder['first'])
+  				{
+  					$folder['first'] = false;
+  					$item = preg_replace(&quot;/{first}(.*?)({else}(.*?))?{\/first}/&quot;, &quot;\\1&quot;, $item);
+  				}
+  				else
+  				{
+  					$item = preg_replace(&quot;/{first}(.*?)({else}(.*?))?{\/first}/&quot;, &quot;\\3&quot;, $item);
+  				}
+  			&lt;CMSPHP:CACHE&gt;
+  			}
+  
+  			if (strstr($cms_mod['value'][22], '{last}') || strstr($cms_mod['value'][23], '{last}'))
+  			{
+  			&lt;/CMSPHP:CACHE&gt;
+  				if (($folder['last_thing'] == 'page') &amp;&amp; ($folder['last'] == $idcatside))
+  				{
+  					$item = preg_replace(&quot;/{last}(.*?)({else}(.*?))?{\/last}/&quot;, &quot;\\1&quot;, $item);
+  				}
+  				else
+  				{
+  					$item = preg_replace(&quot;/{last}(.*?)({else}(.*?))?{\/last}/&quot;, &quot;\\3&quot;, $item);
+  				}
+  			&lt;CMSPHP:CACHE&gt;
+  			}
+  			&lt;/CMSPHP:CACHE&gt;
+  
+  			$temp .= $item;
+  		}
+  	}
+	}
+	
+	return $temp;
+}
+
+
+function print_folder_helper_folders_&lt;CMSPHP:CACHE&gt;echo $cms_mod['container']['id'];&lt;/CMSPHP:CACHE&gt;($folder, $depth)
+{
+	global $evil_global_variable_for_easy_tabindex_implementation, $con_tree, $con_side, $mod;
+  
+  $cats_no_pages = explode(&quot;,&quot;, trim(str_replace(' ', '', &quot;MOD_VALUE[28]&quot;)));
+  
+	// Ordner ausgeben
+	if (is_array($folder['children']))
+	{
+		// Alle Unterordner dieses Ordners durchgehen
+		foreach ($folder['children'] as $subfolder)
+		{
+			$idcat = $subfolder['idcat'];
+			$active_side_is_start = &lt;CMSPHP:CACHE&gt;echo $con_side[$idcatside]['is_start'];&lt;/CMSPHP:CACHE&gt;;
+      $active_cat = &lt;CMSPHP:CACHE&gt;echo $idcat;&lt;/CMSPHP:CACHE&gt;;
+      $show_start_page = &quot;&lt;CMSPHP:CACHE&gt;echo &quot;MOD_VALUE[4]&quot;;&lt;/CMSPHP:CACHE&gt;&quot;;
+				
+			&lt;CMSPHP:CACHE&gt;
+			// Falls &quot;Ordner nur als aktiv markieren, wenn Startseite angezeigt wird&quot; gewaehlt wurde
+			// und die aktuelle (die angezeigte) Seite keine Startseite ist, ...
+			if (($cms_mod['value'][9] == 'true') &amp;&amp; ($con_side[$idcatside]['is_start'] != '1'))
+			{
+			&lt;/CMSPHP:CACHE&gt;
+				// ... die Vorlage (Template) &quot;Ordner&quot; nehmen, ...
+				$template = &quot;MOD_VALUE[24]&quot;;
+			&lt;CMSPHP:CACHE&gt;
+			}
+			else
+			{
+			&lt;/CMSPHP:CACHE&gt;
+				// ... andernfalls die Vorlage &quot;Aktiver Ordner&quot; benutzen, wenn der Unterordner
+				// der aktuelle (&quot;angezeigte&quot;) Ordner ist und sonst die Vorlage &quot;Ordner&quot; verwenden.
+				$template = ($idcat == &lt;CMSPHP:CACHE&gt;echo $idcat;&lt;/CMSPHP:CACHE&gt;) ? &quot;MOD_VALUE[25]&quot; : &quot;MOD_VALUE[24]&quot;;
+				&lt;CMSPHP:CACHE&gt;
+				if ($cms_mod['value'][11] == 'true')
+				{
+				&lt;/CMSPHP:CACHE&gt;
+					if (in_array($idcat, $mod['active']))
+					{
+					   //aktive (25) oder verfolgte (27) kategorie
+					   if ($idcat == $active_cat){
+					        //ist aktiver ordner
+					        //print_r($folder);
+                  if ( in_array($idcat, $cats_no_pages)  
+                  || ($active_side_is_start == '1' &amp;&amp; ($show_start_page == 'false' || ($show_start_page == 'gt1' &amp;&amp; count($subfolder['pages']) &lt; 2) ) ) 
+                 /*|| count($folder['pages']) &lt; 2 &amp;&amp; */ ) {
+                    $template = &quot;MOD_VALUE[25]&quot;;
+                  //ist verfolter ordner
+                  } else {
+                    $template = &quot;MOD_VALUE[27]&quot;;
+                  }
+              } else {
+                  $template = &quot;MOD_VALUE[27]&quot;;
+              }
+					}
+				&lt;CMSPHP:CACHE&gt;
+				}
+			}
+			&lt;/CMSPHP:CACHE&gt;
+
+			$item = str_replace('{name}', htmlspecialchars($con_tree[$idcat]['name'], ENT_COMPAT, 'UTF-8'), $template);
+			$item = str_replace('{desc}', htmlspecialchars(get_cat_desc($idcat), ENT_COMPAT, 'UTF-8'), $item);
+			//$item = str_replace('{link}', $con_tree[$idcat]['link'], $item);
+			if ('MOD_VALUE[17]' == 'true')
+			{
+                $item = str_replace('{link}', $con_side[ $GLOBALS['SF_catinfos']-&gt;getIdcatsideStartpage($idcat) ]['link'], $item);
+			} else {
+			     $item = str_replace('{link}', $con_tree[$idcat]['link'], $item);
+			} 
+			
+			$item = str_replace('{id}', $idcat, $item);
+			$item = str_replace('{depth}', $depth, $item);
+			if (strstr($item, '{tabindex}') !== false)
+			{
+				$item = str_replace('{tabindex}', $evil_global_variable_for_easy_tabindex_implementation++, $item);
+			}
+
+			&lt;CMSPHP:CACHE&gt;
+			if (strstr($cms_mod['value'][24], '{first}') || strstr($cms_mod['value'][25], '{first}'))
+			{
+			&lt;/CMSPHP:CACHE&gt;
+				if ($folder['first'])
+				{
+					$folder['first'] = false;
+					$item = preg_replace(&quot;/{first}(.*?)({else}(.*?))?{\/first}/&quot;, &quot;\\1&quot;, $item);
+				}
+				else
+				{
+					$item = preg_replace(&quot;/{first}(.*?)({else}(.*?))?{\/first}/&quot;, &quot;\\3&quot;, $item);
+				}
+			&lt;CMSPHP:CACHE&gt;
+			}
+
+			if (strstr($cms_mod['value'][24], '{last}') || strstr($cms_mod['value'][25], '{last}'))
+			{
+			&lt;/CMSPHP:CACHE&gt;
+				if (($folder['last_thing'] == 'folder') &amp;&amp; ($folder['last'] == $idcat))
+				{
+					$item = preg_replace(&quot;/{last}(.*?)({else}(.*?))?{\/last}/&quot;, &quot;\\1&quot;, $item);
+				}
+				else
+				{
+					$item = preg_replace(&quot;/{last}(.*?)({else}(.*?))?{\/last}/&quot;, &quot;\\3&quot;, $item);
+				}
+			&lt;CMSPHP:CACHE&gt;
+			}
+			&lt;/CMSPHP:CACHE&gt;
+
+			$subfolder_data = print_folder_&lt;CMSPHP:CACHE&gt;echo $cms_mod['container']['id'];&lt;/CMSPHP:CACHE&gt;($subfolder, $depth+1);
+						
+			$temp .= str_replace(&quot;{folder}&quot;, $subfolder_data, $item);
+		}
+	}
+
+	return $temp;	
+}
+
+
+function build_navi_tree_&lt;CMSPHP:CACHE&gt;echo $cms_mod['container']['id'];&lt;/CMSPHP:CACHE&gt;($start, $depth, $first = false)
+{
+	global $catlist, $con_tree, $con_side, $cms_side, $db, $mod, $cms_db, $lang;
+
+	$entry['idcat'] = $start;
+	
+	if ($first)
+	{
+		$entry['first'] = true;
+	}
+
+	&lt;CMSPHP:CACHE&gt;
+	if ($cms_mod['value'][3] != 'true')
+	{
+		echo 'else if (!in_array($start, $mod[\'path\'])) return $entry;';
+	}
+
+	if ($cms_mod['value'][5] &gt; 0)
+	{
+		echo 'if ($depth &gt;= ' . (int)$cms_mod['value'][5] . ') return $entry;';
+	}
+	&lt;/CMSPHP:CACHE&gt;
+	
+
+	// $hide == true &lt;=&gt; Ausgeschlossene Seiten und Ordner verbergen
+	$hide = &lt;CMSPHP:CACHE&gt;echo ($cms_mod['value'][6] == 'true') ? 'true' : '(!isset($cms_side[\'view\']))';&lt;/CMSPHP:CACHE&gt;;
+
+	&lt;CMSPHP:CACHE&gt;
+	if ($cms_mod['value'][2] != 'folders')
+	{
+	&lt;/CMSPHP:CACHE&gt;
+		// Alle zu diesem Ordner gehoerigen Seiten zusammensuchen
+		foreach ($con_side as $idcatside=&gt;$page)
+		{
+			// Seite ins Array aufnehmen, wenn ...
+			if ( ($page['idcat'] == $start) &amp;&amp;
+                 (
+				   &lt;CMSPHP:CACHE&gt;
+				   // ... es keine Startseite ist (nur wenn keine Startseiten angezeigt werden sollen) und ...
+				   if ($cms_mod['value']['4'] == '')
+				   {
+			         echo '($con_side[$idcatside][\'is_start\'] == \'0\') &amp;&amp;';
+				   }
+				   &lt;/CMSPHP:CACHE&gt;
+				   (
+				     // ... wir im Backend sind, oder ...
+				     isset($cms_side['view']) ||
+				     // ... diese online ist ...
+				     ($con_side[$idcatside]['online'] != 0)
+				   )
+				 ) &amp;&amp;
+				 // ... und diese Seite nicht ausgeschlossen wurde (oder wir im Backend sind und ausgeschlossene Seiten dort angezeigt werden sollen)
+				 (!$hide || !strstr(',&lt;CMSPHP:CACHE&gt;echo str_replace(' ', '', $cms_mod['value'][8]);&lt;/CMSPHP:CACHE&gt;,', &quot;,$idcatside,&quot;))
+			   )
+			{
+				$entry['pages'][] = $idcatside;
+				
+				&lt;CMSPHP:CACHE&gt;
+				// &quot;Notizen&quot;-Felder der Seiten lesen, falls diese verwendet werden
+				if (strstr($cms_mod['value'][22], '{desc}') || strstr($cms_mod['value'][23], '{desc}'))
+				{
+				&lt;/CMSPHP:CACHE&gt;
+
+					$db-&gt;query(&quot;SELECT summary FROM `&quot; . $cms_db['side_lang'] . &quot;` WHERE idlang='&quot; . $lang . &quot;' AND idside='&quot; . $idcatside . &quot;'&quot; );
+					if ($db-&gt;next_record())
+					{
+						$mod['desc'][$idcatside] = $db-&gt;f('summary');
+					}
+
+				&lt;CMSPHP:CACHE&gt;
+				}
+				&lt;/CMSPHP:CACHE&gt;
+			}
+		}
+		//print_r($entry['pages']);print_r($cms_mod);echo &quot;xxxxxxxxxxxxxxxx&quot;;
+		// seiten nur wenn mindestens zwei 
+		if ('MOD_VALUE[4]' == 'gt1') {
+		  if (count($entry['pages']) &lt; 2) {
+		      unset($entry['pages']);
+		  }
+		}
+		// Seiten sortieren
+		if (is_array($entry['pages']))
+		{
+			foreach ($entry['pages'] as $idcatside)
+			{
+				$sortarray[] = $con_side[$idcatside]['&lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][14];&lt;/CMSPHP:CACHE&gt;'];
+			}
+			array_multisort($sortarray, &lt;CMSPHP:CACHE&gt;echo (($cms_mod['value'][14] == 'name') ? &quot;SORT_STRING&quot; : &quot;SORT_NUMERIC&quot;) . &quot;, &quot; . $cms_mod['value'][15];&lt;/CMSPHP:CACHE&gt;, $entry['pages']);
+		}
+
+	&lt;CMSPHP:CACHE&gt;
+	}
+	&lt;/CMSPHP:CACHE&gt;
+
+
+	&lt;CMSPHP:CACHE&gt;
+	if ($cms_mod['value'][2] != 'pages')
+	{
+	&lt;/CMSPHP:CACHE&gt;
+		
+		// Lokale Kopie von $catlist, weil der &quot;foreach zeiger&quot; fuer
+		// das globale Array durch die Rekursion verloren gehen wuerde
+		$catlist2 = $catlist;
+
+		// Fuer jeden Unterordner dieses Ordners diese Funktion aufrufen (Seiten und Unterordner zusammensuchen)
+		foreach ($catlist2 as $idcat)
+		{
+			// Unterordner ins Array aufnehmen, wenn ...
+			if ( ($con_tree[$idcat]['parent'] == $start) &amp;&amp;
+			     (
+			       // ... wir im Backend sind, oder ...
+			       isset($cms_side['view']) ||
+			       // ... dieser sichtbar/online ist ...
+			       ($con_tree[$idcat]['visible'] != 0)
+			     ) &amp;&amp;
+			     // ... und dieser Ordner nicht ausgeschlossen wurde (oder wir im Backend sind und ausgeschlossene Ordner dort angezeigt werden sollen)
+			     (!$hide || !strstr(',&lt;CMSPHP:CACHE&gt;echo str_replace(' ', '', $cms_mod['value'][7]);&lt;/CMSPHP:CACHE&gt;,', &quot;,$idcat,&quot;))
+			   )
+			{
+				$entry['children'][$idcat] = build_navi_tree_&lt;CMSPHP:CACHE&gt;echo $cms_mod['container']['id'];&lt;/CMSPHP:CACHE&gt;($idcat, $depth+1);
+			}
+		}
+
+
+		// Ordner sortieren
+		if (is_array($entry['children']))
+		{
+			unset($sortarray);
+			&lt;CMSPHP:CACHE&gt;
+			if ($cms_mod['value'][14] == 'sortindex')
+			{
+			&lt;/CMSPHP:CACHE&gt;
+				$catlist2 = array();
+				foreach ($catlist as $key=&gt;$value)
+				{
+					if (is_array($entry['children'][$value]))
+					{
+						$catlist2[$value] = $key;
+					}
+				}
+	
+				foreach ($entry['children'] as $idcat =&gt; $v)
+				{
+					$sortarray[] = $catlist2[$idcat];
+				}
+				
+				array_multisort($sortarray, SORT_NUMERIC, &lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][15];&lt;/CMSPHP:CACHE&gt;, $entry['children']);
+			&lt;CMSPHP:CACHE&gt;
+			}
+			else
+			{
+			&lt;/CMSPHP:CACHE&gt;
+				foreach ($entry['children'] as $idcat =&gt; $v)
+				{
+					$sortarray[] = $con_tree[$idcat]['&lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][14];&lt;/CMSPHP:CACHE&gt;'];
+				}
+				array_multisort($sortarray, &lt;CMSPHP:CACHE&gt;echo (($cms_mod['value'][14] == 'name') ? &quot;SORT_STRING&quot; : &quot;SORT_NUMERIC&quot;) . &quot;, &quot; . $cms_mod['value'][15];&lt;/CMSPHP:CACHE&gt;, $entry['children']);
+			&lt;CMSPHP:CACHE&gt;
+			}
+			&lt;/CMSPHP:CACHE&gt;
+		}
+
+	&lt;CMSPHP:CACHE&gt;
+	}
+	&lt;/CMSPHP:CACHE&gt;
+
+	if ($first)
+	{
+		&lt;CMSPHP:CACHE&gt;
+		if (strstr($cms_mod['value'][22], '{last}') || strstr($cms_mod['value'][23], '{last}') ||
+		    strstr($cms_mod['value'][24], '{last}') || strstr($cms_mod['value'][25], '{last}'))
+		{
+			if ($cms_mod['value'][16] == true)
+			{
+			&lt;/CMSPHP:CACHE&gt;
+				$current = &amp;$entry;
+				$parent = &amp;$entry;
+				$last = false;
+				do
+				{
+					if (is_array($current['pages']))
+					{
+						$temp = $current['pages'];
+						$current['last'] = array_pop($temp);
+						$current['last_thing'] = 'page';
+						$last = true;
+					}
+					else if (is_array($current['children']))
+					{
+						$index = array_pop(array_keys($current['children']));
+						$parent = &amp;$current;
+						$current = &amp;$current['children'][$index];
+					}
+					else
+					{
+						$parent['last_thing'] = 'folder';
+						$parent['last'] = $current['idcat'];
+						$last = true;
+					}
+				}
+				while (!$last);
+			&lt;CMSPHP:CACHE&gt;
+			} else {
+			&lt;/CMSPHP:CACHE&gt;
+				$current =&amp; $entry;
+				$parent =&amp; $entry;
+				$last = false;
+				do
+				{
+					if (is_array($current['children']))
+					{
+						$index = array_pop(array_keys($current['children']));
+						$parent =&amp; $current;
+						$current =&amp; $current['children'][$index];
+					}
+					else if (is_array($current['pages']))
+					{
+						$temp = $current['pages'];
+						$current['last'] = array_pop($temp);
+						$current['last_thing'] = 'page';
+						$last = true;
+					}
+					else
+					{
+						$parent['last_thing'] = 'folder';
+						$parent['last'] = $current['idcat'];
+						$last = true;
+					}
+				}
+				while (!$last);
+		&lt;CMSPHP:CACHE&gt;
+			}
+		}
+		&lt;/CMSPHP:CACHE&gt;
+	}
+
+	return $entry;
+}
+
+
+/*
+ * &quot;Hauptprogramm&quot;
+ */
+
+&lt;CMSPHP:CACHE&gt;
+// Falls nicht alle Unterordner angezeigt werden sollen oder der Pfad als aktiv verfolgt werden soll...
+if (($cms_mod['value'][2] != 'pages') &amp;&amp; (($cms_mod['value'][3] != 'true') || ($cms_mod['value'][11] == 'true')))
+{
+&lt;/CMSPHP:CACHE&gt;
+	// Pfad vom aktuellen Ordner zum Start-Ordner &quot;berechnen&quot;
+	$mod['current_idcat'] = &lt;CMSPHP:CACHE&gt;echo $idcat;&lt;/CMSPHP:CACHE&gt;;
+	$mod['path'] = array();
+	&lt;CMSPHP:CACHE&gt;
+	if ($cms_mod['value'][11] == 'true')
+	{
+	&lt;/CMSPHP:CACHE&gt;
+		$mod['flag'] = true;
+	&lt;CMSPHP:CACHE&gt;
+	}
+	&lt;/CMSPHP:CACHE&gt;
+	
+	while ($mod['current_idcat'] != &lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][1];&lt;/CMSPHP:CACHE&gt;)
+	{
+		$mod['path'][] = $mod['current_idcat'];
+		$mod['current_idcat'] = $con_tree[$mod['current_idcat']]['parent'];
+
+		&lt;CMSPHP:CACHE&gt;
+		// Falls der Start-Ordner nicht &quot;root&quot; ist, ...
+		if ($cms_mod['value'][1] != '0')
+		{
+		&lt;/CMSPHP:CACHE&gt;
+
+			if ($mod['current_idcat'] == 0)
+			{
+				// ... aber wir dort angekommen sind und den Startordner noch nicht gefunden haben,
+				// liegt die aktuelle Seite nicht im &quot;Pfad&quot;
+				&lt;CMSPHP:CACHE&gt;
+				if ($cms_mod['value'][11] == 'true')
+				{
+				&lt;/CMSPHP:CACHE&gt;
+					$mod['active'] = $mod['path'];
+					$mod['flag'] = false;
+				&lt;CMSPHP:CACHE&gt;
+				}
+				&lt;/CMSPHP:CACHE&gt;
+				$mod['path'] = array();
+				break;
+			}
+
+		&lt;CMSPHP:CACHE&gt;
+		}
+		&lt;/CMSPHP:CACHE&gt;
+	}
+	
+	&lt;CMSPHP:CACHE&gt;
+	if ($cms_mod['value'][11] == 'true') {
+	&lt;/CMSPHP:CACHE&gt;
+
+		if ($mod['flag'])
+		{
+			$mod['active'] = $mod['path'];
+		}
+
+	&lt;CMSPHP:CACHE&gt;
+	}
+}
+&lt;/CMSPHP:CACHE&gt;
+
+// Mit tabindex + 1 anfangen, wenn der Startordner ungleich Root ist, da in &quot;Einleitung der Navigation&quot; der tabindex benutzt werden koennte
+$evil_global_variable_for_easy_tabindex_implementation = &lt;CMSPHP:CACHE&gt;echo ($cms_mod['value'][13] + (($cms_mod['value'][1] != 0) ? 1 : 0));&lt;/CMSPHP:CACHE&gt;;
+
+// Die Liste gemaess den gewaehlten Einstellungen aufbauen
+$mod['output'] = print_folder_&lt;CMSPHP:CACHE&gt;echo $cms_mod['container']['id'];&lt;/CMSPHP:CACHE&gt;(build_navi_tree_&lt;CMSPHP:CACHE&gt;echo $cms_mod['container']['id'];&lt;/CMSPHP:CACHE&gt;(&lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][1];&lt;/CMSPHP:CACHE&gt;, 0, true), 1);
+
+&lt;CMSPHP:CACHE&gt;
+
+if ($cms_mod['value'][12] != 'true')
+{
+	echo 'if ($mod[\'output\'] != &quot;&quot;) {';
+}
+
+&lt;/CMSPHP:CACHE&gt;
+
+$mod['intro'] = &quot;MOD_VALUE[20]&quot;;
+$mod['outro'] = &quot;MOD_VALUE[21]&quot;;
+
+// Templatevariablen in Einleitung/Ende der Navigation ersetzen, falls der Startordner ungleich &quot;root&quot; ist und der Ordner sichtbar ist.
+if (&lt;CMSPHP:CACHE&gt;echo ($cms_mod['value'][1] != 0) ? 'true' : 'false';&lt;/CMSPHP:CACHE&gt; &amp;&amp;
+    ((isset($cms_side['view']) &amp;&amp; &lt;CMSPHP:CACHE&gt;echo ($cms_mod['value'][6] != 'true') ? 'true' : 'false';&lt;/CMSPHP:CACHE&gt;) ||
+    ($con_tree[&lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][1];&lt;/CMSPHP:CACHE&gt;]['visible'] != 0)) )
+{
+	$mod['intro'] = str_replace('{name}', htmlspecialchars($con_tree[&lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][1];&lt;/CMSPHP:CACHE&gt;]['name'], ENT_COMPAT, 'UTF-8'), $mod['intro']);
+	$mod['intro'] = str_replace('{desc}', htmlspecialchars(get_cat_desc(&lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][1];&lt;/CMSPHP:CACHE&gt;), ENT_COMPAT, 'UTF-8'), $mod['intro']);
+	$mod['intro'] = str_replace('{link}', $con_tree[&lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][1];&lt;/CMSPHP:CACHE&gt;]['link'], $mod['intro']);
+	$mod['intro'] = str_replace('{id}', '&lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][1];&lt;/CMSPHP:CACHE&gt;', $mod['intro']);
+	$mod['intro'] = str_replace('{tabindex}', '&lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][13];&lt;/CMSPHP:CACHE&gt;', $mod['intro']);
+	
+	$mod['outro'] = str_replace('{name}', htmlspecialchars($con_tree[&lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][1];&lt;/CMSPHP:CACHE&gt;]['name'], ENT_COMPAT, 'UTF-8'), $mod['outro']);
+	$mod['outro'] = str_replace('{desc}', htmlspecialchars(get_cat_desc(&lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][1];&lt;/CMSPHP:CACHE&gt;), ENT_COMPAT, 'UTF-8'), $mod['outro']);
+	$mod['outro'] = str_replace('{link}', $con_tree[&lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][1];&lt;/CMSPHP:CACHE&gt;]['link'], $mod['outro']);
+	$mod['outro'] = str_replace('{id}', '&lt;CMSPHP:CACHE&gt;echo $cms_mod['value'][1];&lt;/CMSPHP:CACHE&gt;', $mod['outro']);
+	$mod['outro'] = str_replace('{tabindex}', $evil_global_variable_for_easy_tabindex_implementation, $mod['outro']);
+}
+
+// Navigation ausgeben
+echo $mod['intro'] . $mod['output'] . $mod['outro'];
+
+&lt;CMSPHP:CACHE&gt;
+if ($cms_mod['value'][12] != 'true')
+{
+	echo '}';
+}
+&lt;/CMSPHP:CACHE&gt;
+
+
+
+&lt;CMSPHP:CACHE&gt;
+//clean routing
+$idcatside = $ln_routing['idcatside'];
+$idcat = $ln_routing['idcat'];
+&lt;/CMSPHP:CACHE&gt;
+
+
+unset ($mod, $evil_global_variable_for_easy_tabindex_implementation);
+
+&lt;/CMSPHP&gt;
+</output>
+   <config></config>
+   <repository_id>mod:cc080bc8e2dbf4cdb277a68dbbad8561:e88ffb4e</repository_id>
+   <install_sql></install_sql>
+   <uninstall_sql></uninstall_sql>
+   <update_sql></update_sql>
+</modul>

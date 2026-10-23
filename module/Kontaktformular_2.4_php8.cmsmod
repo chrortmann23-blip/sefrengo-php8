@@ -1,0 +1,3333 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<modul version='0.4' date='1792759063'>
+   <name>Kontaktformular</name>
+   <cat>Interaktion</cat>
+   <version>2.4</version>
+   <author>1</author>
+   <created>1159227335</created>
+   <lastmodified>1509194894</lastmodified>
+   <deletable>1</deletable>
+   <description>Erstellung eines Kontaktformulars mit beliebig vielen Feldern. XHTML- konform </description>
+   <input>&lt;?php
+$is_dev = false;
+
+if($is_dev) {
+include &quot;C:/Programme/xampp/htdocs/sefrengo_dev/moddev/kontakformularIN.php&quot;;
+//include &quot;C:/_server/www/_sefrengo/mod_dev/Kontaktformular/config.php&quot;;
+} else{
+
+
+//val ref
+//0-9 system reserved
+//0 Anzahl Formularelemente 
+//1 switch Elemente hinzufügen/ entfernen
+//
+//10-99 common config vars
+//10 configmode 
+//11 subject in mail
+//12 emailadress empfänger manuell
+//13 fehler
+//14 erfolgreich verschickt
+//15 style fehler	
+//16 style bestätigung
+//17 style label
+//18 style label fehler
+//19 style text
+//20 style textarea
+//21 style select
+//22 style checkbox
+//23 style submitbutton
+//24 beschriftung submitbutton
+//25 tpl gesamt
+//26 tpl elementcontainer nr1
+//27 Absenderadresse
+//28 Mit fieldset (ENFERNT)
+//29 Fieldset Beschriftung Legend (ENTFERNT)
+//31 style password (neu)
+//32 style optionMutiple (neu)
+//33 style radio (neu)
+//34 style label (neu)
+//35 style locumtenency/ platzhalter (neu)
+//36 trennersymbol werte (neu)
+//37 trennersymbol key, value (8)
+//38 tpl usermessage (neu)
+//39 tpl form start (neu)
+//40 tpl form end (neu)
+//41 email to switch (neu)
+//42 tpl platzhalter (neu)
+//43 tpl element fehlermedung (neu2)
+//44 debug  (neu2)
+//45 
+//46 tpl elementcontainer nr2 (neu2)
+//47 upload fileextensions  (neu2)
+//48 upload maxsize (neu2)
+//49 upload error fileextension (neu2)
+//50 upload error maxfilesize (neu2)
+//51 upload error intern (neu2)
+//52 style upload (neu2)
+//53 style custom error (neu2)
+//54 fallback {textfromdynamic}(3)
+//55 fallback {textareafromdynamic}(3)
+//56 tpl email (4)
+//57 txt email cc  (#gruppe, +user, email@something.de) (5)
+//58 txt email bcc (#gruppe, +user, email@something.de) (5)
+//59 select daten in db speichern ja, nein (5)
+//60 txt default gruppen identifier (5)
+//61 select Dateiuploads im Dateisystem ablegen: Nein, Ja - gleichlautene Dateien werden überschrieben, 
+//                                               Ja - gleichlautenen Dateien werden umbenannt (5)
+//62 select Ordner für Uploads  (5)
+//63 select Formulareingaben mitloggen ja/ nein (5)
+//64 txt logfile relativ vom frontend aus, default logs/ (5)
+//65 select emails versenden ja, nein (5)
+//66 tpl elementcontainer3 (8)
+
+//67 txt weiterleitung bei erfogreichen formularversand (6)
+//68 txt Weitere Email verschicken nein|ja (6)
+//69 txt Weitere Email subject (6)
+//70 txt Weitere Email template (6)
+//71 select gespeicherte db werte sind online|offline (6)
+//72 txt addon path||classname (6)
+
+//73 txt captchaimage length (7)
+//74 txt captchaimage width (7)
+//75 txt captchaimage height (7)
+//76 txt captchaimage attributes (7)
+//77 txt captchaimage styleset (7)
+//78 txtarea captchaimage template (7)
+//79 select captchaimage textfield (7)
+//80 txt additional emailaress sender (7)
+//81 txt additional emailaress recipient (7)
+//82 txt tpl required notice (8)
+//83 txt tpl label within required notice (8)
+
+
+//86 tpl elementcontainer4 (8)
+
+//NEXT version
+//freie positionierung der formularelemente
+
+//100-1000 form config vars - in 20 Schritten
+//n+0 aktiv
+//n+1 type
+//n+2 label
+//n+3 default
+//n+4 validate
+//n+5 attributes label
+//n+6 attributes formelement
+//n+7 custom element- error
+//n+8 select tpl elementcontainer
+//-----------------------------
+		
+//configmode
+$mip_form['10']['desc'] = 'Konfigurationsmodus';
+$mip_form['10']['cat'] = 'option';
+$mip_form['10']['size'] = '1';
+$mip_form['10']['option_desc'][] = 'Normal';
+$mip_form['10']['option_val'][] =  '';
+$mip_form['10']['option_desc'][] = 'Ausgeblendet';
+$mip_form['10']['option_val'][] =  'hidden';
+$mip_form['10']['cms_var'] = 'MOD_VAR[10]';
+$mip_form['10']['cms_val'] = $cms_mod['value']['10'];
+$mip_form['10']['flag'] = 'reload';
+
+
+//hidden config
+if($cms_mod['value']['10'] == 'hidden'){
+	mip_formsp($mip_form['10']);//configmode
+	foreach($cms_mod['value'] AS $ke=&gt;$va){
+		if($ke != '10'){
+			?&gt;
+			&lt;input name=&quot;MOD_VAR[&lt;?php echo $ke; ?&gt;]&quot; type=&quot;hidden&quot; value=&quot;&lt;?php echo htmlentities($va, ENT_COMPAT, 'UTF-8');?&gt;&quot;&gt;
+			&lt;?php
+		}
+	}
+//normal config
+} else {
+	// Anzahl der Spalten
+	if ($cms_mod['value']['0'] == '' || $cms_mod['value']['0'] &lt;= '0') $cms_mod['value']['0'] = 3;
+	if ($cms_mod['value']['1'] != '0') $cms_mod['value']['0'] = (int) $cms_mod['value']['0']+ $cms_mod['value']['1'];
+	$mip_form['0']['cat'] = 'hidden';
+	$mip_form['0']['cms_var'] = 'MOD_VAR[0]';
+	$mip_form['0']['cms_val'] = $cms_mod['value']['0'];
+
+	$mip_form['44']['cat'] = 'option';
+	$mip_form['44']['desc'] = 'Debugmodus&lt;br /&gt;
+&lt;small&gt;Ausgabe von Debugmeldungen&lt;br&gt;&lt;br&gt;&lt;/small&gt;';
+	$mip_form['44']['size'] = '1';
+	$mip_form['44']['option_desc'][] = 'nein';
+	$mip_form['44']['option_val'][] =  'false';
+	$mip_form['44']['option_desc'][] = 'ja';
+	$mip_form['44']['option_val'][] =  'true';
+	$mip_form['44']['cms_var'] = 'MOD_VAR['.'44'.']';
+	$mip_form['44']['cms_val'] = $cms_mod['value']['44'];
+	
+	$mip_form['63']['cat'] = 'option';
+	$mip_form['63']['desc'] = 'Maildaten loggen';
+	$mip_form['63']['size'] = '1';
+	$mip_form['63']['option_desc'][] = 'Nein';
+	$mip_form['63']['option_val'][] =  'false';
+	$mip_form['63']['option_desc'][] = 'Ja';
+	$mip_form['63']['option_val'][] =  'true';
+	$mip_form['63']['cms_var'] = 'MOD_VAR['.'63'.']';
+	$mip_form['63']['cms_val'] = $cms_mod['value']['63'];
+	$mip_form['63']['tab'] = '0';
+	
+	$mip_form['64']['cat'] = 'txt';
+	$mip_form['64']['desc'] = 'Pfad logifle relativ vom Frontend';
+	$mip_form['64']['cms_var'] = 'MOD_VAR[64]';
+	$mip_form['64']['cms_val'] = $cms_mod['value']['64'];
+	$mip_form['64']['cms_val_default'] = 'logs/log_contactform.txt';
+	$mip_form['64']['tab'] = '0';
+	
+	$mip_form['11']['cat'] = 'txt';
+	$mip_form['11']['desc'] = 'Beeffzeile/ Subject der Email';
+	$mip_form['11']['cms_var'] = 'MOD_VAR[11]';
+	$mip_form['11']['cms_val'] = $cms_mod['value']['11'];
+	$mip_form['11']['cms_val_default'] = 'Kontaktformular';
+	$mip_form['11']['tab'] = '0';
+	
+	$mip_form['desc']['cat'] = 'desc';
+	$mip_form['desc']['type'] = '';
+	$mip_form['desc']['desc'] = 'Emailadresse Empfänger';
+	$mip_form['desc']['tab'] = '0';	
+	
+	$mip_form['65']['cat'] = 'option';
+	$mip_form['65']['desc'] = 'Mailversand aktiviert';
+	$mip_form['65']['size'] = '1';
+	$mip_form['65']['option_desc'][] = 'Ja';
+	$mip_form['65']['option_val'][] =  'true';
+	$mip_form['65']['option_desc'][] = 'Nein';
+	$mip_form['65']['option_val'][] =  'false';
+	$mip_form['65']['cms_var'] = 'MOD_VAR['.'65'.']';
+	$mip_form['65']['cms_val'] = $cms_mod['value']['65'];
+	$mip_form['65']['cms_val_default'] = 'false';
+
+	$mip_form['12']['cat'] = 'txt';
+	$mip_form['12']['type'] = 'radio'; 
+	$mip_form['12']['desc'] = 'Empfänger aus Textfeld beziehen&lt;br /&gt;
+	&lt;small&gt;Mögliche Formate: mail@somewehre.de, +benutzername,&lt;br /&gt; 
+	#gruppenname, mehrere Empfänger mit Komma trennen&lt;/small&gt;';
+	$mip_form['12']['radio_var'] = 'MOD_VAR[41]'; 
+	$mip_form['12']['radio_val'] = $cms_mod['value']['41']; 
+	$mip_form['12']['radio_user_val'] = 'textfield'; 
+	$mip_form['12']['radio_val_default'] = 'textfield';
+	$mip_form['12']['cms_var'] = 'MOD_VAR[12]';
+	$mip_form['12']['cms_val'] = $cms_mod['value']['12']; 
+	$mip_form['12']['cms_val_default'] = 'me@localhost.de';
+	$mip_form['12']['tab'] = '1';
+	
+	$mip_form['57']['cat'] = 'txt';
+	$mip_form['57']['desc'] = 'Empfänger cc&lt;br /&gt;
+	&lt;small&gt;Mögliche Formate: mail@somewehre.de, +benutzername,&lt;br /&gt; 
+	#gruppenname, mehrere Empfänger mit Komma trennen&lt;/small&gt;';
+	$mip_form['57']['cms_var'] = 'MOD_VAR[57]';
+	$mip_form['57']['cms_val'] = $cms_mod['value']['57'];
+	$mip_form['57']['cms_val_default'] = '';
+	$mip_form['57']['tab'] = '2';
+
+	$mip_form['58']['cat'] = 'txt';
+	$mip_form['58']['desc'] = 'Empfänger bcc&lt;br /&gt;
+	&lt;small&gt;Mögliche Formate: mail@somewehre.de, +benutzername,&lt;br /&gt; 
+	#gruppenname, mehrere Empfänger mit Komma trennen&lt;/small&gt;';
+	$mip_form['58']['cms_var'] = 'MOD_VAR[58]';
+	$mip_form['58']['cms_val'] = $cms_mod['value']['58'];
+	$mip_form['58']['cms_val_default'] = '';
+	$mip_form['58']['tab'] = '2';
+
+	$mip_form['59']['cat'] = 'option';
+	$mip_form['59']['desc'] = 'Formulardaten in Datenbank speichern&lt;br /&gt;
+&lt;small&gt;Zur Nutzung der Funktionalität muss das Modul Reportviewer installiert sein&lt;/small&gt;';
+	$mip_form['59']['size'] = '1';
+	$mip_form['59']['option_desc'][] = 'nein';
+	$mip_form['59']['option_val'][] =  'false';
+	$mip_form['59']['option_desc'][] = 'ja';
+	$mip_form['59']['option_val'][] =  'true';
+	$mip_form['59']['cms_var'] = 'MOD_VAR['.'59'.']';
+	$mip_form['59']['cms_val'] = $cms_mod['value']['59'];
+
+    $mip_form['60']['cat'] = 'txt';
+	$mip_form['60']['desc'] = 'Standardgruppe für Speicherung in Datenbank:';
+	$mip_form['60']['cms_var'] = 'MOD_VAR[60]';
+	$mip_form['60']['cms_val'] = $cms_mod['value']['60'];
+	$mip_form['60']['cms_val_default'] = 'default';
+	$mip_form['60']['tab'] = '0';
+
+	$mip_form['71']['cat'] = 'option';
+	$mip_form['71']['desc'] = 'Neue Datensätze sind zuerst';
+	$mip_form['71']['size'] = '1';
+	$mip_form['71']['option_desc'][] = 'online';
+	$mip_form['71']['option_val'][] =  'online';
+	$mip_form['71']['option_desc'][] = 'offline';
+	$mip_form['71']['option_val'][] =  'offline';
+	$mip_form['71']['cms_var'] = 'MOD_VAR['.'71'.']';
+	$mip_form['71']['cms_val'] = $cms_mod['value']['71'];	
+	
+	$mip_form['41']['cat'] = 'desc';
+	$mip_form['41']['type'] = 'radio'; 
+	$mip_form['41']['desc'] = 'Wenn möglich, dynamisch aus Seitencontent generieren&lt;br /&gt;&lt;small&gt;Benutzen Sie dazu z.B. das Modul Dynamische Empfängeradresse&lt;/small&gt;';
+	$mip_form['41']['radio_var'] = 'MOD_VAR[41]'; 
+	$mip_form['41']['radio_val'] = $cms_mod['value']['41']; 
+	$mip_form['41']['radio_user_val'] = 'get'; 
+	$mip_form['41']['tab'] = '1';
+	
+	//Emailadresse Absender
+	$mip_form['27']['cat'] = 'option';
+	$mip_form['27']['desc'] = 'Emailadresse Absender';
+	$mip_form['27']['size'] = '1';
+	$mip_form['27']['option_desc'][] = 'Wie Empfänger';
+	$mip_form['27']['option_val'][] =  'receiver';
+	for($i=0;$i &lt; $cms_mod['value']['0'];$i++){
+		$element_nr = ($i &lt; 9) ? ('0'. ($i+1) ): $i+1;
+		$mip_form['27']['option_desc'][] = 'Beziehen aus Formularfeld '.$element_nr;
+		$mip_form['27']['option_val'][] = 100 + $i*20;
+	}
+	$mip_form['27']['cms_var'] = 'MOD_VAR[27]';
+	$mip_form['27']['cms_val'] = $cms_mod['value']['27'];
+
+//	//Fieldset DEPRECATED
+//	$mip_form['28']['cat'] = 'option';
+//	$mip_form['28']['desc'] = 'Formular enthält ein Fieldset';
+//	$mip_form['28']['size'] = '1';
+//	$mip_form['28']['option_desc'][] = 'Nein';
+//	$mip_form['28']['option_val'][] =  'false';
+//	$mip_form['28']['option_desc'][] = 'Ja';
+//	$mip_form['28']['option_val'][] =  'true';
+//	$mip_form['28']['cms_var'] = 'MOD_VAR[28]';
+//	$mip_form['28']['cms_val'] = $cms_mod['value']['28'];
+//
+//	//Fieldset Beschriftung
+//	$mip_form['29']['cat'] = 'txt';
+//	$mip_form['29']['desc'] = 'Fieldset Beschriftung (Legend)';
+//	$mip_form['29']['cms_var'] = 'MOD_VAR[29]';
+//	$mip_form['29']['cms_val'] = $cms_mod['value']['29'];
+//	$mip_form['29']['cms_val_default'] = 'Ihre Mitteilung an uns:';
+//	$mip_form['29']['tab'] = '0';
+	
+	$mip_form['13']['cat'] = 'txt';
+	$mip_form['13']['desc'] = 'Fehlermeldung, bei falsch ausgefülltem Formular';
+	$mip_form['13']['cms_var'] = 'MOD_VAR[13]';
+	$mip_form['13']['cms_val'] = $cms_mod['value']['13'];
+	$mip_form['13']['cms_val_default'] = 'Bitte überprüfen Sie Ihre Formulareingaben:';
+	$mip_form['13']['tab'] = '0';
+	
+	$mip_form['14']['cat'] = 'txt';
+	$mip_form['14']['desc'] = 'Erfolgsmeldung, Formular wurde korrekt versendet';
+	$mip_form['14']['cms_var'] = 'MOD_VAR[14]';
+	$mip_form['14']['cms_val'] = $cms_mod['value']['14'];
+	$mip_form['14']['cms_val_default'] = 'Vielen Dank, die Daten wurden versandt';
+	$mip_form['14']['tab'] = '0';
+	
+	$mip_form['67']['cat'] = 'txt';
+	$mip_form['67']['desc'] = 'Nach Erfolg weiterleiten auf folgende URL&lt;br /&gt;
+&lt;small&gt;Url oder Idcatside eingeben, leer lassen für keine Weiterleitung&lt;/small&gt;';
+	$mip_form['67']['cms_var'] = 'MOD_VAR[67]';
+	$mip_form['67']['cms_val'] = $cms_mod['value']['67'];
+	$mip_form['67']['cms_val_default'] = '';
+	$mip_form['67']['tab'] = '0';
+	
+	$mip_form['24']['cat'] = 'txt';
+	$mip_form['24']['desc'] = 'Beschriftung Submitbutton';
+	$mip_form['24']['cms_var'] = 'MOD_VAR[24]';
+	$mip_form['24']['cms_val'] = $cms_mod['value']['24'];
+	$mip_form['24']['cms_val_default'] = 'Abschicken';
+	$mip_form['24']['tab'] = '0';
+		
+	$mip_form['15']['desc'] = 'Styleklasse Fehlermeldung: ';
+	$mip_form['15']['cat'] = 'app_css';
+	$mip_form['15']['output_cat'] = 'option';
+	$mip_form['15']['cms_var'] = 'MOD_VAR[15]';
+	$mip_form['15']['cms_val'] = $cms_mod['value']['15'];
+	$mip_form['15']['flag'] = 'class_only';
+	
+	$mip_form['16']['desc'] = 'Styleklasse Erfolgsmeldung: ';
+	$mip_form['16']['cat'] = 'app_css';
+	$mip_form['16']['output_cat'] = 'option';
+	$mip_form['16']['cms_var'] = 'MOD_VAR[16]';
+	$mip_form['16']['cms_val'] = $cms_mod['value']['16'];
+	$mip_form['16']['flag'] = 'class_only';
+	
+	$mip_form['17']['desc'] = 'Styleklasse Label: ';
+	$mip_form['17']['cat'] = 'app_css';
+	$mip_form['17']['output_cat'] = 'option';
+	$mip_form['17']['cms_var'] = 'MOD_VAR[17]';
+	$mip_form['17']['cms_val'] = $cms_mod['value']['17'];
+	$mip_form['17']['flag'] = 'class_only';
+
+	$mip_form['18']['desc'] = 'Styleklasse Label, bei Fehlermeldung: ';
+	$mip_form['18']['cat'] = 'app_css';
+	$mip_form['18']['output_cat'] = 'option';
+	$mip_form['18']['cms_var'] = 'MOD_VAR[18]';
+	$mip_form['18']['cms_val'] = $cms_mod['value']['18'];
+	$mip_form['18']['flag'] = 'class_only';
+	
+	$mip_form['19']['desc'] = 'Styleklasse einzeiliges Textfeld: ';
+	$mip_form['19']['cat'] = 'app_css';
+	$mip_form['19']['output_cat'] = 'option';
+	$mip_form['19']['cms_var'] = 'MOD_VAR[19]';
+	$mip_form['19']['cms_val'] = $cms_mod['value']['19'];
+	$mip_form['19']['flag'] = 'class_only';
+	
+	$mip_form['20']['desc'] = 'Styleklasse mehrzeiliges Textfeld: ';
+	$mip_form['20']['cat'] = 'app_css';
+	$mip_form['20']['output_cat'] = 'option';
+	$mip_form['20']['cms_var'] = 'MOD_VAR[20]';
+	$mip_form['20']['cms_val'] = $cms_mod['value']['20'];
+	$mip_form['20']['flag'] = 'class_only';
+	
+	$mip_form['21']['desc'] = 'Styleklasse Selectbox: ';
+	$mip_form['21']['cat'] = 'app_css';
+	$mip_form['21']['output_cat'] = 'option';
+	$mip_form['21']['cms_var'] = 'MOD_VAR[21]';
+	$mip_form['21']['cms_val'] = $cms_mod['value']['21'];
+	$mip_form['21']['flag'] = 'class_only';
+	
+	$mip_form['22']['desc'] = 'Styleklasse Checkbox: ';
+	$mip_form['22']['cat'] = 'app_css';
+	$mip_form['22']['output_cat'] = 'option';
+	$mip_form['22']['cms_var'] = 'MOD_VAR[22]';
+	$mip_form['22']['cms_val'] = $cms_mod['value']['22'];
+	$mip_form['22']['flag'] = 'class_only';
+
+	$mip_form['31']['desc'] = 'Styleklasse Einzeiliges Passwortfeld: ';
+	$mip_form['31']['cat'] = 'app_css';
+	$mip_form['31']['output_cat'] = 'option';
+	$mip_form['31']['cms_var'] = 'MOD_VAR[31]';
+	$mip_form['31']['cms_val'] = $cms_mod['value']['31'];
+	$mip_form['31']['flag'] = 'class_only';
+
+	$mip_form['32']['desc'] = 'Styleklasse Selectbox, Mehrfachauswahl: ';
+	$mip_form['32']['cat'] = 'app_css';
+	$mip_form['32']['output_cat'] = 'option';
+	$mip_form['32']['cms_var'] = 'MOD_VAR[32]';
+	$mip_form['32']['cms_val'] = $cms_mod['value']['32'];
+	$mip_form['32']['flag'] = 'class_only';
+
+	$mip_form['33']['desc'] = 'Styleklasse Optionsfelder: ';
+	$mip_form['33']['cat'] = 'app_css';
+	$mip_form['33']['output_cat'] = 'option';
+	$mip_form['33']['cms_var'] = 'MOD_VAR[33]';
+	$mip_form['33']['cms_val'] = $cms_mod['value']['33'];
+	$mip_form['33']['flag'] = 'class_only';
+
+	$mip_form['34']['desc'] = 'Styleklasse Nur Beschriftung: ';
+	$mip_form['34']['cat'] = 'app_css';
+	$mip_form['34']['output_cat'] = 'option';
+	$mip_form['34']['cms_var'] = 'MOD_VAR[34]';
+	$mip_form['34']['cms_val'] = $cms_mod['value']['34'];
+	$mip_form['34']['flag'] = 'class_only';
+
+	$mip_form['35']['desc'] = 'Styleklasse Platzhalter: ';
+	$mip_form['35']['cat'] = 'app_css';
+	$mip_form['35']['output_cat'] = 'option';
+	$mip_form['35']['cms_var'] = 'MOD_VAR[35]';
+	$mip_form['35']['cms_val'] = $cms_mod['value']['35'];
+	$mip_form['35']['flag'] = 'class_only';
+
+	$mip_form['52']['desc'] = 'Styleklasse Dateiupload: ';
+	$mip_form['52']['cat'] = 'app_css';
+	$mip_form['52']['output_cat'] = 'option';
+	$mip_form['52']['cms_var'] = 'MOD_VAR[52]';
+	$mip_form['52']['cms_val'] = $cms_mod['value']['52'];
+	$mip_form['52']['flag'] = 'class_only';
+
+	$mip_form['79']['desc'] = 'Styleklasse Captchbild Textfeld: ';
+	$mip_form['79']['cat'] = 'app_css';
+	$mip_form['79']['output_cat'] = 'option';
+	$mip_form['79']['cms_var'] = 'MOD_VAR[79]';
+	$mip_form['79']['cms_val'] = $cms_mod['value']['79'];
+	$mip_form['79']['flag'] = 'class_only';
+
+	$mip_form['53']['desc'] = 'Styleklasse Fehlermeldung im Formularelement: ';
+	$mip_form['53']['cat'] = 'app_css';
+	$mip_form['53']['output_cat'] = 'option';
+	$mip_form['53']['cms_var'] = 'MOD_VAR[53]';
+	$mip_form['53']['cms_val'] = $cms_mod['value']['53'];
+	$mip_form['53']['flag'] = 'class_only';
+
+		
+	$mip_form['23']['desc'] = 'Styleklasse Submitbutton: ';
+	$mip_form['23']['cat'] = 'app_css';
+	$mip_form['23']['output_cat'] = 'option';
+	$mip_form['23']['cms_var'] = 'MOD_VAR[23]';
+	$mip_form['23']['cms_val'] = $cms_mod['value']['23'];
+	$mip_form['23']['flag'] = 'class_only';
+
+	$mip_form['36']['cat'] = 'txt';
+	$mip_form['36']['desc'] = 'Trennersymbol - bei Feldern, wo mehreren Werte angegeben werden können&lt;br /&gt;
+&lt;small&gt;Selectboxen und Optionsfelder&lt;/small&gt;';
+	$mip_form['36']['cms_var'] = 'MOD_VAR[36]';
+	$mip_form['36']['cms_val'] = $cms_mod['value']['36'];
+	$mip_form['36']['cms_val_default'] = ',';
+	
+
+	$mip_form['37']['cat'] = 'txt';
+	$mip_form['37']['desc'] = 'Trennersymbol - bei Feldern, wo angezeigter Name und übergebener Wert unterschiedlich sein können&lt;br /&gt;
+&lt;small&gt;Selectboxen, Optionsfelder und Checkboxen&lt;/small&gt;';
+	$mip_form['37']['cms_var'] = 'MOD_VAR[37]';
+	$mip_form['37']['cms_val'] = $cms_mod['value']['37'];
+	$mip_form['37']['cms_val_default'] = '@@';
+
+
+	$mip_form['47']['cat'] = 'txt';
+	$mip_form['47']['desc'] = 'Dateiuploads - erlaubte Dateiendungen&lt;br&gt;
+&lt;small&gt;kommasepariert anzugeben (&quot;doc,pdf&quot;), leer bedeutet keine Einschränkungen&lt;/small&gt;';
+	$mip_form['47']['cms_var'] = 'MOD_VAR[47]';
+	$mip_form['47']['cms_val'] = $cms_mod['value']['47'];
+	$mip_form['47']['cms_val_default'] = '';
+	$mip_form['47']['tab'] = '0';
+
+	$mip_form['48']['cat'] = 'txt';
+	$mip_form['48']['desc'] = 'Dateiuploads - erlaubte, maximale Dateigröße in kb&lt;br&gt;
+&lt;small&gt;1024 kb entsprechen 1mb, leer oder 0 bedeutet keine Einschränkungen&lt;/small&gt;';
+	$mip_form['48']['cms_var'] = 'MOD_VAR[48]';
+	$mip_form['48']['cms_val'] = $cms_mod['value']['48'];
+	$mip_form['48']['cms_val_default'] = '';
+	$mip_form['48']['tab'] = '0';
+
+	$mip_form['49']['cat'] = 'txt';
+	$mip_form['49']['rows'] = '1';
+	$mip_form['49']['type'] = 'long';	
+	$mip_form['49']['desc'] = 'Dateiuploads Fehlermeldung &quot;Dateiendung nicht erlaubt&quot;';
+	$mip_form['49']['cms_var'] = 'MOD_VAR[49]';
+	$mip_form['49']['cms_val'] = $cms_mod['value']['49'];
+	$mip_form['49']['cms_val_default'] = 'Der von Ihnen gewählte Dateityp darf nicht hochgeladen werden';
+	$mip_form['49']['tab'] = '0';
+
+	$mip_form['50']['cat'] = 'txt';
+	$mip_form['50']['rows'] = '1';
+	$mip_form['50']['type'] = 'long';	
+	$mip_form['50']['desc'] = 'Dateiuploads Fehlermeldung &quot;Uploadlimit überschritten&quot;';
+	$mip_form['50']['cms_var'] = 'MOD_VAR[50]';
+	$mip_form['50']['cms_val'] = $cms_mod['value']['50'];
+	$mip_form['50']['cms_val_default'] = 'Die maximal zulässige Dateigröße wurde überschritten';
+	$mip_form['50']['tab'] = '0';
+	
+	$mip_form['51']['cat'] = 'txt';
+	$mip_form['51']['rows'] = '1';
+	$mip_form['51']['type'] = 'long';	
+	$mip_form['51']['desc'] = 'Dateiuploads Fehlermeldung &quot;Interner Fehler&quot;';
+	$mip_form['51']['cms_var'] = 'MOD_VAR[51]';
+	$mip_form['51']['cms_val'] = $cms_mod['value']['51'];
+	$mip_form['51']['cms_val_default'] = 'Beim Upload ist ein interner Fehler aufgetreten';
+	$mip_form['51']['tab'] = '0';
+
+	$mip_form['61']['cat'] = 'option';
+	$mip_form['61']['desc'] = 'Dateiuploads im Dateisystem ablegen';
+	$mip_form['61']['size'] = '1';
+	$mip_form['61']['option_desc'][] = 'Nein';
+	$mip_form['61']['option_val'][] =  'false';
+	$mip_form['61']['option_desc'][] = 'Ja, gleichlautene Dateien werden überschrieben';
+	$mip_form['61']['option_val'][] =  'overwrite';
+	$mip_form['61']['option_desc'][] = 'Ja, gleichlautene Dateien werden umbenannt';
+	$mip_form['61']['option_val'][] =  'rename';
+	$mip_form['61']['cms_var'] = 'MOD_VAR['.'61'.']';
+	$mip_form['61']['cms_val'] = $cms_mod['value']['61'];
+	
+	$mip_form['62']['desc'] = &quot;Ordner in dem Uploads abgelegt werden&quot;;
+	$mip_form['62']['cat'] = 'app_directory';
+	$mip_form['62']['output_cat'] = 'option';
+	$mip_form['62']['size'] = 1; 
+	$mip_form['62']['cms_var'] = &quot;MOD_VAR[62]&quot;; 
+	$mip_form['62']['cms_val'] = $dedi_mod['value']['62'];
+	$mip_form['62']['without_all_folders'] = true;
+		
+	
+	$mip_form['25']['desc'] = 'Verbindungstemplate&lt;br&gt;
+	&lt;small&gt;Mögliche Templatevariablen: {usermessage} = Erfolgs oder Fehlermeldung beim verschicken des Formulars,&lt;br&gt;
+    {messageblock} = Gleiche Funktionalität wie {usermessage}, es wird aber das Template Fehlermeldung&lt;br /&gt; eingebunden   
+	{formstart} = Formularkopf, muß vor {formelements}, {submit} eingefügt werden,&lt;br /&gt;
+    {formelements} = enthält alle Formularelement, wird aus dem Template &quot;Formelementblock&quot; generiert, &lt;br /&gt;
+    {submit} = Absendenbutton, {formend} = Formularende, muß hinter {formelements} und {submit} eingefügt &lt;br /&gt;
+    werden, {textfromdynamic} = Optionaler Inhalt aus Textfeld, der im Modul Dynamische Empfängeradresse&lt;br /&gt; 
+    angegeben werden kann, {textareafromdynamic} = Optionale Inhalt aus Textarea, die im Modul Dynamische&lt;br /&gt; 
+    Empfängeradresse angegeben werden kann,&lt;br /&gt;
+	{page_name}, {page_url}, {cat_name}, {cat_url} = Kategorie und Seiteninformationen, die &lt;br /&gt;
+	a) von der Seite stammen, von der das Formular verschickt wurde, wenn die Empfängeradresse&lt;br /&gt;
+	statisch in der Konfiguration eingetragen ist&lt;br /&gt;
+	b) von der Seite stammen, auf der das Modul Dynamische Empfängeradresse liegt, wenn die Daten&lt;br /&gt;
+	dynamisch generiert wurden.&lt;br /&gt; 
+	{debugmessages} = Debugmeldungen, wenn aktiviert&lt;/small&gt;';
+	$mip_form['25']['cat'] = 'txtarea';
+	$mip_form['25']['rows'] = '6';
+	$mip_form['25']['type'] = 'long';
+	$mip_form['25']['cms_var'] = 'MOD_VAR[25]';
+	$mip_form['25']['cms_val'] = $cms_mod['value']['25'];
+	$mip_form['25']['cms_val_default'] = '&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;
+&lt;tr&gt;&lt;td align=&quot;right&quot; colspan=&quot;2&quot;&gt;{usermessage}&lt;/td&gt;&lt;/tr&gt;
+  {formstart} {formelementblock}  
+  &lt;tr&gt;&lt;td align=&quot;right&quot; colspan=&quot;2&quot;&gt;{submit}&lt;/td&gt;&lt;/tr&gt;
+  {formend}
+&lt;/table&gt;';	
+	
+	$mip_form['26']['desc'] = 'Template Elementcontainer 1&lt;br&gt;
+	&lt;small&gt;Mögliche Templatevariablen: {label} = Labes des Formularelements,{element} = Formularelement, z.B. &lt;br&gt;
+	Textfeld/ Selectbox, {errormessage} = Fehlermeldung im Element, {requirenotice} = Auszeichnung wenn Pflichtfeld&lt;/small&gt;';
+	$mip_form['26']['cat'] = 'txtarea';
+	$mip_form['26']['rows'] = '6';
+	$mip_form['26']['type'] = 'long';
+	$mip_form['26']['cms_var'] = 'MOD_VAR[26]';
+	$mip_form['26']['cms_val'] = $cms_mod['value']['26'];
+	$mip_form['26']['cms_val_default'] = '&lt;tr&gt;
+  &lt;td valign=&quot;top&quot;&gt;{label} &amp;nbsp;&amp;nbsp;&lt;/td&gt;
+  &lt;td&gt;{errormessage}{element}&lt;/td&gt;
+&lt;/tr&gt;';	
+
+	$mip_form['46']['desc'] = 'Template Elementcontainer 2&lt;br&gt;
+	&lt;small&gt;Mögliche Templatevariablen: {label} = Labes des Formularelements,{element} = Formularelement, z.B. &lt;br&gt;
+	Textfeld/ Selectbox,  {errormessage} = Fehlermeldung im Element, {requirenotice} = Auszeichnung wenn Pflichtfeld&lt;/small&gt;';
+	$mip_form['46']['cat'] = 'txtarea';
+	$mip_form['46']['rows'] = '6';
+	$mip_form['46']['type'] = 'long';
+	$mip_form['46']['cms_var'] = 'MOD_VAR[46]';
+	$mip_form['46']['cms_val'] = $cms_mod['value']['46'];
+	$mip_form['46']['cms_val_default'] = '&lt;tr&gt;
+    &lt;td valign=&quot;top&quot;&gt;{errormessage}{element} &amp;nbsp;&amp;nbsp;&lt;/td&gt;
+  &lt;td&gt;{label}&lt;/td&gt;
+&lt;/tr&gt;';
+
+	$mip_form['66']['desc'] = 'Template Elementcontainer 3&lt;br&gt;
+	&lt;small&gt;Mögliche Templatevariablen: {label} = Labes des Formularelements,{element} = Formularelement, z.B. &lt;br&gt;
+	Textfeld/ Selectbox,  {errormessage} = Fehlermeldung im Element, {requirenotice} = Auszeichnung wenn Pflichtfeld&lt;/small&gt;';
+	$mip_form['66']['cat'] = 'txtarea';
+	$mip_form['66']['rows'] = '6';
+	$mip_form['66']['type'] = 'long';
+	$mip_form['66']['cms_var'] = 'MOD_VAR[66]';
+	$mip_form['66']['cms_val'] = $cms_mod['value']['66'];
+	$mip_form['66']['cms_val_default'] = '&lt;tr&gt;
+  &lt;td valign=&quot;top&quot; colspan=&quot;2&quot;&gt;{label}&lt;br /&gt;{errormessage}{element} &amp;nbsp;&amp;nbsp;&lt;/td&gt;
+&lt;/tr&gt;';	
+
+	$mip_form['86']['desc'] = 'Template Elementcontainer 4&lt;br&gt;
+	&lt;small&gt;Mögliche Templatevariablen: {label} = Labes des Formularelements,{element} = Formularelement, z.B. &lt;br&gt;
+	Textfeld/ Selectbox,  {errormessage} = Fehlermeldung im Element, {requirenotice} = Auszeichnung wenn Pflichtfeld&lt;/small&gt;';
+	$mip_form['86']['cat'] = 'txtarea';
+	$mip_form['86']['rows'] = '6';
+	$mip_form['86']['type'] = 'long';
+	$mip_form['86']['cms_var'] = 'MOD_VAR[86]';
+	$mip_form['86']['cms_val'] = $cms_mod['value']['86'];
+	$mip_form['86']['cms_val_default'] = '&lt;tr&gt;
+  &lt;td valign=&quot;top&quot; colspan=&quot;2&quot;&gt;{errormessage}{element}&lt;br /&gt;{label}{requirenotice}&lt;/td&gt;
+&lt;/tr&gt;';		
+
+	$mip_form['38']['desc'] = 'Template Messageblock&lt;br&gt;
+	&lt;small&gt;Mögliche Templatevariablen: {usermessage} = Enthält CSS formatierte Fehler- Bestätigungsmeldung&lt;/small&gt;';
+	$mip_form['38']['cat'] = 'txtarea';
+	$mip_form['38']['rows'] = '6';
+	$mip_form['38']['type'] = 'long';
+	$mip_form['38']['cms_var'] = 'MOD_VAR[38]';
+	$mip_form['38']['cms_val'] = $cms_mod['value']['38'];
+	$mip_form['38']['cms_val_default'] = '&lt;hr /&gt;{usermessage}&lt;hr /&gt;';
+	
+	$mip_form['82']['cat'] = 'txt';
+	$mip_form['82']['desc'] = 'Template für &quot;{requirenotice}&quot;';
+	$mip_form['82']['cms_var'] = 'MOD_VAR[82]';
+	$mip_form['82']['cms_val'] = $cms_mod['value']['82']; 
+	$mip_form['82']['cms_val_default'] = '&amp;nbsp;*';
+	
+	$mip_form['83']['cat'] = 'txt';
+	$mip_form['83']['desc'] = 'Template für Labeltext&lt;br&gt;
+	&lt;small&gt;Mögliche Templatevariablen: {labelcontent} = Labeltext, {requirenotice} = Auszeichnung wenn Pflichtfeld&lt;/small&gt;';
+	$mip_form['83']['cms_var'] = 'MOD_VAR[83]';
+	$mip_form['83']['cms_val'] = $cms_mod['value']['83']; 
+	$mip_form['83']['cms_val_default'] = '{labelcontent}{requirenotice}';
+
+	$mip_form['39']['desc'] = 'Template Formularstart&lt;br&gt;
+	&lt;small&gt;Mögliche Templatevariablen: {url} = Ziellink des Formulars, {transmitted} = gibt falls das Formular versendet wurde den String &quot;transmitted&quot; aus&lt;/small&gt;';
+	$mip_form['39']['cat'] = 'txtarea';
+	$mip_form['39']['rows'] = '1';
+	$mip_form['39']['type'] = 'long';
+	$mip_form['39']['cms_var'] = 'MOD_VAR[39]';
+	$mip_form['39']['cms_val'] = $cms_mod['value']['39'];
+	$mip_form['39']['cms_val_default'] = '&lt;form id=&quot;feedback&quot; class=&quot;{transmitted}&quot; method=&quot;post&quot; action=&quot;{url}&quot; enctype=&quot;multipart/form-data&quot; &gt;';	
+
+
+	$mip_form['40']['desc'] = 'Template Formularende&lt;br&gt;
+	&lt;small&gt;Mögliche Templatevariablen: keine&lt;/small&gt;';
+	$mip_form['40']['cat'] = 'txtarea';
+	$mip_form['40']['rows'] = '1';
+	$mip_form['40']['type'] = 'long';
+	$mip_form['40']['cms_var'] = 'MOD_VAR[40]';
+	$mip_form['40']['cms_val'] = $cms_mod['value']['40'];
+	$mip_form['40']['cms_val_default'] = '&lt;/form&gt;';	
+
+	$mip_form['42']['desc'] = 'Template Platzhalter&lt;br&gt;
+	&lt;small&gt;Dieses Template wird beim Platzhalterelement als &quot;defaulttext&quot; eingetragen&lt;br&gt;
+Mögliche Templatevariablen: keine&lt;/small&gt;';
+	$mip_form['42']['cat'] = 'txtarea';
+	$mip_form['42']['rows'] = '1';
+	$mip_form['42']['type'] = 'long';
+	$mip_form['42']['cms_var'] = 'MOD_VAR[42]';
+	$mip_form['42']['cms_val'] = $cms_mod['value']['42'];
+	$mip_form['42']['cms_val_default'] = '&lt;br /&gt;&lt;br /&gt;';	
+
+	$mip_form['43']['desc'] = 'Template Element- Fehlermeldung&lt;br&gt;
+	&lt;small&gt;Mögliche Templatevariablen: {elementerrormessage}&lt;/small&gt;';
+	$mip_form['43']['cat'] = 'txtarea';
+	$mip_form['43']['rows'] = '1';
+	$mip_form['43']['type'] = 'long';
+	$mip_form['43']['cms_var'] = 'MOD_VAR[43]';
+	$mip_form['43']['cms_val'] = $cms_mod['value']['43'];
+	$mip_form['43']['cms_val_default'] = '{elementerrormessage}&lt;br /&gt;';
+	
+	$mip_form['54']['cat'] = 'txt';
+	$mip_form['54']['desc'] = 'Template Defaultwert für {textfromdynamic}&lt;br /&gt;
+	&lt;small&gt;Standardwert für {textfromdynamic}, liegt ein Wert aus dem Modul &lt;br /&gt;
+    &quot;Dynamische Empfängeradresse&quot; vor, wird dieser genommen.&lt;/small&gt;';
+	$mip_form['54']['cms_var'] = 'MOD_VAR[54]';
+	$mip_form['54']['cms_val'] = $cms_mod['value']['54']; 
+	$mip_form['54']['cms_val_default'] = '';
+	
+	$mip_form['55']['cat'] = 'txtarea';
+	$mip_form['55']['rows'] = '2';
+	$mip_form['55']['type'] = 'long';
+	$mip_form['55']['desc'] = 'Template Defaultwert für {textareafromdynamic}&lt;br /&gt;
+	&lt;small&gt;Standardwert für {textareafromdynamic}, liegt ein Wert aus dem Modul&lt;br /&gt;
+    &quot;Dynamische Empfängeradresse&quot; vor, wird dieser genommen.&lt;/small&gt;';
+	$mip_form['55']['cms_var'] = 'MOD_VAR[55]';
+	$mip_form['55']['cms_val'] = $cms_mod['value']['55']; 
+	$mip_form['55']['cms_val_default'] = '';
+	
+	$mip_form['56']['desc'] = 'Template Email &lt;br&gt;
+	&lt;small&gt;Mögliche Templatevariablen: {automessage} = vom System automatisch zusammengestellter Text&lt;br /&gt;
+aus allen Formularelementen, {elementlabel:1} = Label des ersten Formularfeldes, {elementvalue:1} = &lt;br /&gt;
+Wert des ersten Formularfeldes. Es kann auf jedes Formularfeld zugegriffen werden, {elementlabel:3}&lt;br /&gt;
+entspricht beispielsweise dem Label des dritten Formularfeldes&lt;br /&gt;
+{page_name}, {page_url}, {cat_name}, {cat_url} = Kategorie und Seiteninformationen, die &lt;br /&gt;
+a) von der Seite stammen, von der das Formular verschickt wurde, wenn die Empfängeradresse&lt;br /&gt;
+statisch in der Konfiguration eingetragen ist&lt;br /&gt;
+b) von der Seite stammen, auf der das Modul Dynamische Empfängeradresse liegt, wenn die Daten&lt;br /&gt;
+dynamisch generiert wurden. 
+&lt;/small&gt;';
+	$mip_form['56']['cat'] = 'txtarea';
+	$mip_form['56']['rows'] = '6';
+	$mip_form['56']['type'] = 'long';
+	$mip_form['56']['cms_var'] = 'MOD_VAR[56]';
+	$mip_form['56']['cms_val'] = $cms_mod['value']['56'];
+	$mip_form['56']['cms_val_default'] = '{automessage}';
+	
+	//Weitere Email Ja/ Nein
+	$mip_form['68']['cat'] = 'option';
+	$mip_form['68']['desc'] = 'Weitere Email verschicken?';
+	$mip_form['68']['size'] = '1';
+	$mip_form['68']['option_desc'][] = 'Ja';
+	$mip_form['68']['option_val'][] =  'true';
+	$mip_form['68']['option_desc'][] = 'Nein';
+	$mip_form['68']['option_val'][] =  'false';
+	$mip_form['68']['cms_var'] = 'MOD_VAR['.'68'.']';
+	$mip_form['68']['cms_val'] = $cms_mod['value']['68'];
+	$mip_form['68']['cms_val_default'] = 'false';
+	
+	//Subject Weitere Email
+	$mip_form['69']['cat'] = 'txt';
+	$mip_form['69']['desc'] = 'Weitere Email Subject';
+	$mip_form['69']['cms_var'] = 'MOD_VAR[69]';
+	$mip_form['69']['cms_val'] = $cms_mod['value']['69'];
+	$mip_form['69']['cms_val_default'] = 'Ihre getätigten Eingaben';
+	$mip_form['69']['tab'] = '0';
+	
+	//Template Weitere Email	
+	$mip_form['70']['desc'] = 'Template Weitere Email&lt;br /&gt;
+	&lt;small&gt;Mögliche Templatevariablen: Identisch mit Template Email&lt;/small&gt;';
+	$mip_form['70']['cat'] = 'txtarea';
+	$mip_form['70']['rows'] = '6';
+	$mip_form['70']['type'] = 'long';
+	$mip_form['70']['cms_var'] = 'MOD_VAR[70]';
+	$mip_form['70']['cms_val'] = $cms_mod['value']['70'];
+	$mip_form['70']['cms_val_default'] = '{automessage}';
+	
+	//Addonobject
+	$mip_form['72']['cat'] = 'txt';
+	$mip_form['72']['rows'] = '1';
+	$mip_form['72']['type'] = 'long';	
+	$mip_form['72']['desc'] = 'Addonstring&lt;br /&gt;
+&lt;small&gt;Syntax: [pfad]||[klassenname]&lt;/small&gt;';
+	$mip_form['72']['cms_var'] = 'MOD_VAR[72]';
+	$mip_form['72']['cms_val'] = $cms_mod['value']['72'];
+	$mip_form['72']['cms_val_default'] = '';
+	$mip_form['72']['tab'] = '0';
+
+	//Captchaimage length
+	$mip_form['73']['cat'] = 'txt';
+	$mip_form['73']['desc'] = 'Captcha-Code Länge &lt;small&gt;(Anzahl der einzugebenen Zeichen)&lt;/small&gt;';
+	$mip_form['73']['cms_var'] = 'MOD_VAR[73]';
+	$mip_form['73']['cms_val'] = $cms_mod['value']['73'];
+	$mip_form['73']['cms_val_default'] = '4';
+	
+	//Captchaimage width
+	$mip_form['74']['cat'] = 'txt';
+	$mip_form['74']['desc'] = 'Captcha-Code Bildbreite &lt;small&gt;(in Pixeln)&lt;/small&gt;';
+	$mip_form['74']['cms_var'] = 'MOD_VAR[74]';
+	$mip_form['74']['cms_val'] = $cms_mod['value']['74'];
+	$mip_form['74']['cms_val_default'] = '100';
+	
+	//Captchaimage height
+	$mip_form['75']['cat'] = 'txt';
+	$mip_form['75']['desc'] = 'Captcha-Code Bildhöhe &lt;small&gt;(in Pixeln)&lt;/small&gt;';
+	$mip_form['75']['cms_var'] = 'MOD_VAR[75]';
+	$mip_form['75']['cms_val'] = $cms_mod['value']['75'];
+	$mip_form['75']['cms_val_default'] = '30';
+	$mip_form['75']['tab'] = '0';
+	
+	//Captchaimage attributes
+	$mip_form['76']['cat'] = 'txt';
+	$mip_form['76']['desc'] = 'Captcha-Code optionale, zusätzliche Imagetag-Attribute';
+	$mip_form['76']['cms_var'] = 'MOD_VAR[76]';
+	$mip_form['76']['cms_val'] = $cms_mod['value']['76'];
+	$mip_form['76']['cms_val_default'] = '';
+	$mip_form['76']['tab'] = '0';
+	
+	//Captchaimage styleset
+	$mip_form['77']['cat'] = 'option';
+	$mip_form['77']['desc'] = 'Captcha-Code Bilddesign';
+	$mip_form['77']['size'] = '1';
+	$mip_form['77']['option_desc'][] = 'throwCHARS';
+	$mip_form['77']['option_val'][] =  '';
+	$mip_form['77']['option_desc'][] = 'binCLEAR';
+	$mip_form['77']['option_val'][] = '1';
+	$mip_form['77']['option_desc'][] = 'psychoPIXEL';
+	$mip_form['77']['option_val'][] = '2';
+	$mip_form['77']['cms_var'] = 'MOD_VAR[77]';
+	$mip_form['77']['cms_val'] = $cms_mod['value']['77'];
+	
+	//Template Captchaimage
+	$mip_form['78']['desc'] = 'Template Captchaelement&lt;br&gt;
+	&lt;small&gt;Mögliche Templatevariablen: {image}, {textfield}, {hiddentoken}&lt;/small&gt;';
+	$mip_form['78']['cat'] = 'txtarea';
+	$mip_form['78']['rows'] = '1';
+	$mip_form['78']['type'] = 'long';
+	$mip_form['78']['cms_var'] = 'MOD_VAR[78]';
+	$mip_form['78']['cms_val'] = $cms_mod['value']['78'];
+	$mip_form['78']['cms_val_default'] = '{image} {textfield}{hiddentoken}';	
+	
+	//Weitere Email Emailadresse
+	$mip_form['80']['cat'] = 'txt';
+	$mip_form['80']['desc'] = 'Weitere Email Emailadresse Absender&lt;small&gt;(Entweder Emailadresse oder Formulardeldnummer)';
+	$mip_form['80']['cms_var'] = 'MOD_VAR[80]';
+	$mip_form['80']['cms_val'] = $cms_mod['value']['80'];
+	$mip_form['80']['cms_val_default'] = 'me@local.de';
+	$mip_form['80']['tab'] = '0';
+		
+	//Weitere Email Emailadresse
+	$mip_form['81']['cat'] = 'txt';
+	$mip_form['81']['desc'] = 'Weitere Email Emailadresse Empfänger&lt;small&gt;(Entweder Emailadresse oder Formulardeldnummer)';
+	$mip_form['81']['cms_var'] = 'MOD_VAR[81]';
+	$mip_form['81']['cms_val'] = $cms_mod['value']['81'];
+	$mip_form['81']['cms_val_default'] = 'me_too@local.de';
+	$mip_form['81']['tab'] = '0';
+
+
+
+	//------------------------------------------------
+	//START GENERATE FORMFIELDS
+	//------------------------------------------------
+	$cf_formfieldtable = '';
+	$cf_formfieldtable .= '
+
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+
+		// array to memorize a set of form element values
+		var val_mem_MOD_VAR=new Array();
+		// memorized flag
+		var val_mem_saved_MOD_VAR=false;
+		// current memorized entry (the id of the div-element to change the background color on copy)
+		var centry_mem_MOD_VAR;
+		// starting cmsmod-var id - depends on the module config
+		var cmvid_MOD_VAR=100;
+		// difference value betweend the cms_mod-var ids from entry to entry
+		var cmviddiff_MOD_VAR=20;
+		// element counter per entry
+		var ec_MOD_VAR=10;
+				
+		function copyentry_MOD_VAR(no,entry) {
+
+			if (centry_mem_MOD_VAR==entry) {
+				document.getElementById(centry_mem_MOD_VAR).style.backgroundColor=&quot;transparent&quot;;
+				val_mem_MOD_VAR=new Array();
+				val_mem_saved_MOD_VAR=false;	
+				centry_mem_MOD_VAR=null;		
+				return false;
+			}	
+
+			if (centry_mem_MOD_VAR)
+				document.getElementById(centry_mem_MOD_VAR).style.backgroundColor=&quot;transparent&quot;;
+				
+			document.getElementById(entry).style.backgroundColor=&quot;white&quot;;
+			centry_mem_MOD_VAR=entry;
+
+			val_mem_saved_MOD_VAR=true;
+			
+			for (i=0;i&lt;ec_MOD_VAR;i++) {
+				var no1=no+i;
+				if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;]){
+					if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;checkbox&quot;) {
+						val_mem_MOD_VAR[i]=document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].checked;
+					}
+					if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;text&quot; || document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;textarea&quot; || document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;hidden&quot;) {
+						val_mem_MOD_VAR[i]=document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].value;
+					}
+					if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;select-one&quot;) {
+						val_mem_MOD_VAR[i]=document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].selectedIndex;
+					}
+				}
+			}
+		}
+
+		function pasteentry_MOD_VAR(no) {
+			if (val_mem_saved_MOD_VAR==false)
+				return false;
+			if (centry_mem_MOD_VAR)
+				document.getElementById(centry_mem_MOD_VAR).style.backgroundColor=&quot;transparent&quot;;
+			for (i=0;i&lt;ec_MOD_VAR;i++) {
+				var no1=no+i;
+				if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;]){
+					if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;checkbox&quot;) {
+						document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].checked=val_mem_MOD_VAR[i];
+					}
+					if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;text&quot; || document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;textarea&quot; || document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;hidden&quot;) {
+						document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].value=val_mem_MOD_VAR[i];
+					}
+					if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;select-one&quot;) {
+						document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].selectedIndex=val_mem_MOD_VAR[i];
+					}
+				}
+			}
+			val_mem_MOD_VAR=new Array();
+			val_mem_saved_MOD_VAR=false;
+			centry_mem_MOD_VAR=null;
+		}
+		
+		function inserentry_MOD_VAR(no,entries) {
+
+			if (document.editform[&quot;MOD_VAR[&quot;+(cmvid_MOD_VAR+(cmviddiff_MOD_VAR*(entries-1)))+&quot;]&quot;].checked==true) {
+				alert(&quot;Einfügen eines Eintrags nicht möglich, da der letzte Eintrag aktiv ist!\nInsertion of an entry not possible because the last entry is active!&quot;);
+				return false;
+			}	
+
+			for (j=1;j&lt;entries-((no-cmvid_MOD_VAR)/cmviddiff_MOD_VAR);j++) {
+					
+				for (i=0;i&lt;ec_MOD_VAR;i++) {
+					var no2=(cmvid_MOD_VAR+(cmviddiff_MOD_VAR*(entries-j)))+i;
+					var no1=(cmvid_MOD_VAR+(cmviddiff_MOD_VAR*(entries-j-1)))+i;
+
+					if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;]){
+
+						if(document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;checkbox&quot;) {
+							document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].checked=document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].checked;
+						}
+						if(document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;text&quot; || document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;textarea&quot; || document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;hidden&quot;) {
+							document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].value=document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].value;
+						}
+						if(document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;select-one&quot;) {
+							document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].selectedIndex=document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].selectedIndex;
+						}
+						
+					}
+				}
+				
+			}
+			
+			if (val_mem_saved_MOD_VAR==false) {
+				for (i=no;i&lt;no+ec_MOD_VAR;i++) {
+					if (document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;]){
+					
+						if(document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].type==&quot;checkbox&quot;) {
+							document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].checked=false;
+						}
+						if(document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].type==&quot;text&quot; || document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].type==&quot;textarea&quot; || document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].type==&quot;hidden&quot;) {
+							document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].value=&quot;&quot;;
+						}
+						if(document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].type==&quot;select-one&quot;) {
+							document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].selectedIndex=null;
+						}
+						
+					}
+				}
+			} else {
+				if (centry_mem_MOD_VAR)
+					document.getElementById(centry_mem_MOD_VAR).style.backgroundColor=&quot;transparent&quot;;
+				for (i=0;i&lt;ec_MOD_VAR;i++) {
+					var no1=no+i;
+					if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;]){
+						if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;checkbox&quot;) {
+							document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].checked=val_mem_MOD_VAR[i];
+						}
+						if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;text&quot; || document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;textarea&quot; || document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;hidden&quot;) {
+							document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].value=val_mem_MOD_VAR[i];
+						}
+						if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;select-one&quot;) {
+							document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].selectedIndex=val_mem_MOD_VAR[i];
+						}
+					}
+				}
+				val_mem_MOD_VAR=new Array();
+				val_mem_saved_MOD_VAR=false;	
+				centry_mem_MOD_VAR=null;			
+			}
+			
+		}
+		
+		function cutentry_MOD_VAR(no,entries,entry) {
+			if (document.editform[&quot;MOD_VAR[&quot;+no+&quot;]&quot;].checked==true) {
+				alert(&quot;Aktive Einträge können nicht entfernt werden!\nActive entries can\'t be removed!&quot;);
+				return false;
+			}	
+		
+			if (centry_mem_MOD_VAR)
+				document.getElementById(centry_mem_MOD_VAR).style.backgroundColor=&quot;transparent&quot;;
+				
+			document.getElementById(entry).style.backgroundColor=&quot;white&quot;;
+			centry_mem_MOD_VAR=entry;
+
+			val_mem_saved_MOD_VAR=true;
+			
+			for (i=0;i&lt;ec_MOD_VAR;i++) {
+				var no1=no+i;
+				if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;]){
+					if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;checkbox&quot;) {
+						val_mem_MOD_VAR[i]=document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].checked;
+					}
+					if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;text&quot; || document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;textarea&quot; || document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;hidden&quot;) {
+						val_mem_MOD_VAR[i]=document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].value;
+					}
+					if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;select-one&quot;) {
+						val_mem_MOD_VAR[i]=document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].selectedIndex;
+					}
+				}
+			}		
+			
+			
+			
+			for (j=((no-cmvid_MOD_VAR)/cmviddiff_MOD_VAR);j&lt;entries;j++) {
+			
+				for (i=0;i&lt;ec_MOD_VAR;i++) {
+					var no2=(cmvid_MOD_VAR+(cmviddiff_MOD_VAR*(j+1)))+i;
+					var no1=(cmvid_MOD_VAR+(cmviddiff_MOD_VAR*(j)))+i;
+
+					if (document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;]){
+						if(document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].type==&quot;checkbox&quot;) {
+							document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].checked=document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].checked;
+						}
+						if(document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].type==&quot;text&quot; || document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].type==&quot;textarea&quot; || document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].type==&quot;hidden&quot;) {
+							document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].value=document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].value;
+						}
+						if(document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].type==&quot;select-one&quot;) {
+							document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].selectedIndex=document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].selectedIndex;
+						}
+					}
+				}
+			}
+	
+			for (i=(cmvid_MOD_VAR+((entries-1)*cmviddiff_MOD_VAR));i&lt;(cmvid_MOD_VAR+((entries-1)*cmviddiff_MOD_VAR))+ec_MOD_VAR;i++) {
+				if (document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;]){
+					if(document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].type==&quot;checkbox&quot;) {
+						document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].checked=false;
+					}
+					if(document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].type==&quot;text&quot; || document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].type==&quot;textarea&quot; || document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].type==&quot;hidden&quot;) {
+						document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].value=&quot;&quot;;
+					}
+					if(document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].type==&quot;select-one&quot;) {
+						document.editform[&quot;MOD_VAR[&quot;+i+&quot;]&quot;].selectedIndex=null;
+					}
+				}
+			}	
+		}		
+
+
+		function rotateentry_MOD_VAR(no,direction) {
+			for (i=0;i&lt;ec_MOD_VAR;i++) {
+				if (direction==&quot;up&quot;) {
+					var no1=no+i;
+					var no2=no-cmviddiff_MOD_VAR+i;
+				} 
+				if (direction==&quot;down&quot;) {
+					var no1=no+i;
+					var no2=cmviddiff_MOD_VAR+no+i;
+				} 
+				if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;]){
+					if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;checkbox&quot;) {
+						var val_mem1=document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].checked;
+						var val_mem2=document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].checked;
+						document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].checked=val_mem2;
+						document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].checked=val_mem1;
+					}
+					if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;text&quot; || document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;textarea&quot; || document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;hidden&quot;) {
+						var val_mem1=document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].value;
+						var val_mem2=document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].value;
+						document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].value=val_mem2;
+						document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].value=val_mem1;
+					}
+					if (document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].type==&quot;select-one&quot;) {
+						var val_mem1=document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].selectedIndex;
+						var val_mem2=document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].selectedIndex;
+						document.editform[&quot;MOD_VAR[&quot;+no1+&quot;]&quot;].selectedIndex=val_mem2
+						document.editform[&quot;MOD_VAR[&quot;+no2+&quot;]&quot;].selectedIndex=val_mem1;
+					}
+				}
+			}
+		}
+
+	&lt;/script&gt;
+
+
+
+
+	
+	&lt;table border=&quot;0&quot; width=&quot;100%&quot;&gt;
+	      &lt;tr&gt;
+	      &lt;td  style=&quot;background-color:#B7D9FF;font-weight:bold;&quot;&gt;Nr&lt;/td&gt;
+	      &lt;td  style=&quot;background-color:#B7D9FF;font-weight:bold;&quot;&gt;Aktiv&lt;/td&gt;
+	      &lt;td  style=&quot;background-color:#DFEEFF;font-weight:bold;&quot; style=&quot;width:90%&quot;&gt;Typ&lt;/td&gt;';
+
+	$mip_forms_tab_temp = $mip_forms_tab;
+	
+	$mip_forms_tab['open']  = '';
+	$mip_forms_tab['close']  = '';
+	$mip_forms_tab['left']  = '&lt;!--%s--&gt;%s';
+	$mip_forms_tab['left_width'] = '';
+	$mip_forms_tab['right'] = '%s';
+	$mip_forms_tab['full'] = '&lt;td&gt;%s&lt;br&gt;%s&lt;/td&gt;&lt;td width=&quot;5&quot;&gt;&amp;nbsp;&lt;/td&gt;&lt;/tr&gt;';
+	$mip_forms_tab['tab'] = '&lt;td width=&quot;20&quot; valign=&quot;top&quot;&gt;%s&lt;/td&gt;';	
+	$ecount = 100;
+
+	for($i=0;$i &lt; $cms_mod['value']['0'];$i++){
+		$frm_active = $ecount;
+		$frm_type = $ecount+1;
+		$frm_label = $ecount+2;
+		$frm_default = $ecount+3;
+		$frm_validate = $ecount+4;
+		$frm_attributes_label = $ecount+5;
+		$frm_attributes_formelement = $ecount+6;
+		$frm_custom_element_error = $ecount+7;
+		$frm_select_elementcontainer = $ecount+8;				
+//n+7 custom element- error
+//n+8 select tpl elementcontainer		
+		//aktiv
+		$mip_form[$frm_active]['cat'] = 'chk';
+		$mip_form[$frm_active]['option_var']['0'] = 'MOD_VAR['.$frm_active.']';
+		$mip_form[$frm_active]['option_val']['0'] = $cms_mod['value'][$frm_active];
+		$mip_form[$frm_active]['option_val_select']['0'] = 'true';
+		
+		//typ
+		$mip_form[$frm_type]['cat'] = 'option';
+		$mip_form[$frm_type]['size'] = '1';
+		$mip_form[$frm_type]['option_desc'][] = 'Einzeiliges Textfeld';
+		$mip_form[$frm_type]['option_val'][] =  'text';
+		$mip_form[$frm_type]['option_desc'][] = 'Einzeiliges Passwortfeld';
+		$mip_form[$frm_type]['option_val'][] =  'password';
+		$mip_form[$frm_type]['option_desc'][] = 'Mehrzeiliges Textfeld';
+		$mip_form[$frm_type]['option_val'][] =  'textarea';
+		$mip_form[$frm_type]['option_desc'][] = 'Selectbox';
+		$mip_form[$frm_type]['option_val'][] =  'option';
+		$mip_form[$frm_type]['option_desc'][] = 'Selectbox, Mehrfachauswahl';
+		$mip_form[$frm_type]['option_val'][] =  'optionMutiple';
+		$mip_form[$frm_type]['option_desc'][] = 'Optionsfelder';
+		$mip_form[$frm_type]['option_val'][] =  'radio';
+		$mip_form[$frm_type]['option_desc'][] = 'Checkbox';
+		$mip_form[$frm_type]['option_val'][] =  'checkbox';
+		$mip_form[$frm_type]['option_desc'][] = 'Checkbox, vorselektiert';
+		$mip_form[$frm_type]['option_val'][] =  'checkboxSelected';
+		$mip_form[$frm_type]['option_desc'][] = 'Dateiupload';
+		$mip_form[$frm_type]['option_val'][] =  'upload';
+		$mip_form[$frm_type]['option_desc'][] = 'Versteckter Wert';
+		$mip_form[$frm_type]['option_val'][] =  'hidden';
+		$mip_form[$frm_type]['option_desc'][] = 'Nur Beschriftung';
+		$mip_form[$frm_type]['option_val'][] =  'label';
+		$mip_form[$frm_type]['option_desc'][] = 'Platzhalter';
+		$mip_form[$frm_type]['option_val'][] =  'locumtenency';		
+		$mip_form[$frm_type]['option_desc'][] = 'Captchabild';
+		$mip_form[$frm_type]['option_val'][] =  'captchaimage';		
+		$mip_form[$frm_type]['cms_var'] = 'MOD_VAR['.$frm_type.']';
+		$mip_form[$frm_type]['cms_val'] = $cms_mod['value'][$frm_type];
+		
+		//label
+		$label_element = '&lt;input type=&quot;text&quot; name=&quot;MOD_VAR['.$frm_label.']&quot; style=&quot;width:240px&quot; value=&quot;'.htmlentities( $cms_mod['value'][$frm_label], ENT_COMPAT, 'UTF-8' ).'&quot; /&gt;';
+		
+		//default
+		$def_element = '&lt;input type=&quot;text&quot; name=&quot;MOD_VAR['.$frm_default.']&quot; style=&quot;width:240px&quot; value=&quot;'.htmlentities( $cms_mod['value'][$frm_default], ENT_COMPAT, 'UTF-8' ).'&quot; /&gt;';
+		
+		//opt attributes
+		$opt_attributes_label = '&lt;input type=&quot;text&quot; name=&quot;MOD_VAR['.$frm_attributes_label.']&quot; style=&quot;width:240px&quot; value=&quot;'.htmlentities( $cms_mod['value'][$frm_attributes_label], ENT_COMPAT, 'UTF-8' ).'&quot; /&gt;';
+		$opt_attributes_formelement = '&lt;input type=&quot;text&quot; name=&quot;MOD_VAR['.$frm_attributes_formelement.']&quot; style=&quot;width:240px&quot; value=&quot;'.htmlentities( $cms_mod['value'][$frm_attributes_formelement], ENT_COMPAT, 'UTF-8' ).'&quot; /&gt;';
+		
+		//custom error
+		$frm_custom_element_error = '&lt;input type=&quot;text&quot; name=&quot;MOD_VAR['.$frm_custom_element_error.']&quot; style=&quot;width:240px&quot; value=&quot;'.htmlentities( $cms_mod['value'][$frm_custom_element_error], ENT_COMPAT, 'UTF-8' ).'&quot; /&gt;';
+		
+		//validierung
+		$mip_form[$frm_validate]['cat'] = 'option';
+		$mip_form[$frm_validate]['size'] = '1';
+		$mip_form[$frm_validate]['option_desc'][] = 'Keine';
+		$mip_form[$frm_validate]['option_val'][] =  'false';
+		$mip_form[$frm_validate]['option_desc'][] = 'Nicht leer';
+		$mip_form[$frm_validate]['option_val'][] =  'required';
+		$mip_form[$frm_validate]['option_desc'][] = 'Email';
+		$mip_form[$frm_validate]['option_val'][] =  'email';
+		$mip_form[$frm_validate]['option_desc'][] = 'Email oder leer';
+		$mip_form[$frm_validate]['option_val'][] =  'emailOrEmpty';
+		$mip_form[$frm_validate]['cms_var'] = 'MOD_VAR['.$frm_validate.']';
+		$mip_form[$frm_validate]['cms_val'] = $cms_mod['value'][$frm_validate];
+		
+		//tpl elementcontainer
+		$mip_form[$frm_select_elementcontainer]['cat'] = 'option';
+		$mip_form[$frm_select_elementcontainer]['size'] = '1';
+		$mip_form[$frm_select_elementcontainer]['option_desc'][] = 'Elementcontainer 1';
+		$mip_form[$frm_select_elementcontainer]['option_val'][] =  '1';
+		$mip_form[$frm_select_elementcontainer]['option_desc'][] = 'Elementcontainer 2'; 
+		$mip_form[$frm_select_elementcontainer]['option_val'][] =  '2';
+		$mip_form[$frm_select_elementcontainer]['option_desc'][] = 'Elementcontainer 3';
+		$mip_form[$frm_select_elementcontainer]['option_val'][] =  '3';
+		$mip_form[$frm_select_elementcontainer]['option_desc'][] = 'Elementcontainer 4'; 
+		$mip_form[$frm_select_elementcontainer]['option_val'][] =  '4';
+		$mip_form[$frm_select_elementcontainer]['cms_var'] = 'MOD_VAR['.$frm_select_elementcontainer.']';
+		$mip_form[$frm_select_elementcontainer]['cms_val'] = $cms_mod['value'][$frm_select_elementcontainer];
+
+		
+		$cf_formfieldtable .= '&lt;tr&gt;';
+		$element_nr = ($i &lt; 9) ? ('0'. ($i+1) ): $i+1;
+		$cf_formfieldtable .= '&lt;td valign=&quot;top&quot; style=&quot;background-color:#B7D9FF&quot;&gt;&lt;b&gt;'. $element_nr  .'&lt;/b&gt;&lt;/td&gt;';
+		$cf_formfieldtable .= '&lt;td align=&quot;center&quot; valign=&quot;top&quot;  style=&quot;background-color:#B7D9FF&quot;&gt;'. mip_forms($mip_form[$frm_active]) .'&lt;/td&gt;';
+		$cf_formfieldtable .= '&lt;td valign=&quot;top&quot; style=&quot;background-color:#DFEEFF&quot;&gt;'. mip_forms($mip_form[$frm_type]) .'&lt;/td&gt;';
+		$cf_formfieldtable .= '&lt;/tr&gt;&lt;tr&gt;&lt;td align=&quot;center&quot; colspan=&quot;2&quot; style=&quot;padding-top:3px;background-color:#B7D9FF;&quot;&gt;';
+		if ($cms_mod['value']['0']&gt;1)
+			$cf_formfieldtable .= '			&lt;div id=&quot;copy_MOD_VAR_'.$ecount.'&quot; style=&quot;padding:3px 3px 3px 3px;width:40px;margin:auto;&quot;	&gt;
+				&lt;input type=&quot;button&quot; value=&quot;cut&quot; title=&quot;Formularfled ausschneiden, darunterliegenden Felder rücken um eine Position nach oben&quot; onclick=&quot;cutentry_MOD_VAR('.$ecount.','.$cms_mod['value']['0'].',\'copy_MOD_VAR_'.$ecount.'\')&quot; style=&quot;width:40px;font-weight:bold;font-size:10px;display:block;&quot; /&gt;
+				&lt;input type=&quot;button&quot; value=&quot;copy&quot; title=&quot;In die Zwischenablage kopieren&quot; onclick=&quot;copyentry_MOD_VAR('.$ecount.',\'copy_MOD_VAR_'.$ecount.'\')&quot; style=&quot;width:40px;font-weight:bold;font-size:10px;cursor:pointer;display:block;&quot; /&gt;
+				&lt;input type=&quot;button&quot; value=&quot;paste&quot; title=&quot;Einfügen, vorhandene Formulardaten werden überschrieben&quot; onclick=&quot;pasteentry_MOD_VAR('.$ecount.')&quot; style=&quot;width:40px;font-weight:bold;font-size:10px;cursor:pointer;display:block;&quot; /&gt;
+				&lt;input type=&quot;button&quot; value=&quot;insert&quot; title=&quot;Einfügen, vorhanden Formulardaten verschieben sich eine Position nach unten&quot; onclick=&quot;inserentry_MOD_VAR('.$ecount.','.$cms_mod['value']['0'].');&quot; style=&quot;width:40px;font-weight:bold;font-size:10px;cursor:pointer;display:block;&quot; /&gt;
+			&lt;/div&gt;			
+			&lt;div style=&quot;padding:3px 3px 5px 3px;width:40px;margin:auto;&quot;	&gt;';
+
+		if ($i&gt;0)
+			$cf_formfieldtable .= '				&lt;input type=&quot;button&quot; value=&quot;up&quot; title=&quot;Eine Position nach oben verschieben&quot; onclick=&quot;rotateentry_MOD_VAR('.$ecount.',\'up\');&quot; style=&quot;width:40px;font-weight:bold;font-size:10px;cursor:pointer;display:block;&quot; /&gt;';
+		else
+			$cf_formfieldtable .= '				&lt;div style=&quot;width:40px;height:18px;&quot;&gt;&amp;nbsp;&lt;/div&gt;';
+	
+		if ($i&lt;$cms_mod['value']['0']-1)
+			$cf_formfieldtable .= '				&lt;input type=&quot;button&quot; value=&quot;down&quot; title=&quot;Eine Position nach unten verschieben&quot; onclick=&quot;rotateentry_MOD_VAR('.$ecount.',\'down\')&quot; style=&quot;width:40px;font-weight:bold;font-size:10px;cursor:pointer;display:block;&quot; /&gt;';
+		else
+			$cf_formfieldtable .= '				&lt;div style=&quot;width:40px;height:18px;&quot;&gt;&amp;nbsp;&lt;/div&gt;';		
+
+
+		$cf_formfieldtable .= '			&lt;/div&gt;&lt;/div&gt;
+		&lt;/td&gt;&lt;td&gt;';
+		
+		$cf_formfieldtable .= '&lt;table border=&quot;0&quot; width=&quot;100%&quot;&gt;
+	      &lt;tr style=&quot;font-weight: bold;&quot;&gt;
+	      &lt;td&gt;Label&lt;/td&gt;
+	      &lt;td&gt;Defaultwert*&lt;/td&gt;
+	      &lt;td&gt;Validierung&lt;/td&gt;
+	      &lt;/tr&gt;
+	      &lt;tr&gt;
+	      &lt;td&gt;'. $label_element .'&lt;/td&gt;
+	      &lt;td&gt;'. $def_element .'&lt;/td&gt;
+	      &lt;td&gt;'. mip_forms($mip_form[$frm_validate]) .'&lt;/td&gt;
+	      &lt;/tr&gt;
+	      &lt;tr style=&quot;font-weight: bold;&quot;&gt;
+	      &lt;td&gt;Optionale Attribute Label&lt;/td&gt;
+          &lt;td&gt;Opt. Attribute Formularelement&lt;/td&gt;
+          &lt;td&gt;Template&lt;/td&gt;
+	      &lt;/tr&gt;
+	      &lt;tr&gt;
+	      &lt;td&gt;'. $opt_attributes_label .'&lt;/td&gt;
+		  &lt;td&gt;'. $opt_attributes_formelement .'&lt;/td&gt;
+          &lt;td&gt;'.mip_forms($mip_form[$frm_select_elementcontainer]).'&lt;/td&gt;
+	      &lt;/tr&gt;
+	      &lt;tr style=&quot;font-weight: bold;&quot;&gt;
+	      &lt;td&gt;Fehlermeldung&lt;/td&gt;
+          &lt;td&gt;&lt;/td&gt;
+          &lt;td&gt;&lt;/td&gt;
+	      &lt;/tr&gt;
+	      &lt;tr&gt;
+	      &lt;td&gt;'. $frm_custom_element_error .'&lt;/td&gt;
+		  &lt;td&gt;&lt;/td&gt;
+          &lt;td&gt;&lt;/td&gt;
+	      &lt;/tr&gt;
+	      &lt;/table&gt;';
+	      
+	    $cf_formfieldtable .= '&lt;/td&gt;&lt;/tr&gt;';
+		
+		$ecount = $ecount+20;		
+	}
+	$mip_forms_tab = $mip_forms_tab_temp;
+	      	
+	
+	$cf_formfieldtable .= '&lt;/table&gt;
+	&lt;small&gt;*: Wird das Element Selectbox ausgewählt, sind die einezelnen Auswahlelemente kommasepariert anzugben,
+	z.B. &quot;Tomaten ,Birnen ,Orangen&quot;. Checkbox- Defaultwerte werden im Formular nicht angezeigt. Wird die
+	Checkbox vom Versender markiert, wird dieser Wert im übermittelten Kontaktformular sichtbar.&lt;/small&gt;';
+	
+	
+	$cf_formfieldtable .= '&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; border=&quot;0&quot; width=&quot;100%&quot;&gt;
+	  &lt;tr&gt;
+	    &lt;td align=&quot;right&quot;&gt;&lt;select name=&quot;MOD_VAR[1]&quot; size=&quot;1&quot; onchange=&quot;document.editform.action.value=\'change\';if(document.editform.anchor){document.editform.anchor.value=\''. $_container_name .'\'};document.editform.submit();&quot;&gt;
+	      &lt;option value=&quot;0&quot; selected&gt;Spalte erstellen - löschen&lt;/option&gt;';
+	      if ($cms_mod['value']['0'] &gt;= '13') $cf_formfieldtable .= &quot;&lt;option value=\&quot;-12\&quot;&gt;-12&lt;/option&gt;&quot;;
+	      if ($cms_mod['value']['0'] &gt;= '7') $cf_formfieldtable .= &quot;&lt;option value=\&quot;-6\&quot;&gt;-6&lt;/option&gt;&quot;;
+	      if ($cms_mod['value']['0'] &gt;= '4') $cf_formfieldtable .= &quot;&lt;option value=\&quot;-3\&quot;&gt;-3&lt;/option&gt;&quot;;
+	      if ($cms_mod['value']['0'] &gt;= '3') $cf_formfieldtable .= &quot;&lt;option value=\&quot;-2\&quot;&gt;-2&lt;/option&gt;&quot;;
+	      if ($cms_mod['value']['0'] &gt;= '2') $cf_formfieldtable .= &quot;&lt;option value=\&quot;-1\&quot;&gt;-1&lt;/option&gt;&quot;;
+	      $cf_formfieldtable .= '&lt;option value=&quot;1&quot;&gt;+1&lt;/option&gt;
+	      &lt;option value=&quot;2&quot;&gt;+2&lt;/option&gt;
+	      &lt;option value=&quot;3&quot;&gt;+3&lt;/option&gt;
+          &lt;option value=&quot;6&quot;&gt;+6&lt;/option&gt;
+          &lt;option value=&quot;12&quot;&gt;+12&lt;/option&gt;
+	    &lt;/select&gt;&lt;br /&gt;&lt;br /&gt;&lt;/td&gt;
+	  &lt;/tr&gt;
+	&lt;/table&gt;';
+	//------------------------------------------------
+	//END GENERATE FORMFIELDS
+	//------------------------------------------------
+
+mip_forms_tabpane_beginp();
+mip_forms_tabitem_beginp('Formularfelder');	
+	mip_formsp($mip_form['0']);//hidden anzahl formularfehler
+	echo $cf_formfieldtable;//all formfields
+mip_forms_tabitem_endp();
+
+mip_forms_tabitem_beginp('Maileinstellungen');
+	echo '&lt;p&gt;&lt;strong&gt;Email 1:&lt;/strong&gt;&lt;/p&gt;';
+	mip_formsp($mip_form['65']);//select email versenden ja, nein
+	mip_formsp($mip_form['desc']);//email empfänger
+	mip_formsp($mip_form['12']);//empfänger aus textfeld
+	mip_formsp($mip_form['57']);//txt email cc 
+	mip_formsp($mip_form['58']);//txt email bcc
+	mip_formsp($mip_form['41']);//empfänger aus GET Parameter
+	mip_formsp($mip_form['27']);//email absender
+	mip_formsp($mip_form['11']);//subject
+	mip_formsp($mip_form['56']);//template email
+	//DEPRECATED
+	//	mip_formsp($mip_form['28']);//mit fieldset
+	//	mip_formsp($mip_form['29']);//fieldset legend
+	
+	echo '&lt;p&gt;&lt;strong&gt;Email 2:&lt;/strong&gt;&lt;/p&gt;';
+	mip_formsp($mip_form['68']);//select Weitere Email verschicken ja|nein
+	mip_formsp($mip_form['80']);//txt Weitere Email Emailadresse Absender
+	mip_formsp($mip_form['81']);//txt Weitere Email Emailadresse Empfänger
+	mip_formsp($mip_form['69']);//txt Weitere Email subject
+	mip_formsp($mip_form['70']);//txtarea template Weitere Email
+	
+mip_forms_tabitem_endp();
+mip_forms_tabitem_beginp('Styles');
+	mip_formsp($mip_form['15']);//style fehler		
+	mip_formsp($mip_form['16']);//style bestätigung		
+	mip_formsp($mip_form['17']);//style label	
+	mip_formsp($mip_form['18']);//style label bei fehler
+	mip_formsp($mip_form['53']);//style fehlermeldung im element		
+
+	mip_formsp($mip_form['19']);//style text		
+	mip_formsp($mip_form['31']);//style passwort		
+	mip_formsp($mip_form['20']);//style textarea	
+	mip_formsp($mip_form['21']);//style select		
+	mip_formsp($mip_form['32']);//style select, mutiple		
+	mip_formsp($mip_form['33']);//style option		
+	mip_formsp($mip_form['22']);//style checkbox
+	mip_formsp($mip_form['52']);//style upload		
+	mip_formsp($mip_form['34']);//style nur beschriftung
+	mip_formsp($mip_form['79']);//style captcha textfield		
+	mip_formsp($mip_form['35']);//style label
+	mip_formsp($mip_form['23']);//style submitbutton		
+
+mip_forms_tabitem_endp();
+mip_forms_tabitem_beginp('Meldungen &amp; Templates');
+	echo '&lt;p&gt;&lt;strong&gt;Meldungen:&lt;/strong&gt;&lt;/p&gt;';
+	mip_formsp($mip_form['14']);//erfolgreich verschickt
+	mip_formsp($mip_form['24']);//beschriftung submitbutton
+	mip_formsp($mip_form['13']);//fehler
+	mip_formsp($mip_form['49']);//upload err ext
+	mip_formsp($mip_form['50']);//upload err size
+	mip_formsp($mip_form['51']);//upload err int
+	
+	echo '&lt;p&gt;&lt;strong&gt;Templates:&lt;/strong&gt;&lt;/p&gt;';
+	mip_formsp($mip_form['25']);//template gesamt		
+	mip_formsp($mip_form['26']);//template elementcontainer 1
+	mip_formsp($mip_form['46']);//template elementcontainer 2
+	mip_formsp($mip_form['66']);//template elementcontainer 3
+	mip_formsp($mip_form['86']);//template elementcontainer 4
+	mip_formsp($mip_form['82']);//template requirenotice
+	mip_formsp($mip_form['83']);//template labelcontent
+	mip_formsp($mip_form['78']);//template captchaimage		
+	mip_formsp($mip_form['38']);//template messageblock		
+	mip_formsp($mip_form['39']);//template formstart		
+	mip_formsp($mip_form['40']);//template formend	
+	mip_formsp($mip_form['42']);//template platzhalter
+	mip_formsp($mip_form['43']);//template element fehler
+	mip_formsp($mip_form['54']);//template standard {textfromdynamic} 
+	mip_formsp($mip_form['55']);//template standard {textareafromdynamic} 
+	
+mip_forms_tabitem_endp();
+mip_forms_tabitem_beginp('Sonstiges');
+	
+	echo '&lt;p&gt;&lt;strong&gt;Captcha:&lt;/strong&gt;&lt;/p&gt;';
+	mip_formsp($mip_form['73']);//txt captchaimage length
+	mip_formsp($mip_form['74']);//txt captchaimage width
+	mip_formsp($mip_form['75']);//txt captchaimage height
+	mip_formsp($mip_form['76']);//txt captchaimage attributes
+	mip_formsp($mip_form['77']);//txt captchaimage styleset
+
+	echo '&lt;p&gt;&lt;strong&gt;Dateiuploads:&lt;/strong&gt;&lt;/p&gt;';
+	mip_formsp($mip_form['47']);//upload allowed extensions
+	mip_formsp($mip_form['48']);//upload max filesize
+	mip_formsp($mip_form['61']);//select Dateiuploads im Dateisystem ablegen
+	mip_formsp($mip_form['62']);//select Ordner für Uploads
+	
+	//reportviewersettings
+	if(is_file($cfg_cms['cms_path'].'plugins/reportviewer/index.php')) {
+		echo '&lt;p&gt;&lt;strong&gt;Reportviewer:&lt;/strong&gt;&lt;/p&gt;';
+		mip_formsp($mip_form['59']);//select daten in db speichern ja, nein
+		mip_formsp($mip_form['60']);//txt default gruppen identifier 
+		mip_formsp($mip_form['71']);//select gespeicherte db werte sind online|offline
+	}
+
+	echo '&lt;p&gt;&lt;strong&gt;Logging:&lt;/strong&gt;&lt;/p&gt;';
+	mip_formsp($mip_form['63']);//select Formulareingaben mitloggen ja/ nein
+	mip_formsp($mip_form['64']);//txt logfile relativ vom frontend aus, default logs/
+	
+	echo '&lt;p&gt;&lt;strong&gt;Sonstige Einstellungen:&lt;/strong&gt;&lt;/p&gt;';
+	mip_formsp($mip_form['67']);//weiterleitung bei erfolg
+	mip_formsp($mip_form['44']);//debug
+	mip_formsp($mip_form['36']);//trenner - einzelne auswahlmöglichkeiten
+	mip_formsp($mip_form['37']);//trenner - key, value FEATURE VERSCHOBEN
+	mip_formsp($mip_form['10']);//configmode
+	mip_formsp($mip_form['72']);//txt addon object	
+	
+		
+mip_forms_tabitem_endp();
+mip_forms_tabpane_endp();
+
+}
+unset($mip_form);
+
+
+
+
+
+} // end $is_dev
+unset($is_dev);
+?&gt;</input>
+   <output>&lt;CMSPHP&gt;
+    $is_dev = false;
+&lt;/CMSPHP&gt;
+
+
+&lt;CMSPHP:CACHE&gt;
+    // (c) 2004 - 2006 by Björn Brockmann
+    // needs PHP 4.1+
+
+    //Alle Variablen, die nur innerhalb des gecachten PHPs sichtbar sind, auch für dynamisches PHP zur Verfügung stellen
+    echo '&lt;CMSPHP&gt;';
+        if (is_array($cms_mod['value'])) {
+        foreach($cms_mod['value'] AS $k =&gt; $v){
+        echo '$mvars[&quot;'.$k.'&quot;] = &quot;'. addslashes($v) .'&quot;;'.&quot;\n&quot;;
+        }}
+        echo '&lt;/CMSPHP&gt;';
+&lt;/CMSPHP:CACHE&gt;
+
+&lt;CMSPHP&gt;
+if ($is_dev) {
+    include &quot;C:/Programme/xampp/htdocs/sefrengo_dev/moddev/kontakformularOUT.php&quot;;
+} else {
+
+    if (!class_exists('gooseberry_form')) {
+        class gooseberry_form
+        {
+            var $version = 0.83;
+            //debug mode
+            var $debug = false;
+            //debug message
+            var $debugmessage = '';
+            //send mail
+            var $send_mail = true;
+            //logging
+            var $logging_active = false;
+            var $logging_file = 'logs/contact_log.txt';
+
+            var $charset = 'iso-8859-1';
+            var $is_rule_violation = false;
+            var $invalid_fields = array();
+            var $rules = array(
+                'required' =&gt; '/(\s|\S)/',
+                'email' =&gt; '/^[a-zA-Z0-9\._-]+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/',
+                'emailOrEmpty' =&gt; '/(^$)|(^[a-zA-Z0-9\._-]+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$)/'
+            );
+            var $field_styles = array();
+            var $stack = array();
+
+            //final template to combinate all elements
+            var $combination_tpl = '&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;
+        &lt;tr&gt;&lt;td align=&quot;right&quot; colspan=&quot;2&quot;&gt;{usermessage}&lt;/td&gt;&lt;/tr&gt;
+        {formstart} {formelementblock}
+        &lt;tr&gt;&lt;td align=&quot;right&quot; colspan=&quot;2&quot;&gt;{submit}&lt;/td&gt;&lt;/tr&gt;
+        {formend}
+    &lt;/table&gt;';
+
+            //message block template
+            var $message_block_tpl = '{usermessage}';
+
+            //template for the form element seperator
+            var $separator_tpl = '&lt;br /&gt;&lt;br /&gt;';
+
+            //template for one form row
+            var $row_tpl = array(1 =&gt; '&lt;tr&gt;&lt;td valign=&quot;top&quot;&gt;{label} &amp;nbsp;&amp;nbsp;&lt;/td&gt;&lt;td&gt;{element}&lt;/td&gt;&lt;/tr&gt;');
+
+            //template labelcontent
+            var $tpl_labeltext = '{labelcontent}{requirenotice}';
+
+            //template required notice
+            var $tpl_label_required_notice = '&amp;nbsp;*';
+
+            //template for formstarttag
+            var $tpl_formstarttag = '&lt;form id=&quot;b2st-form&quot; method=&quot;post&quot; action=&quot;{url}&quot; enctype=&quot;multipart/form-data&quot;&gt;';
+
+            //template for formendttag
+            var $tpl_formendtag = '&lt;/form&gt;';
+
+            //template for elementerror
+            var $tpl_elementerror = '{errormessage}&lt;br /&gt;&lt;br /&gt;';
+
+            //some fallbacks if get mode is active, but no data was found
+            var $fallback_textfromdynamic = '';
+            var $fallback_textareafromdynamic = '';
+
+            //url for form- action- parameter
+            var $form_target_url;
+
+            //email receiptor mode - possible values are textfield and get
+            var $email_receiptor_mode = 'textfield';
+
+            //settings for email receiptor mode 'get'
+            var $email_receiptor_get_mode_idcatside;
+            var $email_receiptor_get_mode_idcontainer;
+
+            //settings for email receiptor mode 'textfield'
+            var $email_receiptor_textfield_mode_mailadress;
+
+            // cc and bcc
+            var $email_receiptor_cc;
+            var $email_receiptor_bcc;
+
+
+            //emailadress sender
+            var $email_sender;
+
+            //email subject
+            var $email_subject;
+
+            //success message
+            var $message_success = 'Vielen Dank, die Daten wurden versandt';
+
+            //error message
+            var $message_error = 'Bitte überprüfen Sie Ihre Formulareingaben:';
+
+            //submitbutton text
+            var $submitbutton_text = 'Abschicken';
+
+            //mutiple value separator
+            var $mutiple_value_separator = ',';
+
+            //key/ value separator
+            var $key_value_separator = '@@';
+
+            //all hidden values
+            var $hiddenvalues;
+
+            //email template
+            var $tpl_email = '{automessage}';
+
+            //send confirmmail
+            var $confirm_mail_active = false;
+            //
+            var $confirm_mail_subject = 'Kontaktformular Confirm';
+            //
+            var $confirm_mail_tpl = '{automessage}';
+
+            //addon object
+            var $addon;
+
+
+            //2d array with all informations about uploaded files in it
+            //['element_name']['file'] - filepath
+            //['element_name']['error'] - contains errormessage for user if occurs
+            //['element_name']['int_error'] - contains internal errormessage
+            var $uploads = array();
+
+            var $upload_errors = array(
+                'deb_filesize_php_ini' =&gt; 'Die hochgeladene Datei ueberschreitet die in der Anweisung upload_max_filesize in php.ini festgelegte Groesse.',
+                'deb_filesize_browser' =&gt; 'Die hochgeladene Datei ueberschreitet die in dem HTML Formular mittels der Anweisung MAX_FILE_SIZE angegebene maximale Dateigroesse.',
+                'deb_filesize_incremental' =&gt; 'Die Datei wurde nur teilweise hochgeladen.',
+                'deb_no_file' =&gt; 'Es wurde keine Datei hochgeladen.',
+                'deb_filecopy_fails' =&gt; 'upload fails - check writepremissons for backend/upload/in/',
+                'usr_allowed_ext' =&gt; 'Dieser Dateityp darf nicht hochgeladen werden',
+                'usr_allowed_size' =&gt; 'Die maximal zulaessige Dateigroesse wurde ueberschritten',
+                'usr_internal_error' =&gt; 'Beim Upload ist ein interner Fehler aufgetreten'
+            );
+
+            //allowed fileextensions for uploadfiles - comma separated
+            var $upload_allowed_extensions;
+
+            //allowed filesize for uploadfiles in kb
+            var $upload_allowed_filesize;
+
+            //temp upload dir for files
+            var $upload_dir;
+
+            //snippet replacement stuff. Possible values are str unknown, true false
+            var $snippet_replacement_found = 'unknown';
+            var $snippet_object = false;
+
+            function __construct()
+            {
+                $this-&gt;addon = new gooseberry_form_addon;
+            }
+
+
+            /*
+            * -----------------------------------------------------------
+            * FORM PARSER METHODS
+            * -----------------------------------------------------------
+            */
+            function parse_elements()
+            {
+                $this-&gt;parsed_plain = '';
+                $this-&gt;parsed = '';
+                $p = '';
+                $pp = '';
+                //print_r($this-&gt;stack);
+                foreach ($this-&gt;stack AS $k =&gt; $v) {
+
+                    //addon preParse
+                    $this-&gt;addon-&gt;onPreParse($v, $this-&gt;stack);
+
+                    //collect all hidden values separatly
+                    if ($v['type'] == 'hidden') {
+                        $this-&gt;hiddenvalues .= $this-&gt;get_formelement($v['name'], $v['type'], $v['value'],
+                            $v['default_value'], $v['opt_attributes_formelement']);
+                        continue;
+                    }
+
+                    //special handling for checkboxes in plainform / unchecked checkboxes have no value
+                    $def_v_for_plain = ($v['type'] == 'checkbox' &amp;&amp; $this-&gt;is_submitted()) ? $v['default_value'] : $v['default_value'];
+
+                    //get formelement
+                    $element = $this-&gt;get_formelement($v['name'], $v['type'], $v['value'], $v['default_value'],
+                        $v['opt_attributes_formelement'], false);
+
+                    //get plain HTML formelement
+                    if ($v['type'] != 'captchaimage') {
+                        $element_plain = $this-&gt;get_formelement($v['name'], $v['type'], $def_v_for_plain,
+                            $v['default_value'], $v['opt_attributes_formelement'], true);
+                    } //no need to generate a second captcha for plainform
+                    else {
+                        $element_plain = $element;
+                    }
+
+                    //find out if element must validate
+                    $mv = (($v['validate_rule'] != 'false' &amp;&amp; $v['validate_rule'] != 'emailOrEmpty')) ? true : false;
+
+                    //special validation for ceckboxes and radios
+                    if ($v['type'] == 'checkbox' || $v['type'] == 'radio') {
+                        $vr = $this-&gt;validate($v['validate_rule'], $_REQUEST[$v['name']]);
+                    } //special validation for uploads
+                    else {
+                        if ($v['type'] == 'upload') {
+                            $vr = $this-&gt;validate_upload($v['name'], $v['label'], $v['validate_rule'], $k);
+
+                            // upload fails
+                            if (!$vr) {
+                                if ($this-&gt;uploads[$v['name']]['error'] != '') {
+                                    $v['errormessage'] = $this-&gt;uploads[$v['name']]['error'];
+                                }
+                            }
+                            //validate captcha
+                        } else {
+                            if ($v['type'] == 'captchaimage' &amp;&amp; $this-&gt;is_submitted()) {
+                                $this-&gt;init_captcha_object();
+                                $vr = $this-&gt;captcha_object-&gt;validateByCharseqAndRequestFieldname($v['value'],
+                                    $v['name']);
+                                if (!$vr) {
+                                    $this-&gt;is_rule_violation = true;
+                                }
+                            } //validate other elements
+                            else {
+                                $vr = $this-&gt;validate($v['validate_rule'], $v['value']);
+                            }
+                        }
+                    }
+
+                    //validation fail - set error
+                    if (!$vr) {
+                        sf_array_push($this-&gt;invalid_fields, $v['label']);
+                    }
+
+                    //addon validate
+                    $this-&gt;addon-&gt;onValidate($v, $vr, $this-&gt;stack);
+
+                    //get label
+                    $label = $this-&gt;get_label($v['name'], $v['label'], $v['opt_attributes_label'], $mv, $vr);
+
+                    //addon parse row
+                    $this-&gt;addon-&gt;onParseRow($v, $label, $element, $element_plain, $this-&gt;stack);
+
+                    //add to forms
+                    $p .= $this-&gt;parse_form_row($v['tpl_index'], $label, $element, $vr, $v['errormessage'], $mv);
+                    $pp .= $this-&gt;parse_form_row($v['tpl_index'], $label, $element_plain, false, false, $mv);
+                }
+
+                $this-&gt;parsed = $p;
+                $this-&gt;parsed_plain = $pp;
+
+                //log errors
+                if (sf_count($this-&gt;invalid_fields) &gt; 0 &amp;&amp; $this-&gt;logging_active) {
+                    $logmessage = sprintf(&quot;%s: Mail Rule Violation: %s%s\n\n&quot;, date('Y-m-d (D) H:i:s'),
+                        &quot;IP: &quot; . $_SERVER['REMOTE_ADDR'] . &quot;\n-------------------------------\n&quot;,
+                        &quot;Invalied Fields: &quot; . sf_implode(', ',
+                            $this-&gt;invalid_fields) . &quot;\n&quot; . &quot;Values:$log \n-------------------------------\n&quot;);
+                    $this-&gt;_log($logmessage);
+                }
+
+                //set controlvalue formwassubmitted as hiddenvalue
+                $this-&gt;hiddenvalues .= $this-&gt;get_formelement('formSubmitted', 'hidden', 'true', 'true');
+
+                //if email receiver mode ='get', add some more hiddenvalues
+                if ($this-&gt;email_receiptor_mode == 'get') {
+                    $this-&gt;hiddenvalues .= $this-&gt;get_formelement('contactidcs', 'hidden',
+                        $this-&gt;email_receiptor_get_mode_idcatside, '');
+                    $this-&gt;hiddenvalues .= $this-&gt;get_formelement('contactcontainer', 'hidden',
+                        $this-&gt;email_receiptor_get_mode_idcontainer, '');
+                }
+
+                if ($this-&gt;is_submitted() &amp;&amp; !$this-&gt;is_validated()) {
+                    $this-&gt;addon-&gt;onFailure($this-&gt;stack);
+                }
+            }
+
+            function get_label($element_name, $element_label, $element_attributes, $must_validated, $is_validated)
+            {
+
+                $rn = ($must_validated) ? $this-&gt;tpl_label_required_notice : '';
+                //{labelcontent}{requirenotice}
+                $element_label = str_replace(array('{labelcontent}', '{requirenotice}'), array($element_label, $rn),
+                    $this-&gt;tpl_labeltext);
+                $style = (!$is_validated) ? $this-&gt;field_styles['label_error'] : $this-&gt;field_styles['label'];
+                $label = ($style != '') ? '&lt;span class=&quot;' . $style . '&quot;&gt;' . $element_label . '&lt;/span&gt;' : $element_label;
+
+                return '&lt;label for=&quot;' . $element_name . '&quot; ' . $element_attributes . ' &gt;' . $label . '&lt;/label&gt;';
+            }
+
+            function parse_form_row($tplindex, $label, $element, $is_valid, $errormessage, $must_validated)
+            {
+                $errormessage = ($is_valid) ? '' : $errormessage;
+                $rn = ($must_validated) ? $this-&gt;tpl_label_required_notice : '';
+
+                if ($errormessage != '') {
+                    $errormessage = str_replace('{elementerrormessage}', $errormessage, $this-&gt;tpl_elementerror);
+                    $errormessage = $this-&gt;_get_styled_message($errormessage, $this-&gt;field_styles['element_error']);
+                }
+
+                return str_replace(array('{label}', '{element}', '{errormessage}', '{requirenotice}'),
+                    array($label, $element, $errormessage, ''), $this-&gt;row_tpl[$tplindex]);
+            }
+
+            function get_formelement(
+                $element_name,
+                $element_type,
+                $element_value,
+                $element_default_value,
+                $element_attributes = '',
+                $get_plain = false
+            ) {
+
+                switch ($element_type) {
+                    case 'hidden':
+                        $e = '&lt;input type=&quot;hidden&quot; name=&quot;' . $element_name . '&quot; id=&quot;' . $element_name . '&quot; ';
+                        $e .= ' value=&quot;' . $this-&gt;_htmlentities($element_value) . '&quot; ' . $element_attributes . ' /&gt;';
+                        break;
+                    case 'text':
+                    case 'password':
+                        $e = '&lt;input type=&quot;' . $element_type . '&quot; name=&quot;' . $element_name . '&quot; id=&quot;' . $element_name . '&quot; ' . $this-&gt;_format_styleclass($this-&gt;field_styles[$element_type]) . $element_attributes . ' ';
+                        $e .= ' value=&quot;' . $this-&gt;_htmlentities($element_value) . '&quot; /&gt;';
+                        break;
+                    case 'textarea':
+                        $e = '&lt;textarea name=&quot;' . $element_name . '&quot;  id=&quot;' . $element_name . '&quot; ' . $element_attributes . ' ' . $this-&gt;_format_styleclass($this-&gt;field_styles[$element_type]) . '&gt;' . $this-&gt;_htmlentities($element_value) . '&lt;/textarea&gt;';
+                        break;
+                    case 'option':
+                        $e = '&lt;select name=&quot;' . $element_name . '&quot;  id=&quot;' . $element_name . '&quot;  ' . $element_attributes . ' ' . $this-&gt;_format_styleclass($this-&gt;field_styles[$element_type]) . '&gt;' . &quot;\n&quot;;
+                        $p = explode($this-&gt;mutiple_value_separator, $element_default_value);
+                        foreach ($p AS $k =&gt; $v) {
+                            $v_key = $v;
+                            if (strstr($v, $this-&gt;key_value_separator) !== false) {
+                                $v_pairs = explode($this-&gt;key_value_separator, $v);
+                                $v_key = $v_pairs['0'];
+                                $v = $v_pairs['1'];
+                            }
+                            $s = ($element_value == $v_key &amp;&amp; !$get_plain) ? 'selected=&quot;selected&quot;' : '';
+                            $e .= '&lt;option value=&quot;' . $this-&gt;_htmlentities($v_key) . '&quot; ' . $s . ' &gt;' . $this-&gt;_htmlentities($v) . '&lt;/option&gt;' . &quot;\n&quot;;
+                        }
+                        $e .= '&lt;/select&gt;' . &quot;\n&quot;;
+                        break;
+                    case 'optionMutiple':
+                        $e = '&lt;select name=&quot;' . $element_name . '[]&quot;  id=&quot;' . $element_name . '&quot;  ' . $this-&gt;field_styles[$element_type] . ' multiple&gt;' . &quot;\n&quot;;
+                        $p = explode($this-&gt;mutiple_value_separator, $element_default_value);
+                        //$selected_options = (is_array($_REQUEST[$element_name])) ? $_REQUEST[$element_name] : array();
+                        $selected_options = explode($this-&gt;mutiple_value_separator, $element_value);
+                        //print_r($selected_options);
+                        foreach ($p AS $k =&gt; $v) {
+                            $s = '';
+                            $v_key = $v;
+                            if (strstr($v, $this-&gt;key_value_separator) !== false) {
+                                $v_pairs = explode($this-&gt;key_value_separator, $v);
+                                $v_key = $v_pairs['0'];
+                                $v = $v_pairs['1'];
+                            }
+
+                            if (sf_count($selected_options) &gt; 0) {
+                                $s = (sf_in_array($v_key,
+                                        $selected_options) &amp;&amp; !$get_plain) ? ' selected=&quot;selected&quot; ' : '';
+                            }
+                            $e .= '&lt;option value=&quot;' . $this-&gt;_htmlentities($v_key) . '&quot; ' . $s . '&gt;' . $this-&gt;_htmlentities($v) . '&lt;/option&gt;' . &quot;\n&quot;;
+                        }
+                        $e .= '&lt;/select&gt;' . &quot;\n&quot;;
+                        break;
+                    case 'radio':
+                        $p = explode($this-&gt;mutiple_value_separator, $element_default_value);
+                        foreach ($p AS $k =&gt; $v) {
+                            $v_key = $v;
+                            if (strstr($v, $this-&gt;key_value_separator) !== false) {
+                                $v_pairs = explode($this-&gt;key_value_separator, $v);
+                                $v_key = $v_pairs['0'];
+                                $v = $v_pairs['1'];
+                            }
+                            $c = ($element_value == $v_key &amp;&amp; !$get_plain) ? 'checked=&quot;checked&quot;' : '';
+                            $e .= '&lt;input type=&quot;radio&quot; name=&quot;' . $element_name . '&quot; id=&quot;' . $element_name . '&quot; value=&quot;' . $this-&gt;_htmlentities($v_key) . '&quot; ' . $c . ' /&gt;' . '&amp;nbsp;' . $this-&gt;_htmlentities($v);
+                        }
+                        break;
+                    case 'checkbox':
+                    case 'checkboxSelected':
+                        $element_default_value_key = $element_default_value;
+                        if (strstr($element_default_value, $this-&gt;key_value_separator) !== false) {
+                            $v_pairs = explode($this-&gt;key_value_separator, $element_default_value);
+                            $element_default_value_key = $v_pairs['0'];
+                            $element_default_value = $v_pairs['1'];
+                        }
+
+                        $c = (($element_default_value_key == $element_value &amp;&amp; !$get_plain) || (!$this-&gt;is_submitted() &amp;&amp; $element_type == 'checkboxSelected')) ? 'checked=&quot;checked&quot;' : '';
+                        $e = '&lt;input type=&quot;checkbox&quot; name=&quot;' . $element_name . '&quot;  id=&quot;' . $element_name . '&quot; ' . $this-&gt;_format_styleclass($this-&gt;field_styles['checkbox']) . ' ';
+                        $e .= 'value=&quot;' . $this-&gt;_htmlentities($element_default_value_key) . '&quot;  ' . $c . '  ' . $element_attributes . ' /&gt;' . '&lt;label for=&quot;' . $element_name . '&quot; ' . $this-&gt;_format_styleclass($this-&gt;field_styles['label']) . '&gt;' . $this-&gt;_htmlentities($element_default_value) . '&lt;/label&gt;';
+                        break;
+                    case 'upload':
+                        $e = '&lt;input type=&quot;file&quot; name=&quot;' . $element_name . '&quot; id=&quot;' . $element_name . '&quot; ' . $this-&gt;_format_styleclass($this-&gt;field_styles[$element_type]) . $element_attributes . ' ';
+                        $e .= ' /&gt;';
+                        break;
+                    case 'captchaimage':
+                        $this-&gt;init_captcha_object();
+                        $e = $this-&gt;captcha_object-&gt;getCaptchaHtml($element_name, $this-&gt;captchavals['length'],
+                            $this-&gt;_format_styleclass($this-&gt;field_styles[$element_type]) . $element_attributes,
+                            $this-&gt;captchavals['attributes'], $this-&gt;captchavals['styleset'],
+                            $this-&gt;captchavals['width'], $this-&gt;captchavals['height']);
+                        break;
+                    case 'label'://label_as_formfield, placeholder
+                        $e = '&lt;span ' . $this-&gt;_format_styleclass($this-&gt;field_styles['label_as_formfield']) . ' &gt;' . $element_value . '&lt;/span&gt;';
+                        break;
+                    case 'locumtenency':
+                        $e = '&lt;span ' . $this-&gt;_format_styleclass($this-&gt;field_styles['placeholder']) . ' &gt;' . $this-&gt;separator_tpl . '&lt;/span&gt;';
+                        break;
+                }
+
+                return $e;
+            }
+
+            function init_captcha_object()
+            {
+                global $cfg_client;
+
+                if (is_object($this-&gt;captcha_object)) {
+                    return true;
+                } else {
+                    $this-&gt;captcha_object =&amp; sf_factoryGetObject('GUI', 'CaptchaImage');
+                    $this-&gt;captcha_object-&gt;setCaptchaTemplate($this-&gt;captchavals['template']);
+
+                    return true;
+                }
+            }
+
+            function get_value($element_type, $element_name, $element_default, $element_selected, $skip_default = false)
+            {
+                //echo &quot;$element_type, $element_name, $element_default, $element_selected, $skip_default &lt;br&gt;&quot;;
+                if (isset($_REQUEST[$element_name])) {
+                    $v = is_array($_REQUEST[$element_name]) ? sf_implode($this-&gt;mutiple_value_separator,
+                        $_REQUEST[$element_name]) : $_REQUEST[$element_name];
+
+                    return $this-&gt;_strip_slashes($v);
+                } else {
+                    if (($element_type == 'checkbox' || $element_type == 'checkboxSelected' || $element_type == 'radio') &amp;&amp; !$_REQUEST[$element_name] &amp;&amp; $this-&gt;is_submitted()) {
+                        return false;
+                    } else {
+                        if ($element_selected != '') {
+                            return $element_selected;
+                        } else {
+                            if ($skip_default) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+
+                return $element_default;
+            }
+
+
+            function validate($element_validate, $element_value)
+            {
+                if (!$this-&gt;is_submitted()) {
+                    return true;
+                }
+
+                //validate captcha
+                if ($element_validate == 'imagecaptcha') {
+                    //do nothing
+                } //validate regex
+                else {
+                    if (sf_array_key_exists($element_validate, $this-&gt;rules)) {
+                        if (!preg_match($this-&gt;rules[$element_validate], $element_value)) {
+                            $this-&gt;is_rule_violation = true;
+
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            }
+
+            function validate_upload($element_name, $element_label, $validate_rule, $stack_key)
+            {
+                $upload_dir = $this-&gt;upload_dir;
+                $upload_allowed_extension = $this-&gt;upload_allowed_extensions;
+                $upload_allowed_filesize = $this-&gt;upload_allowed_filesize;
+
+                $size = $_FILES[$element_name]['size'];
+                $name = $_FILES[$element_name]['name'];
+                $type = $_FILES[$element_name]['type'];
+                $tmp_name = $_FILES[$element_name]['tmp_name'];
+                $err = $_FILES[$element_name]['error'];
+                $parts = pathinfo('sicheristsicher/' . $name);
+                $ext = strtolower($parts['extension']);
+                $allowed_ext = strtolower(str_replace(' ', '', $upload_allowed_extension));
+
+                $this-&gt;uploads[$element_name]['label'] = $element_label;
+                $this-&gt;uploads[$element_name]['file'] = '';
+                $this-&gt;uploads[$element_name]['error'] = '';
+                $this-&gt;uploads[$element_name]['int_error'] = '';
+
+
+                //no file found/ uploaded
+                if ($tmp_name == '') {
+                    //check if upload is required
+                    if ($validate_rule == 'required') {
+                        $this-&gt;is_rule_violation = true;
+
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+
+                $upload_error = '';
+                //check php errors
+                switch ($err) {
+                    case 1:
+                        $upload_error = $this-&gt;upload_errors['deb_filesize_php_ini'];
+                        break;
+                    case 2:
+                        $upload_error = $this-&gt;upload_errors['deb_filesize_browser'];
+                        break;
+                    case 3:
+                        $upload_error = $this-&gt;upload_errors['deb_filesize_incremental'];
+                        break;
+                    case 4:
+                        $upload_error = $this-&gt;upload_errors['deb_no_file'];
+                        break;
+                }
+
+                if ($err &gt; 0) {
+                    $this-&gt;uploads[$element_name]['error'] = $this-&gt;upload_errors['usr_internal_error'];
+                    $this-&gt;uploads[$element_name]['int_error'] = $upload_error;
+                    $this-&gt;is_rule_violation = true;
+
+                    return false;
+                }
+
+                //check extensions
+                if (strlen($allowed_ext) &gt; 0) {
+                    $ax = explode(',', $allowed_ext);
+                    if (!sf_in_array($ext, $ax)) {
+                        $this-&gt;uploads[$element_name]['error'] = $this-&gt;upload_errors['usr_allowed_ext'];
+                        $this-&gt;is_rule_violation = true;
+
+                        return false;
+                    }
+                }
+
+                //checkfilesize
+                if ($upload_allowed_filesize &gt; 0) {
+                    $upload_allowed_filesize *= 1024;
+                    if ($size &gt; $upload_allowed_filesize) {
+                        $this-&gt;uploads[$element_name]['error'] = $this-&gt;upload_errors['usr_allowed_size'];
+                        $this-&gt;is_rule_violation = true;
+
+                        return false;
+                    }
+                }
+
+                //move file
+                if (!move_uploaded_file($_FILES[$element_name]['tmp_name'], $upload_dir . $name)) {
+
+                    $this-&gt;uploads[$element_name]['error'] = $this-&gt;upload_errors['usr_internal_error'];
+                    $this-&gt;uploads[$element_name]['int_error'] = $this-&gt;upload_errors['deb_filecopy_fails'];
+                    $this-&gt;is_rule_violation = true;
+
+                    return false;
+                }
+
+                $this-&gt;uploads[$element_name]['file'] = $upload_dir . $name;
+                $this-&gt;uploads[$element_name]['name'] = $name;
+                $this-&gt;uploads[$element_name]['type'] = $type;
+                $this-&gt;uploads[$element_name]['size'] = $size;
+                $this-&gt;uploads[$element_name]['ext'] = $ext;
+                $this-&gt;stack[$stack_key]['advanced'] = $this-&gt;uploads[$element_name];
+
+                return true;
+            }
+
+
+            /*
+            * -----------------------------------------------------------
+            * &quot;FORM TO FINAL HTML&quot; AND SOME MISC METHODS
+            * -----------------------------------------------------------
+            */
+            function get_form()
+            {
+                return $this-&gt;_get_form();
+            }
+
+            function get_form_plain()
+            {
+                return $this-&gt;_get_form(true);
+            }
+
+            function _get_form($is_plain = false)
+            {
+                global $con_side, $con_tree, $cfg_client, $idcatside;
+
+                $frm_vals['formstart'] = $this-&gt;get_form_head() . &quot;\n&quot;;
+                $frm_vals['formend'] = $this-&gt;get_form_footer() . &quot;\n&quot;;
+                $frm_vals['submit'] = $this-&gt;get_submitbutton();
+
+                $arr['email'] = '';
+                if ($this-&gt;email_receiptor_mode == 'get' &amp;&amp; $this-&gt;email_receiptor_get_mode_idcatside &gt; 0) {
+                    $arr = $this-&gt;get_receiptor_data_from_content_as_array();
+                    $frm_vals['textareafromdynamic'] = nl2br($arr['textareafromdynamic']);
+                    $frm_vals['textfromdynamic'] = $arr['textfromdynamic'];
+
+                    $idcatside_from = $this-&gt;email_receiptor_get_mode_idcatside;
+                    $frm_vals['page_name'] = $con_side[$idcatside_from]['name'];
+                    $frm_vals['page_url'] = $cfg_client['htmlpath'] . str_replace('&amp;amp;', '&amp;',
+                            $con_side[$idcatside_from]['link']);
+                    $frm_vals['cat_name'] = $con_tree[$con_side[$idcatside_from]['idcat']]['name'];
+                    $frm_vals['cat_url'] = $cfg_client['htmlpath'] . str_replace('&amp;amp;', '&amp;',
+                            $con_tree[$con_side[$idcatside_from]['idcat']]['link']);
+                } else {
+                    $frm_vals['textareafromdynamic'] = nl2br($this-&gt;fallback_textareafromdynamic);
+                    $frm_vals['textfromdynamic'] = $this-&gt;fallback_textfromdynamic;
+                    $frm_vals['page_name'] = $con_side[$idcatside]['name'];
+                    $frm_vals['page_url'] = $cfg_client['htmlpath'] . str_replace('&amp;amp;', '&amp;',
+                            $con_side[$idcatside]['link']);
+                    $frm_vals['cat_name'] = $con_tree[$con_side[$idcatside]['idcat']]['name'];
+                    $frm_vals['cat_url'] = $cfg_client['htmlpath'] . str_replace('&amp;amp;', '&amp;',
+                            $con_tree[$con_side[$idcatside]['idcat']]['link']);
+                }
+
+                if ($is_plain) {
+                    $frm_vals['formelementblock'] = $this-&gt;parsed_plain;
+                } else {
+                    $frm_vals['formelementblock'] = $this-&gt;parsed;
+                }
+                $frm_vals['usermessage'] = $this-&gt;get_usermessage();
+                if ($frm_vals['usermessage'] != '') {
+                    $frm_vals['messageblock'] = str_replace('{usermessage}', $this-&gt;get_usermessage(),
+                        $this-&gt;message_block_tpl);
+                } else {
+                    $frm_vals['messageblock'] = '';
+                }
+
+                $tpl = $this-&gt;combination_tpl;
+                foreach ($frm_vals AS $k =&gt; $v) {
+                    $tpl = str_replace('{' . $k . '}', $v, $tpl);
+                }
+
+                $deb = ($this-&gt;debug) ? $this-&gt;debugmessage : '';
+                $tpl = str_replace('{debugmessages}', $deb, $tpl);
+
+                return $tpl;
+            }
+
+            function get_form_head()
+            {
+                $a = str_replace('{url}', $this-&gt;form_target_url, $this-&gt;tpl_formstarttag);
+                if ($_REQUEST['formSubmitted'] == 'true' AND $this-&gt;is_validated()) {
+                    $a = str_replace('{transmitted}', &quot;transmitted&quot;, $a);
+                }
+
+                return $a;
+            }
+
+            function get_form_footer()
+            {
+                return $this-&gt;hiddenvalues . $this-&gt;tpl_formendtag;
+            }
+
+            function get_submitbutton()
+            {
+                return '&lt;input type=&quot;submit&quot; name=&quot;fmsubmit&quot; ' . $this-&gt;_format_styleclass($this-&gt;field_styles['submitbutton']) . ' value=&quot;' . $this-&gt;submitbutton_text . '&quot; /&gt;';
+            }
+
+            function get_usermessage()
+            {
+
+                $m = '';
+                if ($this-&gt;is_submitted()) {
+                    if ($this-&gt;is_validated()) {
+                        $m = $this-&gt;_get_styled_message($this-&gt;message_success, $this-&gt;field_styles['submit']);
+                    } else {
+                        $m = $this-&gt;_get_styled_message($this-&gt;message_error . ' ' . $this-&gt;get_invalid_fields(),
+                            $this-&gt;field_styles['submit_error']);
+                    }
+                }
+
+                return $m;
+            }
+
+
+            function get_invalid_fields()
+            {
+                return sf_implode(', ', $this-&gt;invalid_fields);
+            }
+
+            function get_stack()
+            {
+                return $this-&gt;stack;
+            }
+
+            function is_validated()
+            {
+                return (!$this-&gt;is_rule_violation);
+            }
+
+            function is_submitted()
+            {
+                return ($_REQUEST['formSubmitted'] == 'true');
+            }
+
+
+            /*
+            * -----------------------------------------------------------
+            * MAIL METHODS
+            * -----------------------------------------------------------
+            */
+            function send_mail()
+            {
+                global $con_side, $con_tree, $cfg_client, $idcatside;
+
+                $tpl_email = $this-&gt;tpl_email;
+
+                $to = '';
+                if ($this-&gt;email_receiptor_mode == 'get') {
+                    $arr = $this-&gt;get_receiptor_data_from_content_as_array();
+                    $to = trim($arr['email']);
+
+                    $idcatside_from = $this-&gt;email_receiptor_get_mode_idcatside;
+                    $page_name = $con_side[$idcatside_from]['name'];
+                    $page_url = $cfg_client['htmlpath'] . str_replace('&amp;amp;', '&amp;', $con_side[$idcatside_from]['link']);
+                    $cat_name = $con_tree[$con_side[$idcatside_from]['idcat']]['name'];
+                    $cat_url = $cfg_client['htmlpath'] . str_replace('&amp;amp;', '&amp;',
+                            $con_tree[$con_side[$idcatside_from]['idcat']]['link']);
+                }
+
+                if ($this-&gt;email_receiptor_mode == 'textfield' || $to == '') {
+                    $to = $this-&gt;email_receiptor_textfield_mode_mailadress;
+
+                    if ($this-&gt;email_receiptor_mode == 'textfield') {
+                        $page_name = $con_side[$idcatside]['name'];
+                        $page_url = $cfg_client['htmlpath'] . str_replace('&amp;amp;', '&amp;', $con_side[$idcatside]['link']);
+                        $cat_name = $con_tree[$con_side[$idcatside]['idcat']]['name'];
+                        $cat_url = $cfg_client['htmlpath'] . str_replace('&amp;amp;', '&amp;',
+                                $con_tree[$con_side[$idcatside]['idcat']]['link']);
+
+                        $arr['textfromdynamic'] = $this-&gt;fallback_textfromdynamic;
+                        $arr['textareafromdynamic'] = $this-&gt;fallback_textareafromdynamic;
+                    }
+                }
+
+
+                //no emailadress found - break up
+                if ($to == '' &amp;&amp; $this-&gt;send_mail) {
+                    return;
+                }
+
+                $sender = $this-&gt;email_sender;
+                $subject = $this-&gt;generate_email_template($this-&gt;email_subject);
+
+
+                $mail =&amp; $GLOBALS['sf_factory']-&gt;getObject('UTILS', 'Mail');
+                $mail-&gt;setCharset($this-&gt;charset);
+                $mail-&gt;setFrom($sender);
+                $mail-&gt;setSubject($subject);
+
+                $arr['to'] = explode(',', $to);
+                $arr['cc'] = explode(',', $this-&gt;email_receiptor_cc);
+                $arr['bcc'] = explode(',', $this-&gt;email_receiptor_bcc);
+                foreach ($arr AS $k =&gt; $v) {
+                    if (is_array($v)) {
+                        foreach ($v AS $adr) {
+                            $adr = trim($adr);
+                            if (substr($adr, 0, 1) == '+') {
+                                $mail-&gt;addAdressByUsername(substr($adr, 1), $k);
+                            } else {
+                                if (substr($adr, 0, 1) == '#') {
+                                    $mail-&gt;addAdressByGroupname(substr($adr, 1), $k);
+                                } else {
+                                    $mail-&gt;addAdress($adr, $k);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //add attachements
+                if (is_array($this-&gt;uploads)) {
+                    foreach ($this-&gt;uploads AS $k =&gt; $v) {
+                        if ($v['file'] != '') {
+                            $mail-&gt;addAttachment($v['file'], $v['type'], $v['name']);
+                        }
+                    }
+                }
+
+                //give possibility to manipulate the stack
+                ////////////////////////////////////////////////////////$this-&gt;addon-&gt;onSuccess($this-&gt;stack);
+
+                //generate email template
+                $tpl_email = $this-&gt;generate_email_template($tpl_email, $to, $arr['textfromdynamic'],
+                    $arr['textareafromdynamic'], $page_name, $page_url, $cat_name, $cat_url);
+                //echo $tpl_email;exit;
+                $mail-&gt;setTxtBody($tpl_email);
+
+                if ($this-&gt;debug) {
+                    $this-&gt;debugmessage .= &quot;Mail to: $to || Mail from:  $sender || Mail subject: $subject &lt;br&gt;&quot;;
+                    echo $this-&gt;debugmessage .= 'Mailtext:&lt;br&gt;-------------&lt;br&gt;' . nl2br($tpl_email) . '&lt;br&gt;-------------&lt;br&gt;';
+                }
+
+                if ($this-&gt;send_mail) {
+                    $result = $mail-&gt;process();//$mail-&gt;send(array($to), 'mail');
+                }
+
+                //send second email
+                if ($this-&gt;confirm_mail_active) {
+                    $mail-&gt;adresses = array(
+                        'to' =&gt; array(),
+                        'cc' =&gt; array(),
+                        'bcc' =&gt; array()
+                    );
+                    $tpl_email2 = $this-&gt;generate_email_template($this-&gt;confirm_mail_tpl, $to, $arr['textfromdynamic'],
+                        $arr['textareafromdynamic'], $page_name, $page_url, $cat_name, $cat_url);
+
+
+                    //get sender
+                    if (is_numeric(trim($this-&gt;second_email_sender))) {
+                        foreach ($this-&gt;stack AS $k =&gt; $v) {
+                            if ($v['elementnumber'] == (int)$this-&gt;second_email_sender) {
+                                $sender = $v['value'];
+                            }
+                        }
+                    } else {
+                        $sender = $this-&gt;second_email_sender;
+                    }
+
+                    //get recipient
+                    if (is_numeric(trim($this-&gt;second_email_recipient))) {
+                        foreach ($this-&gt;stack AS $k =&gt; $v) {
+                            if ($v['elementnumber'] == (int)$this-&gt;second_email_recipient) {
+                                $recipient = $v['value'];
+                            }
+                        }
+                    } else {
+                        $recipient = $this-&gt;second_email_recipient;
+                    }
+
+
+                    $rec_array = explode($this-&gt;mutiple_value_separator, $recipient);
+
+
+                    $this-&gt;confirm_mail_subject = $this-&gt;generate_email_template($this-&gt;confirm_mail_subject);
+
+                    $mail-&gt;setFrom($sender);
+                    $mail-&gt;setSubject($this-&gt;confirm_mail_subject);
+
+                    foreach ($rec_array AS $v) {
+                        $v2 = explode($this-&gt;key_value_separator, $v);
+                        $mail-&gt;addAdress($v2['0'], 'to');
+                    }
+
+                    $mail-&gt;setTxtBody($tpl_email2);
+                    $result = $mail-&gt;process();
+                }
+
+                if ($this-&gt;logging_active) {
+                    $mailstatus = ($result) ? 'OK' : 'Error - Mailfunction does not work';
+                    $logmessage = sprintf(&quot;%s: Send Mail: %s%s\n\n&quot;, date('Y-m-d (D) H:i:s'),
+                        &quot;IP: &quot; . $_SERVER['REMOTE_ADDR'] . &quot; Mail to: $to || Mail from:  $sender || Mail subject: $subject \nStatus: $mailstatus \n-------------------------------\n&quot;,
+                        &quot;Mail Conent1: $tpl_email \n-------------------------------\n&quot; . &quot;Mail Conent2: $tpl_email2 \n-------------------------------\n&quot;);
+                    $this-&gt;_log($logmessage);
+                }
+
+
+            }
+
+            function generate_email_template(
+                $tpl_email,
+                $to = '',
+                $textfromdynamic = '',
+                $textareafromdynamic = '',
+                $page_name = '',
+                $page_url = '',
+                $cat_name = '',
+                $cat_url = ''
+            ) {
+
+                // convert all linebreaks to \r\n linebreaks
+                $tpl_email = preg_replace(&quot;#(\r\n)|(\r)#m&quot;, &quot;\n&quot;, $tpl_email);
+                //$tpl_email = preg_replace(&quot;#(\n)#m&quot;, &quot;\r\n&quot;, $tpl_email);
+
+
+                // fill emailtemplate
+                $tpl_email = str_replace(array(
+                    '{email_receiptor}',
+                    '{textfromdynamic}',
+                    '{textareafromdynamic}',
+                    '{page_name}',
+                    '{page_url}',
+                    '{cat_name}',
+                    '{cat_url}'
+                ), array(
+                        $to,
+                        $textfromdynamic,
+                        $textareafromdynamic,
+                        $page_name,
+                        $page_url,
+                        $cat_name,
+                        $cat_url
+                    ), $tpl_email);
+
+                $automessage = '';
+                foreach ($this-&gt;stack AS $k =&gt; $v) {
+                    //echo $k.&quot;: &quot;;print_r($v);echo &quot;&lt;br&gt;&lt;br&gt;&quot;;
+                    switch ($v['type']) {
+                        case 'label':
+                            $tpl_email = str_replace(array(
+                                '{elementlabel:' . $v['elementnumber'] . '}',
+                                '{elementvalue:' . $v['elementnumber'] . '}'
+                            ), array($v['label'], $v['value']), $tpl_email);
+                        case 'locumtenency':
+                        case 'upload':
+                        case 'captchaimage':
+                            break;
+                        case 'optionMutiple':
+                            //print_r($v);
+                            $s = $_REQUEST[$v['name']];
+                            if (sf_count($s) &gt; 0) {
+                                $m_inner = '';
+                                foreach ($s AS $v2) {
+                                    $m_inner .= $this-&gt;_strip_slashes($v2) . &quot;\n&quot;;
+                                }
+                                $automessage .= $v['label'] . &quot;:\n&quot; . $m_inner . &quot;\n\n&quot;;
+                                $tpl_email = str_replace(array(
+                                    '{elementlabel:' . $v['elementnumber'] . '}',
+                                    '{elementvalue:' . $v['elementnumber'] . '}'
+                                ), array($v['label'], $m_inner), $tpl_email);
+                            }
+                            break;
+                        default:
+                            $automessage .= $v['label'] . &quot;:\n&quot; . $v['value'] . &quot;\n\n&quot;;
+                            $tpl_email = str_replace(array(
+                                '{elementlabel:' . $v['elementnumber'] . '}',
+                                '{elementvalue:' . $v['elementnumber'] . '}'
+                            ), array($v['label'], $v['value']), $tpl_email);
+                    }
+                }
+
+                if (is_array($this-&gt;uploads)) {
+                    foreach ($this-&gt;uploads AS $k =&gt; $v) {
+                        if ($v['file'] != '') {
+                            $automessage .= &quot;ATTACHMENT '&quot; . $v['label'] . &quot;': &quot; . $v['name'] . &quot;\n&quot;;
+                        }
+                    }
+                }
+
+                //generate email template
+                $tpl_email = str_replace('{automessage}', $automessage, $tpl_email);
+
+                //replace snippets
+                $tpl_email = $this-&gt;_snippetReplace($tpl_email);
+
+
+                return $tpl_email;
+            }
+
+            function get_receiptor_data_from_content_as_array()
+            {
+                global $db, $cms_db, $lang;
+
+                $arr = array('email' =&gt; '', 'textfromdynamic' =&gt; '', 'textareafromdynamic' =&gt; '',);
+
+                if ($this-&gt;email_receiptor_get_mode_idcatside == '' || $this-&gt;email_receiptor_get_mode_idcontainer == '') {
+                    return $arr;
+                }
+
+                $grab_conf['idcatside'] = $this-&gt;email_receiptor_get_mode_idcatside;
+                $grab_conf['idlang'] = $lang;
+                $grab_conf['container'] = $this-&gt;email_receiptor_get_mode_idcontainer;
+                $grab_conf['id'] = '1,2'; //id of cmstag
+                $grab_conf['type'] = '1,3';//text + textarea
+
+                $sql = &quot;SELECT
+    CS.sortindex, CS.idcatside, CS.idcat,
+    CONTENT.container, CONTENT.idtype AS type, CONTENT.typenumber AS id,
+    CONTENT.number AS repeatid, CONTENT.value
+    FROM
+    &quot; . $cms_db['content'] . &quot; CONTENT,
+    &quot; . $cms_db['side_lang'] . &quot; SL
+    LEFT JOIN &quot; . $cms_db['cat_side'] . &quot;  CS USING (idside)
+    WHERE
+    CONTENT.idsidelang = SL.idsidelang
+    AND CS.idcatside = &quot; . $grab_conf['idcatside'] . &quot;
+    AND SL.idlang= &quot; . $grab_conf['idlang'] . &quot;
+    AND CONTENT.container IN (&quot; . $grab_conf['container'] . &quot;)
+    AND CONTENT.typenumber IN (&quot; . $grab_conf['id'] . &quot;)
+    AND CONTENT.idtype IN (&quot; . $grab_conf['type'] . &quot;)&quot;;
+                $db-&gt;query($sql);
+
+                while ($db-&gt;next_record()) {
+                    if ($db-&gt;f('type') == 1 &amp;&amp; $db-&gt;f('id') == 1) {
+                        if (preg_match($this-&gt;rules['email'], trim($db-&gt;f('value')))) {
+                            $arr['email'] = trim($db-&gt;f('value'));
+                        }
+                    } else {
+                        if ($db-&gt;f('type') == 1 &amp;&amp; $db-&gt;f('id') == 2) {
+                            $arr['textfromdynamic'] = $db-&gt;f('value');
+                        } else {
+                            if ($db-&gt;f('type') == 3 &amp;&amp; $db-&gt;f('id') == 1) {
+                                $arr['textareafromdynamic'] = $db-&gt;f('value');
+                            }
+                        }
+                    }
+                }
+
+                return $arr;
+            }
+
+
+            /*
+            * -----------------------------------------------------------
+            * SET METHODS
+            * -----------------------------------------------------------
+            */
+
+            /**
+             * Set all used stylesheets for the form
+             *
+             * @args array style_array - possible values are
+             * submit_error, submit (Styles for textmessages),
+             * label, label_error, text, textarea, option, checkbox, submitbutton,
+             *
+             * new:  password, select_mutiple, radio, label_as_formfield, placeholder
+             */
+            function set_styles($style_array)
+            {
+                if (!is_array($style_array)) {
+                    return;
+                }
+
+                foreach ($style_array AS $k =&gt; $v) {
+                    $this-&gt;field_styles[$k] = $v;
+                }
+            }
+
+            //mainmethod to add form elements
+            function set_formelement(
+                $element_name,
+                $element_type,
+                $element_default,
+                $element_validate,
+                $element_label,
+                $attributes_formelement,
+                $attributes_label,
+                $element_errormessage,
+                $element_tplindex,
+                $element_default_selected_val,
+                $elementnumber
+            ) {
+                $i = sf_count($this-&gt;stack);
+                $this-&gt;stack[$i]['name'] = $element_name;
+                $this-&gt;stack[$i]['type'] = $element_type;
+                $this-&gt;stack[$i]['default_value'] = $element_default;
+                $this-&gt;stack[$i]['validate_rule'] = $element_validate;
+                $this-&gt;stack[$i]['label'] = $this-&gt;_strip_slashes($element_label);
+                $this-&gt;stack[$i]['value'] = $this-&gt;get_value($element_type, $element_name, $element_default,
+                    $element_default_selected_val,
+                    (sf_in_array($element_type, array('checkbox', 'checkboxSelected', 'optionMutiple'))));
+                $this-&gt;stack[$i]['opt_attributes_label'] = $this-&gt;_strip_slashes($attributes_label);
+                $this-&gt;stack[$i]['opt_attributes_formelement'] = $this-&gt;_strip_slashes($attributes_formelement);
+                $this-&gt;stack[$i]['errormessage'] = $this-&gt;_strip_slashes($element_errormessage);
+                $this-&gt;stack[$i]['tpl_index'] = $element_tplindex;
+                $this-&gt;stack[$i]['elementnumber'] = $elementnumber;
+                //$this-&gt;stack[$i]['selected_value'] = $element_default_selected_val;
+                //some fields have advanced informations, like the upload
+                $this-&gt;stack[$i]['advanced'] = false;
+            }
+
+            //set anonymous hidden vars
+            function set_anonymus_hidden($name, $value)
+            {
+                $this-&gt;hiddenvalues .= $this-&gt;get_formelement($name, 'hidden', $value, '');
+            }
+
+            //debugmessage
+            function set_debug($d)
+            {
+                $this-&gt;debug = $d;
+            }
+
+            //final template to combinate all elements
+            function set_combination_tpl($tpl)
+            {
+                $this-&gt;combination_tpl = $tpl;
+            }
+
+            //message block template
+            function set_message_block_tpl($tpl)
+            {
+                $this-&gt;message_block_tpl = $tpl;
+            }
+
+            //template for the form element seperator
+            function set_separator_tpl($tpl)
+            {
+                $this-&gt;separator_tpl = $tpl;
+            }
+
+            //template for one form row
+            function set_row_tpl($index, $tpl)
+            {
+                $this-&gt;row_tpl[$index] = $tpl;
+            }
+
+            //template for formstarttag
+            function set_formstart_tpl($tpl)
+            {
+                $this-&gt;tpl_formstarttag = $tpl;
+            }
+
+            //template for formendttag
+            function set_formend_tpl($tpl)
+            {
+                $this-&gt;tpl_formendtag = $tpl;
+            }
+
+            //template for elementerror
+            function set_tpl_elementerror($tpl)
+            {
+                $this-&gt;tpl_elementerror = $tpl;
+            }
+
+            //url for form- action- parameter
+            function set_form_target_url($url)
+            {
+                $this-&gt;form_target_url = $url;
+            }
+
+            //email sender mode
+            function set_email_receiptor_mode($mode)
+            {
+                $this-&gt;email_receiptor_mode = $mode;
+            }
+
+            //settings for email sender mode 'get'
+            function set_email_receiptor_get_mode_data($idcatside, $container)
+            {
+                $this-&gt;email_receiptor_get_mode_idcatside = $idcatside;
+                $this-&gt;email_receiptor_get_mode_idcontainer = $container;
+            }
+
+            //settings for email sender mode 'textfield'
+            function set_email_receiptor_textfield_mode_data($mailadress)
+            {
+                $this-&gt;email_receiptor_textfield_mode_mailadress = $mailadress;
+            }
+
+            //emailadress sender
+            function set_email_sender($mailadress)
+            {
+                $this-&gt;email_sender = $mailadress;
+            }
+
+            //email subject
+            function set_email_subject($s)
+            {
+                $this-&gt;email_subject = $s;
+            }
+
+            //success message
+            function set_form_message_success($message)
+            {
+                $this-&gt;message_success = $message;
+            }
+
+            //error message
+            function set_form_message_error($message)
+            {
+                $this-&gt;message_error = $message;
+            }
+
+            //submitbutton text
+            function set_submitbutton_text($txt)
+            {
+                $this-&gt;submitbutton_text = $txt;
+            }
+
+            //mutiple value separator
+            function set_mutiple_value_separator($sep)
+            {
+                $this-&gt;mutiple_value_separator = $sep;
+            }
+
+            //key/ value value separator
+            function set_key_value_separator($sep)
+            {
+                $this-&gt;key_value_separator = $sep;
+            }
+
+            //upload dir
+            function set_upload_dir($dir)
+            {
+                $this-&gt;upload_dir = $dir;
+            }
+
+            //upload restrictions
+            function set_upload_restrictions($a)
+            {
+                $this-&gt;upload_allowed_extensions = $a['upload_allowed_extensions'];
+                $this-&gt;upload_allowed_filesize = $a['upload_allowed_filesize'];
+            }
+
+            //upload errors
+            function set_upload_errors($a)
+            {
+                $this-&gt;upload_errors['usr_allowed_ext'] = $a['usr_allowed_ext'];
+                $this-&gt;upload_errors['usr_allowed_size'] = $a['usr_allowed_size'];
+                $this-&gt;upload_errors['usr_internal_error'] = $a['usr_internal_error'];
+            }
+
+            //fallback {textfromdynamic}
+            function set_fallback_textfromdynamic($in)
+            {
+                $this-&gt;fallback_textfromdynamic = $in;
+            }
+
+            //fallback {textfarearomdynamic}
+            function set_fallback_textareafromdynamic($in)
+            {
+                $this-&gt;fallback_textareafromdynamic = $in;
+            }
+
+            function set_charset($set)
+            {
+                $this-&gt;charset = strtolower($set);
+            }
+
+            function set_tpl_email($tpl)
+            {
+                $this-&gt;tpl_email = $tpl;
+            }
+
+            function set_send_mail($set)
+            {
+                $this-&gt;send_mail = (boolean)$set;
+            }
+
+            function set_logging_active($set)
+            {
+                $this-&gt;logging_active = (boolean)$set;
+            }
+
+            function set_logging_file($set)
+            {
+                $this-&gt;logging_file = $set;
+            }
+
+            function set_email_receiptor_cc($set)
+            {
+                $this-&gt;email_receiptor_cc = $set;
+            }
+
+            function set_email_receiptor_bcc($set)
+            {
+                $this-&gt;email_receiptor_bcc = $set;
+            }
+
+            function set_confirmmail_vars($is_active, $subject, $tpl)
+            {
+                $this-&gt;confirm_mail_active = (boolean)$is_active;
+                $this-&gt;confirm_mail_subject = $subject;
+                $this-&gt;confirm_mail_tpl = $tpl;
+            }
+
+            function set_addon($addonstring)
+            {
+                if (trim($addonstring) != '') {
+                    $p = explode('||', $addonstring);
+                    if (is_file($p['0'])) {
+                        include_once $p['0'];
+                        if (class_exists($p['1'])) {
+                            $this-&gt;addon = new $p['1'];
+                        }
+                    }
+                }
+            }
+
+            function set_captcha_vals(
+                $length = 4,
+                $width = 100,
+                $height = 30,
+                $attributes = '',
+                $styleset = '',
+                $template = '{image} {textfield}{hiddentoken}'
+            ) {
+                $this-&gt;captchavals['length'] = $length;
+                $this-&gt;captchavals['width'] = $width;
+                $this-&gt;captchavals['height'] = $height;
+                $this-&gt;captchavals['attributes'] = $attributes;
+                $this-&gt;captchavals['styleset'] = $styleset;
+                $this-&gt;captchavals['template'] = $template;
+            }
+
+            function set_second_email_sender($email)
+            {
+                $this-&gt;second_email_sender = $email;
+            }
+
+            function set_second_email_recipient($email)
+            {
+                $this-&gt;second_email_recipient = $email;
+            }
+
+            function set_tpl_requirenotice($tpl)
+            {
+                $this-&gt;tpl_label_required_notice = $tpl;
+            }
+
+            function set_tpl_labeltext($tpl)
+            {
+                $this-&gt;tpl_labeltext = $tpl;
+            }
+
+            /*
+            * -----------------------------------------------------------
+            * PRIVATE HELPER METHODS
+            * -----------------------------------------------------------
+            */
+            function _strip_slashes($in)
+            {
+                if (false != 0) {
+                    return stripslashes($in);
+                }
+
+                return $in;
+            }
+
+            function _snippetReplace($content)
+            {
+                //no snippet replacement found
+                if ($this-&gt;snippet_replacement_found === false) {
+                    return $content;
+                } //figure out if snippet replacement exist
+                else {
+                    if ($this-&gt;snippet_replacement_found == 'unknown') {
+                        if (file_exists($GLOBALS['cfg_cms']['cms_path'] . 'plugins/snippet_replacement/inc/class.SnippetReplacement.php')) {
+                            include_once $GLOBALS['cfg_cms']['cms_path'] . 'plugins/snippet_replacement/inc/class.SnippetReplacement.php';
+                            $this-&gt;snippet_object = new snippetReplacement();
+                            $this-&gt;snippet_replacement_found = true;
+                        } else {
+                            $this-&gt;snippet_replacement_found = false;
+                        }
+                    }
+                }
+
+                //replace
+                if ($this-&gt;snippet_replacement_found == true) {
+                    $content = $this-&gt;snippet_object-&gt;replace($content, 'sr_lang', $GLOBALS['client'],
+                        $GLOBALS['lang']);
+                }
+
+                return $content;
+            }
+
+            function _htmlentities($in)
+            {
+                if ($this-&gt;charset == 'utf-8') {
+                    return htmlentities($in, ENT_COMPAT, 'UTF-8');
+                } else {
+                    return htmlentities($in);
+                }
+            }
+
+            function _format_styleclass($style)
+            {
+                return ($style != '') ? ' class=&quot;' . $style . '&quot; ' : null;
+
+            }
+
+            function _get_styled_message($message, $style)
+            {
+                if ($c = $this-&gt;_format_styleclass($style)) {
+                    return '&lt;span ' . $c . '&gt;' . $message . '&lt;/span&gt;';
+                }
+
+                return $message;
+            }
+
+            function _log($message)
+            {
+                if (!$this-&gt;logging_active) {
+                    return false;
+                }
+
+                $fp = @fopen($this-&gt;logging_file, 'a+');
+                @fputs($fp, $message);
+                @fclose($fp);
+            }
+
+        }
+    }
+
+    /* EXPERIMENTAL */
+    if (!class_exists('gooseberry_form_addon')) {
+        class gooseberry_form_addon
+        {
+            function onPreParse(&amp;$current, &amp;$stack)
+            {
+
+            }
+
+            function onValidate(&amp;$current, &amp;$is_valid, &amp;$stack)
+            {
+
+            }
+
+            function onParseRow(&amp;$current, &amp;$label, &amp;$element, &amp;$element_plain, &amp;$stack)
+            {
+
+            }
+
+            function onFailure(&amp;$stack)
+            {
+
+            }
+
+            function onSuccess(&amp;$stack)
+            {
+
+            }
+        }
+    }
+
+    if (!class_exists('gooseberry_formcontroller')) {
+        class gooseberry_formcontroller
+        {
+            var $frm;//form object
+            var $content;//form html content
+            var $dbdata;// dataitem object
+            var $dbmeta;// reportdesc object
+
+
+            var $db_mode_active = false;
+            var $db_mode_default_datagroup;
+            var $mutiple_value_separator = ',';
+            var $redirect_after_success = false;
+            var $redirect_after_success_url = '';
+
+            var $save_in_filemanager = false;
+            var $filemanager_iddirectory = false;
+
+
+            function __construct()
+            {
+                global $con_side;
+                if ((int)$_REQUEST['rvbackidcatside'] &gt; 0) {
+                    $this-&gt;redirect_after_success = true;
+                    $this-&gt;redirect_after_success_url = $con_side[(int)$_REQUEST['rvbackidcatside']]['link'];
+                    $parms = '';
+                    $parms .= '&amp;rvsortfield=' . $_REQUEST['rvsortfield'];
+                    $parms .= '&amp;rvstart=' . $_REQUEST['rvstart'];
+                    $parms .= '&amp;rvsortdirec=' . $_REQUEST['rvsortdirec'];
+                    $parms .= '&amp;rvsearchquery=' . $_REQUEST['rvsearchquery'];
+                    if (is_array($_REQUEST['rvkeyfilter'])) {
+                        foreach ($_REQUEST['rvkeyfilter'] AS $k =&gt; $v) {
+                            $parms .= '&amp;rvkeyfilter[' . $k . ']=' . $v;
+                        }
+                    }
+                    if (is_array($_REQUEST['rvfreefilter'])) {
+                        foreach ($_REQUEST['rvfreefilter'] AS $k =&gt; $v) {
+                            $parms .= '&amp;rvfreefilter[' . $k . ']=' . $v;
+                        }
+                    }
+                    $this-&gt;redirect_after_success_url .= $parms;
+
+                    //$this-&gt;redirect_after_success_url;exit;
+                }
+            }
+
+            function set_formobject(&amp;$frm)
+            {
+                $this-&gt;frm =&amp; $frm;
+            }
+
+            function set_db_mode_active($set)
+            {
+                $this-&gt;db_mode_active = (boolean)$set;
+            }
+
+            function set_db_mode_default_datagroup($set)
+            {
+                $this-&gt;db_mode_default_datagroup = $set;
+            }
+
+            function set_db_mode_items_are_online($set)
+            {
+                $this-&gt;db_mode_items_are_online = (boolean)$set;
+            }
+
+            function set_mutiple_value_separator($set)
+            {
+                $this-&gt;mutiple_value_separator = $set;
+            }
+
+            function set_save_in_filemanager($set)
+            {
+                $this-&gt;save_in_filemanager = $set;
+            }
+
+            function set_filemanager_iddirectory($id)
+            {
+                $this-&gt;filemanager_iddirectory = (int)$id;
+            }
+
+            function set_tpl_labeltext($tpl)
+            {
+                $this-&gt;tpl_labeltext = $tpl;
+            }
+
+            function set_redirect_after_success($bol, $url)
+            {
+                global $con_side;
+
+                if (trim($url) == '') {
+                    return false;
+                }
+
+                if ((int)$url &gt; 0) {
+                    $url = $con_side[(int)$url]['link'];
+                }
+
+                $this-&gt;redirect_after_success = (boolean)$bol;
+                $this-&gt;redirect_after_success_url = $url;
+            }
+
+            function start()
+            {
+                global $mvars;
+                $rvidnew = $rvidedit = 0;
+                //dbmode
+                if ($this-&gt;db_mode_active) {
+                    //check external db mode
+                    $rvidedit = (int)$_REQUEST['rvidedit'];
+                    $rvidnew = (int)$_REQUEST['rvidnew'];
+                    $is_db_mode_and_new_record = false;
+
+                    //from reportviewer context
+                    if ($rvidedit &gt; 0 || $rvidnew &gt; 0) {
+                        if ($rvidnew &gt; 0) {
+                            $this-&gt;dbmeta = new rv_Reportdesc;
+                            $this-&gt;dbmeta-&gt;loadByIddescreption($rvidnew);
+                            $this-&gt;dbdata = new rv_DataItem;
+                            $this-&gt;dbdata-&gt;setDatagroup($this-&gt;dbmeta-&gt;getGroupname());
+                        } else {
+                            $this-&gt;dbdata = new rv_DataItem;
+                            $this-&gt;dbdata-&gt;loadByIdreportdata($rvidedit);
+                            $this-&gt;dbmeta = new rv_Reportdesc;
+                            $this-&gt;dbmeta-&gt;loadByGroupname($this-&gt;dbdata-&gt;getDatagroup());
+                        }
+                        $is_db_mode_and_new_record = $this-&gt;dbdata-&gt;isEmptyRecord();
+                        for ($iter =&amp; $this-&gt;dbdata-&gt;getFormvalueIterator(); $iter-&gt;valid(); $iter-&gt;next()) {
+                            $formkey = ($iter-&gt;key() - 1);
+                            $fieldtype = $mvars[($formkey * 20 + 101)];
+                            switch ($fieldtype) {
+                                case 'option':
+                                case 'optionMutiple':
+                                case 'radio':
+                                case 'checkbox':
+                                case 'checkboxSelected':
+                                    $mvars[($formkey * 20 + 109)] = $iter-&gt;current();
+                                    break;
+                                default:
+                                    $mvars[($formkey * 20 + 103)] = $iter-&gt;current();
+                            }
+                        }
+                    } else {
+                        if ($this-&gt;db_mode_default_datagroup != '') {
+                            //from default
+                            $this-&gt;dbdata = new rv_DataItem;
+                            $this-&gt;dbdata-&gt;setDatagroup($this-&gt;db_mode_default_datagroup);
+
+                            $this-&gt;dbmeta = new rv_Reportdesc;
+                            $this-&gt;dbmeta-&gt;loadByGroupname($this-&gt;db_mode_default_datagroup);
+                            $is_db_mode_and_new_record = true;
+                        } else {
+                            $this-&gt;db_mode_active = false;
+                        }
+                    }
+
+                    //new record is per default online or offline
+                    if ($is_db_mode_and_new_record) {
+                        $this-&gt;dbdata-&gt;setIs_online($this-&gt;db_mode_items_are_online);
+                    }
+                }
+
+                //Formular erstellen
+                //n+0 aktiv
+                //n+1 type
+                //n+2 label
+                //n+3 default
+                //n+4 validate
+                //n+5 attributes label
+                //n+6 attributes formelement
+                //n+7 custom element- error
+                //n+8 index tpl elementcontainer
+                //n+9 default selected
+                //elementnumber $i/100
+                for ($i = 100; sf_array_key_exists(($i + 1), $mvars); $i = $i + 20) {
+                    if ($mvars[$i]) {
+                        if ($mvars[$i + 1] == 'checkboxSelected' &amp;&amp; $is_db_mode_and_new_record) {
+                            $mvars[$i + 9] = $mvars[$i + 3];
+                        }
+                        $this-&gt;frm-&gt;set_formelement('go_frm' . $i, $mvars[$i + 1], $mvars[$i + 3], $mvars[$i + 4],
+                            $mvars[$i + 2], $mvars[$i + 6], $mvars[$i + 5], $mvars[$i + 7], $mvars[$i + 8],
+                            $mvars[$i + 9], (($i / 20) - 4));
+                    }
+                }
+
+
+                //hidden vars by reportviewer
+                //sortfield=2&amp;sortdirec=asc&amp;start=0&amp;rvidedit=7&amp;rvbackidcatside=8 (edit)
+                //sortfield=2&amp;sortdirec=asc&amp;start=0&amp;rvidnew=-1&amp;rvbackidcatside=8 (new)
+                if ($this-&gt;db_mode_active) {
+                    if ($rvidedit &gt; 0 || $rvidnew == -1) {
+                        $this-&gt;frm-&gt;set_anonymus_hidden('rvsortfield', $_REQUEST['rvsortfield']);
+                        $this-&gt;frm-&gt;set_anonymus_hidden('rvsortdirec', $_REQUEST['rvsortdirec']);
+                        $this-&gt;frm-&gt;set_anonymus_hidden('rvsearchquery', $_REQUEST['rvsearchquery']);
+                        $this-&gt;frm-&gt;set_anonymus_hidden('rvstart', (int)$_REQUEST['rvstart']);
+                        $this-&gt;frm-&gt;set_anonymus_hidden('rvbackidcatside', (int)$_REQUEST['rvbackidcatside']);
+                        if (is_array($_REQUEST['rvkeyfilter'])) {
+                            foreach ($_REQUEST['rvkeyfilter'] AS $k =&gt; $v) {
+                                $this-&gt;frm-&gt;set_anonymus_hidden('rvkeyfilter[' . $k . ']',
+                                    $this-&gt;frm-&gt;_strip_slashes($v));
+                            }
+                        }
+                        if (is_array($_REQUEST['freefilter'])) {
+                            foreach ($_REQUEST['freefilter'] AS $k =&gt; $v) {
+                                $this-&gt;frm-&gt;set_anonymus_hidden('freefilter[' . $k . ']',
+                                    $this-&gt;frm-&gt;_strip_slashes($v));
+                            }
+                        }
+                    }
+                    if ($rvidedit &gt; 0) {
+                        $this-&gt;frm-&gt;set_anonymus_hidden('rvidedit', (int)$_REQUEST['rvidedit']);
+                    } else {
+                        if ($rvidnew == -1) {
+                            $this-&gt;frm-&gt;set_anonymus_hidden('rvidnew', (int)$_REQUEST['rvidnew']);
+                        }
+                    }
+                }
+
+                $this-&gt;frm-&gt;parse_elements();
+                if ($this-&gt;frm-&gt;is_submitted()) {
+                    if ($this-&gt;frm-&gt;is_validated()) {
+                        $this-&gt;frm-&gt;send_mail();
+                        $this-&gt;_reportviewer_save();
+                        $this-&gt;process_redirect();
+                        $this-&gt;content = $this-&gt;frm-&gt;get_form_plain();
+                    } else {
+                        $this-&gt;content = $this-&gt;frm-&gt;get_form();
+                    }
+                } else {
+                    $this-&gt;content = $this-&gt;frm-&gt;get_form();
+                }
+
+            }
+
+            function get_content()
+            {
+                return $this-&gt;content;
+            }
+
+            function _reportviewer_save()
+            {
+
+                $stack = $this-&gt;frm-&gt;get_stack();
+                $used_keys = array();
+
+                //id dbmode isn't active catch upload files and exit
+                if (!$this-&gt;db_mode_active) {
+                    foreach ($stack AS $k =&gt; $v) {
+                        switch ($v['type']) {
+                            case 'upload':
+                                if ($v['advanced']['file'] == '') {
+                                    break;
+                                } else {
+                                    $f =&amp; $GLOBALS['sf_factory']-&gt;getObjectForced('ASSETS', 'DbFile');
+                                    if ($this-&gt;save_in_filemanager == 'overwrite') {
+                                        $f-&gt;setOverwriteExistingFile(true);
+                                        $f-&gt;setAutorenameIfExists(false);
+                                    } else {
+                                        if ($this-&gt;save_in_filemanager == 'rename') {
+                                            $f-&gt;setOverwriteExistingFile(false);
+                                            $f-&gt;setAutorenameIfExists(true);
+                                        } else {
+                                            break;
+                                        }
+                                    }
+                                    $f-&gt;setExternalSourceFile($v['advanced']['file'], $v['advanced']['type']);
+                                    $f-&gt;setIddirectory($this-&gt;filemanager_iddirectory);
+                                    $f-&gt;save();
+                                }
+                                break;
+                        }
+                    }
+
+                    return false;
+                }
+
+                foreach ($stack AS $k =&gt; $v) {
+                    switch ($v['type']) {
+                        case 'locumtenency':
+                        case 'label':
+                            break;
+                        case 'upload':
+                            if ($v['advanced']['file'] == '') {
+                                if ($this-&gt;dbdata-&gt;isEmptyRecord()) {
+                                    $v['value'] = '';
+                                } else {
+                                    break;
+                                }
+                            } else {
+                                $f =&amp; $GLOBALS['sf_factory']-&gt;getObjectForced('ASSETS', 'DbFile');
+                                if ($this-&gt;save_in_filemanager == 'overwrite') {
+                                    $f-&gt;setOverwriteExistingFile(true);
+                                    $f-&gt;setAutorenameIfExists(false);
+                                } else {
+                                    if ($this-&gt;save_in_filemanager == 'rename') {
+                                        $f-&gt;setOverwriteExistingFile(false);
+                                        $f-&gt;setAutorenameIfExists(true);
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                $f-&gt;setExternalSourceFile($v['advanced']['file'], $v['advanced']['type']);
+                                $f-&gt;setIddirectory($this-&gt;filemanager_iddirectory);
+                                $f-&gt;save();
+                                $v['value'] = $f-&gt;getCmsLink();
+                            }
+                        default:
+                            //special handling for 'option' and 'optionMutiple'
+                            $this-&gt;dbdata-&gt;setFormvalueByFormkey(($k + 1), $v['value']);
+                            sf_array_push($used_keys, ($k + 1));
+                            $this-&gt;dbmeta-&gt;setFieldlabelByFieldkey(($k + 1), $v['label']);
+
+                    }
+                }
+
+
+                $this-&gt;dbmeta-&gt;deleteFieldkeysByKeysNotInArray($used_keys);
+
+
+                $this-&gt;dbdata-&gt;save();
+                $this-&gt;dbmeta-&gt;save();
+                //print_r($this-&gt;dbmeta);
+            }
+
+            function process_redirect()
+            {
+                if (!$this-&gt;redirect_after_success) {
+                    return false;
+                }
+                //echo $this-&gt;redirect_after_success_url;exit;
+                sf_header_redirect($this-&gt;redirect_after_success_url);
+            }
+
+        }
+    }
+
+    //
+    // START WORKING
+    //
+
+    //look for reportviewer plugin
+    if (is_file($cfg_cms['cms_path'] . 'plugins/reportviewer/index.php')) {
+        $mvars['reportviewer_included'] = true;
+        include_once $cfg_cms['cms_path'] . 'plugins/reportviewer/includes/class.rv_ArrayIterator.php';
+        include_once $cfg_cms['cms_path'] . 'plugins/reportviewer/includes/class.rv_DataItem.php';
+        include_once $cfg_cms['cms_path'] . 'plugins/reportviewer/includes/class.rv_Reportdesc.php';
+    } else {
+        $mvars['reportviewer_included'] = false;
+    }
+    include_once $cfg_cms['cms_path'] . 'external/misc/class.captcha.php';
+    $frm = new gooseberry_form;
+    //set debug
+    $frm-&gt;set_debug(($mvars['44'] == 'true') ? true : false);
+    //set form styles
+    $frm-&gt;set_styles(array(
+        'submit_error' =&gt; $mvars['15'],
+        'submit' =&gt; $mvars['16'],
+        'label' =&gt; $mvars['17'],
+        'label_error' =&gt; $mvars['18'],
+        'element_error' =&gt; $mvars['53'],
+        'text' =&gt; $mvars['19'],
+        'textarea' =&gt; $mvars['20'],
+        'option' =&gt; $mvars['21'],
+        'checkbox' =&gt; $mvars['22'],
+        'upload' =&gt; $mvars['52'],
+        'password' =&gt; $mvars['31'],
+        'select_mutiple' =&gt; $mvars['32'],
+        'radio' =&gt; $mvars['33'],
+        'captchaimage' =&gt; $mvars['79'],
+        'label_as_formfield' =&gt; $mvars['34'],
+        'placeholder' =&gt; $mvars['35'],
+        'submitbutton' =&gt; $mvars['23']
+    ));
+    //final template to combinate all elements
+    $frm-&gt;set_combination_tpl($mvars['25']);
+    //message block template
+    $frm-&gt;set_message_block_tpl($mvars['38']);
+    //template for the form element seperator
+    $frm-&gt;set_separator_tpl($mvars['42']);
+    //template for elementerror
+    $frm-&gt;set_tpl_elementerror($mvars['43']);
+    //template for one form row
+    $frm-&gt;set_row_tpl(1, $mvars['26']);
+    $frm-&gt;set_row_tpl(2, $mvars['46']);
+    $frm-&gt;set_row_tpl(3, $mvars['66']);
+    $frm-&gt;set_row_tpl(4, $mvars['86']);
+    //template for formstarttag
+    $frm-&gt;set_formstart_tpl($mvars['39']);
+    //template for formendttag
+    $frm-&gt;set_formend_tpl($mvars['40']);
+    //upload restrictions
+    $frm-&gt;set_upload_restrictions(array(
+        'upload_allowed_extensions' =&gt; $mvars['47'],
+        'upload_allowed_filesize' =&gt; $mvars['48']
+    ));
+    //upload
+    $frm-&gt;set_upload_errors(array(
+        'usr_allowed_ext' =&gt; $mvars['49'],
+        'usr_allowed_size' =&gt; $mvars['50'],
+        'usr_internal_error' =&gt; $mvars['51']
+    ));
+
+    //url for form- action- parameter
+    $frm-&gt;set_form_target_url($con_side[(int)$idcatside]['link']);
+    //email receiptor mode - get or textfield are possible
+    $frm-&gt;set_email_receiptor_mode($mvars['41']);
+    //settings for email receiptor mode 'get' idcatside and container
+    $frm-&gt;set_email_receiptor_get_mode_data($_REQUEST['contactidcs'], $_REQUEST['contactcontainer']);
+    //settings for email receiptor mode 'textfield'
+    $frm-&gt;set_email_receiptor_textfield_mode_data($mvars['12']);
+    //emailadress sender
+    $frm-&gt;set_email_sender((is_numeric($mvars['27'])) ? $_REQUEST['go_frm' . $mvars['27']] : $mvars['12']);
+    //email subject
+    $frm-&gt;set_email_subject($mvars['11']);
+    //success message
+    $frm-&gt;set_form_message_success($mvars['14']);
+    //error message
+    $frm-&gt;set_form_message_error($mvars['13']);
+    //submitbutton text
+    $frm-&gt;set_submitbutton_text($mvars['24']);
+    //mutiple value separator
+    $frm-&gt;set_mutiple_value_separator($mvars['36']);
+    //key/ value value separator
+    $frm-&gt;set_key_value_separator($mvars['37']);
+    //upload dir
+    $frm-&gt;set_upload_dir($cfg_cms['cms_path'] . 'upload/in/');
+    //fallback {textfromdynamic}
+    $frm-&gt;set_fallback_textfromdynamic($mvars['54']);
+    //fallback {textareafromdynamic}
+    $frm-&gt;set_fallback_textareafromdynamic($mvars['55']);
+    //charset
+    $frm-&gt;set_charset($lang_charset);
+    //tple email
+    $frm-&gt;set_tpl_email($mvars['56']);
+    //send email
+    $frm-&gt;set_send_mail($mvars['65'] == 'true');
+    //en/ disable logging
+    $frm-&gt;set_logging_active($mvars['63'] == 'true');
+    //logfile
+    $frm-&gt;set_logging_file($mvars['64']);
+    //cc and bcc
+    $frm-&gt;set_email_receiptor_cc($mvars['57']);
+    $frm-&gt;set_email_receiptor_bcc($mvars['58']);
+    //confirmmail vals: boolean sendiit|subject|body
+    $frm-&gt;set_confirmmail_vars(($mvars['68'] == 'true'), $mvars['69'], $mvars['70']);
+    //addon object string
+    $frm-&gt;set_addon($mvars['72']);
+    //captcha vals
+    $frm-&gt;set_captcha_vals($mvars['73'], $mvars['74'], $mvars['75'], $mvars['76'], $mvars['77'], $mvars['78']);
+    //second email
+    $frm-&gt;set_second_email_sender($mvars['80']);
+    $frm-&gt;set_second_email_recipient($mvars['81']);
+    //requirenotice
+    $frm-&gt;set_tpl_requirenotice($mvars['82']);
+    //labeltext
+    $frm-&gt;set_tpl_labeltext($mvars['83']);
+
+    $frm_control = new gooseberry_formcontroller;
+    $frm_control-&gt;set_formobject($frm);
+    $frm_control-&gt;set_db_mode_active($mvars['59'] == 'true' &amp;&amp; $mvars['reportviewer_included']);
+    $frm_control-&gt;set_db_mode_default_datagroup($mvars['60']);
+    $frm_control-&gt;set_db_mode_items_are_online(($mvars['71'] == 'online'));
+    $frm_control-&gt;set_mutiple_value_separator($mvars['36']);
+    $frm_control-&gt;set_save_in_filemanager($mvars['61']);
+    $frm_control-&gt;set_filemanager_iddirectory($mvars['62']);
+    $frm_control-&gt;set_redirect_after_success((trim($mvars['67']) != ''), $mvars['67']);
+    $frm_control-&gt;start();
+    //print_r($mvars);
+    echo $frm_control-&gt;get_content();
+
+    unset($frm, $frm_control, $inner_form, $outer_form, $to_replace, $replacer, $frm_vals, $mvars, $a);
+
+
+}
+
+unset($is_dev);
+&lt;/CMSPHP&gt;</output>
+   <config></config>
+   <repository_id>mod:c7ec67c74104a45bde479c5d666bdc75:f5e7fdbe</repository_id>
+   <install_sql></install_sql>
+   <uninstall_sql></uninstall_sql>
+   <update_sql></update_sql>
+</modul>

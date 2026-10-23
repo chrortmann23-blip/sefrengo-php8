@@ -1,0 +1,11 @@
+/* Sefrengo editor integration */
+.sf-editor-cell { width: 100%; }
+.sf-editor-cell .ck.ck-editor { max-width: 980px; }
+.sf-editor-cell .ck-editor__editable_inline { min-height: 300px; }
+/* the backend stylesheet must not leak into the editable area */
+.ck-content { font: 13px/1.5 Arial, Helvetica, sans-serif; color: #000; background: #fff; }
+.ck-content h1, .ck-content h2, .ck-content h3, .ck-content h4 { font-weight: bold; margin: .8em 0 .4em; }
+.ck-content p { margin: 0 0 .8em; }
+.ck-content ul, .ck-content ol { margin: 0 0 .8em 1.6em; padding: 0; }
+.ck-content table { border-collapse: collapse; }
+.CodeMirror { border: 1px solid #999; font: 13px/1.4 Consolas, "Courier New", monospace; }

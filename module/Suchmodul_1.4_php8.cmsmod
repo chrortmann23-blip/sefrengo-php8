@@ -1,0 +1,903 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<modul version='0.4' date='1792759066'>
+   <name>Suchmodul</name>
+   <cat>Interaktion</cat>
+   <version>1.4</version>
+   <author>1</author>
+   <created>1089569940</created>
+   <lastmodified>1125877173</lastmodified>
+   <deletable>1</deletable>
+   <description>Umfangreiche Volltextsuche. XHTML- konform</description>
+   <input>&lt;?php
+
+//configmode
+$mip_form['99']['desc'] = 'Konfigurationsmodus';
+$mip_form['99']['cat'] = 'option';
+$mip_form['99']['size'] = '1';
+$mip_form['99']['option_desc'][] = 'Normal';
+$mip_form['99']['option_val'][] =  '';
+$mip_form['99']['option_desc'][] = 'Erweitert';
+$mip_form['99']['option_val'][] =  'advanced';
+$mip_form['99']['option_desc'][] = 'Ausgeblendet';
+$mip_form['99']['option_val'][] =  'hidden';
+$mip_form['99']['cms_var'] = 'MOD_VAR[99]';
+$mip_form['99']['cms_val'] = $cms_mod['value']['99'];
+$mip_form['99']['flag'] = 'reload';
+mip_formsp($mip_form['99']);//configmode
+$mip_form['hide_in_standard_mode'] = array(26,22,23,24,25,37,30,31,32,33,34,35,36,38);
+
+//hidden config
+if($cms_mod['value']['99'] == 'hidden'){
+  foreach($cms_mod['value'] AS $ke=&gt;$va){
+    if($ke != '99'){
+    ?&gt;
+      &lt;input name=&quot;MOD_VAR[&lt;?php echo $ke; ?&gt;]&quot; type=&quot;hidden&quot; value=&quot;&lt;?php echo htmlentities($va, ENT_COMPAT, 'UTF-8');?&gt;&quot;&gt;
+    &lt;?php
+     }
+  }
+}
+//simple, advanced and all config (not hidden config)
+else if($cms_mod['value']['99'] == '' || $cms_mod['value']['99'] == 'advanced'){
+
+
+
+// Schriftart Link/Titel
+$mip_form['0']['desc'] = $mod_lang['gen_font'].&quot; Link/Titel&quot;;
+$mip_form['0']['cat'] = 'app_css';
+$mip_form['0']['output_cat'] = 'option';
+$mip_form['0']['cms_var'] = 'MOD_VAR[0]';
+$mip_form['0']['cms_val'] = $cms_mod['value']['0'];
+$mip_form['0']['flag'] = 'class_only';
+
+// Schriftart Beschreibung
+$mip_form['1']['desc'] = $mod_lang['gen_font'].&quot; Beschreibung&quot;;
+$mip_form['1']['cat'] = 'app_css';
+$mip_form['1']['output_cat'] = 'option';
+$mip_form['1']['cms_var'] = 'MOD_VAR[1]';
+$mip_form['1']['cms_val'] = $cms_mod['value']['1'];
+$mip_form['1']['flag'] = 'class_only';
+
+// Schriftart Feldbezeichner
+$mip_form['2']['desc'] = $mod_lang['gen_font'].&quot; Feldbezeichner&quot;;
+$mip_form['2']['cat'] = 'app_css';
+$mip_form['2']['output_cat'] = 'option';
+$mip_form['2']['cms_var'] = 'MOD_VAR[2]';
+$mip_form['2']['cms_val'] = $cms_mod['value']['2'];
+$mip_form['2']['flag'] = 'class_only';
+
+// Schriftart Eingabefelder
+$mip_form['3']['desc'] = $mod_lang['gen_font'].&quot; Eingabefelder&quot;;
+$mip_form['3']['cat'] = 'app_css';
+$mip_form['3']['output_cat'] = 'option';
+$mip_form['3']['cms_var'] = 'MOD_VAR[3]';
+$mip_form['3']['cms_val'] = $cms_mod['value']['3'];
+$mip_form['3']['flag'] = 'class_only';
+
+// Schriftart Fehlermeldung
+$mip_form['4']['desc'] = $mod_lang['gen_font'].&quot; Fehlermeldung&quot;;
+$mip_form['4']['cat'] = 'app_css';
+$mip_form['4']['output_cat'] = 'option';
+$mip_form['4']['cms_var'] = 'MOD_VAR[4]';
+$mip_form['4']['cms_val'] = $cms_mod['value']['4'];
+$mip_form['4']['flag'] = 'class_only';
+
+// Schriftart Navigation
+$mip_form['5']['desc'] = $mod_lang['gen_font'].&quot; Navigation&quot;;
+$mip_form['5']['cat'] = 'app_css';
+$mip_form['5']['output_cat'] = 'option';
+$mip_form['5']['cms_var'] = 'MOD_VAR[5]';
+$mip_form['5']['cms_val'] = $cms_mod['value']['5'];
+$mip_form['5']['flag'] = 'class_only';
+
+// ----------------------------------------------------------------------------
+
+// Formulartemplate
+$mip_form['6']['cat'] = 'option';
+$mip_form['6']['type'] = '';
+$mip_form['6']['desc'] = 'Suchformular: &lt;small&gt;{modus [titel]}&lt;/small&gt;';
+$mip_form['6']['cms_var'] = 'MOD_VAR[6]';
+$mip_form['6']['cms_val'] = $cms_mod['value']['6'];
+$mip_form['6']['cms_val_default'] = '1';
+$mip_form['6']['option_desc']['0'] = 'kein Formular';
+$mip_form['6']['option_val']['0'] = 'none';
+$mip_form['6']['option_desc']['1'] = 'Template 1';
+$mip_form['6']['option_val']['1'] = '1';
+$mip_form['6']['option_desc']['2'] = 'Template 2';
+$mip_form['6']['option_val']['2'] = '2';
+
+// Suchen in
+$mip_form['7']['cat'] = 'chk';
+$mip_form['7']['type'] = '';
+$mip_form['7']['desc'] = 'Felder durchsuchen: &lt;small&gt;{where}&lt;/small&gt;';
+$mip_form['7']['option_desc']['0'] = 'Titel';
+$mip_form['7']['option_var']['0'] = 'MOD_VAR[70]';
+$mip_form['7']['option_val']['0'] = $cms_mod['value']['70'];
+$mip_form['7']['option_val_select']['0'] = 'B.title';
+$mip_form['7']['option_desc']['1'] = 'Notizen';
+$mip_form['7']['option_var']['1'] = 'MOD_VAR[71]';
+$mip_form['7']['option_val']['1'] = $cms_mod['value']['71'];
+$mip_form['7']['option_val_select']['1'] = 'B.summary';
+$mip_form['7']['option_desc']['2'] = 'Beschreibung';
+$mip_form['7']['option_var']['2'] = 'MOD_VAR[72]';
+$mip_form['7']['option_val']['2'] = $cms_mod['value']['72'];
+$mip_form['7']['option_val_select']['2'] = 'B.meta_description';
+$mip_form['7']['option_desc']['3'] = 'Keywords';
+$mip_form['7']['option_var']['3'] = 'MOD_VAR[73]';
+$mip_form['7']['option_val']['3'] = $cms_mod['value']['73'];
+$mip_form['7']['option_val_select']['3'] = 'B.meta_keywords';
+$mip_form['7']['option_desc']['4'] = 'Textbody';
+$mip_form['7']['option_var']['4'] = 'MOD_VAR[74]';
+$mip_form['7']['option_val']['4'] = $cms_mod['value']['74'];
+$mip_form['7']['option_val_select']['4'] = 'A.value';
+
+// Ausgabe von
+$mip_form['8']['cat'] = 'option';
+$mip_form['8']['type'] = '';
+$mip_form['8']['desc'] = 'Im Ergebnis mit anzeigen: &lt;small&gt;{what}&lt;/small&gt;';
+$mip_form['8']['cms_var'] = 'MOD_VAR[8]';
+$mip_form['8']['cms_val'] = $cms_mod['value']['8'];
+$mip_form['8']['cms_val_default'] = 'body';
+$mip_form['8']['option_desc']['0'] = 'keine';
+$mip_form['8']['option_val']['0'] = 'none';
+$mip_form['8']['option_desc']['1'] = 'Notizen';
+$mip_form['8']['option_val']['1'] = 'summary';
+$mip_form['8']['option_desc']['2'] = 'Beschreibung';
+$mip_form['8']['option_val']['2'] = 'meta_description';
+$mip_form['8']['option_desc']['3'] = 'Textausschnitt';
+$mip_form['8']['option_val']['3'] = 'body';
+
+// Suchvariante
+$mip_form['9']['cat'] = 'option';
+$mip_form['9']['type'] = '';
+$mip_form['9']['desc'] = 'logische Verbindung: &lt;small&gt;{how}&lt;/small&gt;';
+$mip_form['9']['cms_var'] = 'MOD_VAR[9]';
+$mip_form['9']['cms_val'] = $cms_mod['value']['9'];
+$mip_form['9']['cms_val_default'] = 'AND';
+$mip_form['9']['option_desc']['0'] = 'UND';
+$mip_form['9']['option_val']['0'] = 'AND';
+$mip_form['9']['option_desc']['1'] = 'ODER';
+$mip_form['9']['option_val']['1'] = 'OR';
+$mip_form['9']['option_desc']['2'] = 'exakt';
+$mip_form['9']['option_val']['2'] = 'QUOT';
+
+// Sortieren nach
+$mip_form['10']['cat'] = 'option';
+$mip_form['10']['type'] = '';
+$mip_form['10']['desc'] = 'Sortieren nach: &lt;small&gt;{sort}&lt;/small&gt;';
+$mip_form['10']['cms_var'] = 'MOD_VAR[10]';
+$mip_form['10']['cms_val'] = $cms_mod['value']['10'];
+$mip_form['10']['cms_val_default'] = 'C.idcatside';
+$mip_form['10']['option_desc']['0'] = 'Index';
+$mip_form['10']['option_val']['0'] = 'C.idcatside';
+$mip_form['10']['option_desc']['1'] = 'Titel';
+$mip_form['10']['option_val']['1'] = 'B.title';
+$mip_form['10']['option_desc']['2'] = 'Notizen';
+$mip_form['10']['option_val']['2'] = 'B.summary';
+$mip_form['10']['option_desc']['3'] = 'Beschreibung';
+$mip_form['10']['option_val']['3'] = 'B.meta_description';
+$mip_form['10']['option_desc']['4'] = 'Keywords';
+$mip_form['10']['option_val']['4'] = 'B.meta_keywords';
+
+// Ergebnisse pro Seite
+$mip_form['11']['cat'] = 'txt';
+$mip_form['11']['type'] = '';
+$mip_form['11']['desc'] = 'Ergebnisse pro Seite: &lt;small&gt;(0 = alle)&lt;/small&gt;';
+$mip_form['11']['cms_var'] = 'MOD_VAR[11]';
+$mip_form['11']['cms_val'] = $cms_mod['value']['11'];
+$mip_form['11']['cms_val_default'] = '5';
+
+// Ausgabe-Ziel
+$mip_form['12']['cat'] = 'txt';
+$mip_form['12']['type'] = '';
+$mip_form['12']['desc'] = 'Ausgabeziel: &lt;small&gt;(idcatside angeben [0=hier])&lt;/small&gt;';
+$mip_form['12']['cms_var'] = 'MOD_VAR[12]';
+$mip_form['12']['cms_val'] = $cms_mod['value']['12'];
+$mip_form['12']['cms_val_default'] = '0';
+
+// ----------------------------------------------------------------------------
+
+// Suchformular 1
+$mip_form['13']['cat'] = 'txtarea';
+$mip_form['13']['rows'] = '3';
+$mip_form['13']['type'] = 'long';
+$mip_form['13']['desc'] = 'Suchformular Template 1:&lt;br&gt;&lt;small&gt;{search},{submit},{where},{what},{how},{sort},{modus [titel]}&lt;/small&gt;';
+$mip_form['13']['cms_var'] = 'MOD_VAR[13]';
+$mip_form['13']['cms_val'] = $cms_mod['value']['13'];
+$mip_form['13']['cms_val_default'] = '{search} {submit} {modus [Erweitert]}';
+
+// Suchformular 2
+$mip_form['14']['cat'] = 'txtarea';
+$mip_form['14']['rows'] = '3';
+$mip_form['14']['type'] = 'long';
+$mip_form['14']['desc'] = 'Suchformular Template 2:&lt;br&gt;&lt;small&gt;{search},{submit},{where},{what},{how},{sort},{modus
+ [titel]}&lt;/small&gt;';
+$mip_form['14']['cms_var'] = 'MOD_VAR[14]';
+$mip_form['14']['cms_val'] = $cms_mod['value']['14'];
+$mip_form['14']['cms_val_default'] = '{search} {submit} {modus [Einfach]}&lt;br /&gt;
+{where}&lt;br /&gt;zusätzlich anzeigen:&lt;br /&gt;
+{what}&lt;br /&gt;Suchmethode:&lt;br /&gt;
+{how}&lt;br /&gt;Sortierung:&lt;br /&gt;
+{sort}';
+
+// Liste pre
+$mip_form['15']['cat'] = 'txtarea';
+$mip_form['15']['rows'] = '1';
+$mip_form['15']['type'] = 'long';
+$mip_form['15']['desc'] = 'vor der Ergebnisliste&lt;br&gt;&lt;small&gt;{count}&lt;/small&gt;';
+$mip_form['15']['cms_var'] = 'MOD_VAR[15]';
+$mip_form['15']['cms_val'] = $cms_mod['value']['15'];
+$mip_form['15']['cms_val_default'] = '&lt;p&gt;Insgesamt &lt;strong&gt;{count}&lt;/strong&gt; Seiten gefunden&lt;/p&gt;';
+
+// Liste
+$mip_form['16']['cat'] = 'txtarea';
+$mip_form['16']['rows'] = '1';
+$mip_form['16']['type'] = 'long';
+$mip_form['16']['desc'] = 'Ergebnis:&lt;br&gt;&lt;small&gt;{nr},{link},{descr}&lt;/small&gt;';
+$mip_form['16']['cms_var'] = 'MOD_VAR[16]';
+$mip_form['16']['cms_val'] = $cms_mod['value']['16'];
+$mip_form['16']['cms_val_default'] = '{nr}. &lt;strong&gt;{link}&lt;/strong&gt;{descr}';
+
+// Liste post
+$mip_form['17']['cat'] = 'txtarea';
+$mip_form['17']['rows'] = '1';
+$mip_form['17']['type'] = 'long';
+$mip_form['17']['desc'] = 'nach der Ergebnisliste';
+$mip_form['17']['cms_var'] = 'MOD_VAR[17]';
+$mip_form['17']['cms_val'] = $cms_mod['value']['17'];
+$mip_form['17']['cms_val_default'] = '&lt;hr  /&gt;';
+
+
+// Navigation
+$mip_form['18']['cat'] = 'txtarea';
+$mip_form['18']['rows'] = '3';
+$mip_form['18']['type'] = 'long';
+$mip_form['18']['desc'] = 'Navigation:&lt;br&gt;&lt;small&gt;{nav}&lt;/small&gt;';
+$mip_form['18']['cms_var'] = 'MOD_VAR[18]';
+$mip_form['18']['cms_val'] = $cms_mod['value']['18'];
+$mip_form['18']['cms_val_default'] = '{nav}';
+
+// Seite nicht gefunden
+$mip_form['19']['cat'] = 'txt';
+$mip_form['19']['type'] = 'long';
+$mip_form['19']['desc'] = 'Meldung keine Suchergebnisse:';
+$mip_form['19']['cms_var'] = 'MOD_VAR[19]';
+$mip_form['19']['cms_val'] = $cms_mod['value']['19'];
+$mip_form['19']['cms_val_default'] = 'Es wurden keine Seiten gefunden die Ihrer Anfrage entsprechen';
+
+
+// Suche nur in dieser Sprache
+$mip_form['20']['cat'] = 'chk';
+$mip_form['20']['type'] = '';
+$mip_form['20']['desc'] = 'Suche auf alle Sprachen ausdehnen';
+$mip_form['20']['option_var']['0'] = 'MOD_VAR[20]';
+$mip_form['20']['option_val']['0'] = $cms_mod['value']['20'];
+$mip_form['20']['option_desc']['0'] = 'ja';
+$mip_form['20']['option_val_select']['0'] = 'true';
+
+
+// Absenden Button
+$mip_form['21']['cat'] = 'txt';
+$mip_form['21']['type'] = 'long';
+$mip_form['21']['desc'] = 'Absende Button (Suche):';
+$mip_form['21']['cms_var'] = 'MOD_VAR[21]';
+$mip_form['21']['cms_val'] = $cms_mod['value']['21'];
+$mip_form['21']['cms_val_default'] = 'Suche';
+
+
+// ----------------------------------------------------------------------------
+
+$mip_form['26']['cat'] = 'desc';
+$mip_form['26']['type'] = '';
+$mip_form['26']['desc'] = &quot;&lt;hr /&gt;&lt;strong&gt;Ein- / Ausschließen:&lt;/strong&gt;&lt;br /&gt;&quot;;
+$mip_form['26']['tab'] = '0';
+
+// Optionen
+$mip_form['22']['cat'] = 'option';
+$mip_form['22']['type'] = '';
+$mip_form['22']['desc'] = 'Seiten und Ordner aus der Suche auszuschließen';
+$mip_form['22']['cms_var'] = 'MOD_VAR[22]';
+$mip_form['22']['cms_val'] = $cms_mod['value']['22'];
+$mip_form['22']['cms_val_default'] = 'all';
+$mip_form['22']['option_desc']['0'] = 'Alle erlauben, einige verbieten';
+$mip_form['22']['option_val']['0'] = 'all';
+$mip_form['22']['option_desc']['1'] = 'Alle verbieten, einige erlauben';
+$mip_form['22']['option_val']['1'] = 'none';
+
+// Erlaubte/ Verbotene Kategorien
+$mip_form['23']['desc'] = 'Erlaubte / Verbotene Kategorien &lt;br&gt;Die Auswahl Root entspricht keiner Auswahl';
+$mip_form['23']['cat'] = 'app_cat';
+$mip_form['23']['output_cat'] = 'option';
+$mip_form['23']['without_this_cat'] = true;
+$mip_form['23']['cms_var'] = 'MOD_VAR[23]';
+$mip_form['23']['cms_val'] = $cms_mod['value']['23'];
+$mip_form['23']['cms_val_default'] = 'root';
+$mip_form['23']['flag'] = 'multiple';
+$mip_form['23']['size'] = '5';
+
+// Erlaubte/ Verbotene Seiten
+$mip_form['24']['cat'] = 'txt';
+$mip_form['24']['type'] = '';
+$mip_form['24']['desc'] = 'Erlaubte/ Verbotene Seiten &lt;small&gt;kommagetrennt anhand idcatside eintragen&lt;/small&gt;';
+$mip_form['24']['cms_var'] = 'MOD_VAR[24]';
+$mip_form['24']['cms_val'] = $cms_mod['value']['24'];
+$mip_form['24']['cms_val_default'] = '0';
+
+//Featureauswahl
+$mip_form['25']['desc'] = 'Eingrenzung der Suche auf bestimmte Contenttypen';
+$mip_form['25']['cat'] = 'option';
+$mip_form['25']['flag'] = 'multiple';
+$mip_form['25']['size'] = '7';
+$mip_form['25']['cms_var'] = 'MOD_VAR[25]';
+$mip_form['25']['cms_val'] = $cms_mod['value']['25'];
+$mip_form['25']['cms_val_default'] = 'true';
+$mip_form['25']['option_desc'][] = 'Alle Felder durchsuchen';
+$mip_form['25']['option_val'][] =  'true';
+$mip_form['25']['option_desc'][] = 'text';
+$mip_form['25']['option_val'][] =  '1';
+$mip_form['25']['option_desc'][] = 'textarea';
+$mip_form['25']['option_val'][] =  '3';
+$mip_form['25']['option_desc'][] = 'wysiwyg';
+$mip_form['25']['option_val'][] =  '2';
+$mip_form['25']['option_desc'][] = 'wysiwyg2';
+$mip_form['25']['option_val'][] =  '13';
+$mip_form['25']['option_desc'][] = 'link';
+$mip_form['25']['option_val'][] =  '7';
+$mip_form['25']['option_desc'][] = 'file';
+$mip_form['25']['option_val'][] =  '11';
+$mip_form['25']['option_desc'][] = 'sourcecode';
+$mip_form['25']['option_val'][] =  '9';
+
+// ----------------------------------------------------------------------------
+
+$mip_form['37']['cat'] = 'desc';
+$mip_form['37']['type'] = '';
+$mip_form['37']['desc'] = &quot;&lt;hr /&gt;&lt;strong&gt;Navigation&lt;/strong&gt;&quot;;
+$mip_form['37']['tab'] = '0';
+
+// vor/zurück-links anzeigen
+$mip_form['30']['desc'] = 'Vor/Zur&amp;uuml;ck-Links anzeigen';
+$mip_form['30']['cat'] = 'option';
+$mip_form['30']['cms_var'] = 'MOD_VAR[30]';
+$mip_form['30']['cms_val'] = $cms_mod['value']['30'];
+$mip_form['30']['option_desc']['0'] = 'Ja';
+$mip_form['30']['option_desc']['1'] = 'Nein';
+$mip_form['30']['option_val']['0'] = 'true';
+$mip_form['30']['option_val']['1'] = 'false';
+$mip_form['30']['cms_val_default'] = 'true';
+
+//
+
+// vor/zurück-linktexte definieren
+if ($cms_mod['value']['30'] == 'true') {
+        // zurück-link
+        $mip_form['33']['desc'] = &quot;Zurück-Linktext&quot;;
+        $mip_form['33']['cat'] = 'txt';
+        $mip_form['33']['cms_var'] = 'MOD_VAR[33]';
+        $mip_form['33']['cms_val'] = $cms_mod['value']['33'];
+        $mip_form['33']['cms_val_default'] = '&amp;lt;&amp;lt;';
+
+        // weiter-link
+        $mip_form['34']['desc'] = &quot;Weiter-Linktext&quot;;
+        $mip_form['34']['cat'] = 'txt';
+        $mip_form['34']['cms_var'] = 'MOD_VAR[34]';
+        $mip_form['34']['cms_val'] = $cms_mod['value']['34'];
+        $mip_form['34']['cms_val_default'] = '&amp;gt;&amp;gt;';
+} else {
+        // zurück-link
+        $mip_form['33']['cat'] = 'hidden';
+        $mip_form['33']['cms_var'] = 'MOD_VAR[33]';
+        $mip_form['33']['cms_val'] = $cms_mod['value']['33'];
+        $mip_form['33']['cms_val_default'] = '&amp;lt;&amp;lt;';
+
+        // weiter-link
+        $mip_form['34']['cat'] = 'hidden';
+        $mip_form['34']['cms_var'] = 'MOD_VAR[34]';
+        $mip_form['34']['cms_val'] = $cms_mod['value']['34'];
+        $mip_form['34']['cms_val_default'] = '&amp;gt;&amp;gt;';
+}
+
+// anzahl der angezeigten Seitenlinks
+$mip_form['31']['desc'] = &quot;Navigation: &lt;small&gt;(0 = Floating aus, 1-n = Max. angezeigter Links)&lt;/small&gt;\n&quot;;
+$mip_form['31']['cat'] = 'txt';
+$mip_form['31']['cms_var'] = 'MOD_VAR[31]';
+$mip_form['31']['cms_val'] = $cms_mod['value']['31'];
+$mip_form['31']['cms_val_default'] = '0';
+
+// separatoren
+$mip_form['32']['desc'] = &quot;Separator zwischen den Seitenlinks &lt;small&gt;(leer = default-separator)&lt;/small&gt;&quot;;
+$mip_form['32']['cat'] = 'txt';
+$mip_form['32']['cms_var'] = 'MOD_VAR[32]';
+$mip_form['32']['cms_val'] = $cms_mod['value']['32'];
+$mip_form['32']['cms_val_default'] = '';
+
+// Aktuelle Galerieseite verlinken?
+$mip_form['38']['desc'] = 'Soll die aktuelle Seite in der Navigation verlinkt werden?';
+$mip_form['38']['cat'] = 'option';
+$mip_form['38']['cms_var'] = 'MOD_VAR[38]';
+$mip_form['38']['cms_val'] = $cms_mod['value']['38'];
+$mip_form['38']['option_desc']['0'] = 'Ja';
+$mip_form['38']['option_desc']['1'] = 'Nein';
+$mip_form['38']['option_val']['0'] = 'true';
+$mip_form['38']['option_val']['1'] = 'false';
+$mip_form['38']['cms_val_default'] = 'true';
+
+//
+//Schriftart 2
+$mip_form['35']['desc'] = $mod_lang['gen_font'].&quot; {font2} (Seitenlink in der Navigation+weiter (&gt;&gt;) in Navi)&quot;;
+$mip_form['35']['cat'] = 'app_css';
+$mip_form['35']['output_cat'] = 'option';
+$mip_form['35']['cms_var'] = 'MOD_VAR[35]';
+$mip_form['35']['cms_val'] = $cms_mod['value']['35'];
+
+//Schriftart 3
+$mip_form['36']['desc'] = $mod_lang['gen_font'].&quot; {font3} (Aktueller Seitenlink in der Navigation)&lt;BR&gt;&lt;BR&gt;\n&quot;;
+$mip_form['36']['cat'] = 'app_css';
+$mip_form['36']['output_cat'] = 'option';
+$mip_form['36']['cms_var'] = 'MOD_VAR[36]';
+$mip_form['36']['cms_val'] = $cms_mod['value']['36'];
+
+
+// Liste pre
+$mip_form['40']['cat'] = 'txtarea';
+$mip_form['40']['rows'] = '1';
+$mip_form['40']['type'] = 'long';
+$mip_form['40']['desc'] = 'Einleitung der Suche';
+$mip_form['40']['cms_var'] = 'MOD_VAR[40]';
+$mip_form['40']['cms_val'] = $cms_mod['value']['40'];
+$mip_form['40']['cms_val_default'] = '';
+
+// Liste post
+$mip_form['41']['cat'] = 'txtarea';
+$mip_form['41']['rows'] = '1';
+$mip_form['41']['type'] = 'long';
+$mip_form['41']['desc'] = 'Ende der Suche';
+$mip_form['41']['cms_var'] = 'MOD_VAR[41]';
+$mip_form['41']['cms_val'] = $cms_mod['value']['41'];
+$mip_form['41']['cms_val_default'] = '';
+
+// ----------------------------------------------------------------------------
+
+$mip_form['28']['cat'] = 'desc';
+$mip_form['28']['type'] = '';
+$mip_form['28']['desc'] = &quot;&lt;B&gt;&lt;U&gt;CSS-Einstellungen&lt;/U&gt;&lt;/B&gt;&lt;BR&gt;&quot;;
+$mip_form['28']['tab'] = '0';
+
+$mip_form['29']['cat'] = 'desc';
+$mip_form['29']['type'] = '';
+$mip_form['29']['desc'] = &quot;&lt;hr /&gt;&lt;strong&gt;Voreinstellungen&lt;/strong&gt;&lt;br /&gt;&quot;;
+$mip_form['29']['tab'] = '0';
+
+$mip_form['27']['cat'] = 'desc';
+$mip_form['27']['type'] = '';
+$mip_form['27']['desc'] = &quot;&lt;hr /&gt;&lt;strong&gt;Templates:&lt;/strong&gt;&lt;br /&gt;&quot;;
+$mip_form['27']['tab'] = '0';
+
+
+// Ausgabe
+
+//if simple mode
+if($cms_mod['value']['99'] == ''){
+   foreach ($mip_form['hide_in_standard_mode']  AS $ke=&gt;$va){
+     $mip_form[$va]['cat'] = 'hidden';
+   }
+ }
+
+
+mip_formsp($mip_form['28']);	// Beschreibung
+mip_formsp($mip_form['0']);
+mip_formsp($mip_form['1']);
+mip_formsp($mip_form['2']);
+mip_formsp($mip_form['3']);
+mip_formsp($mip_form['4']);
+mip_formsp($mip_form['5']);
+
+mip_formsp($mip_form['29']);	// Beschreibung
+mip_formsp($mip_form['6']);
+mip_formsp($mip_form['7']);
+mip_formsp($mip_form['8']);
+mip_formsp($mip_form['9']);
+mip_formsp($mip_form['10']);
+mip_formsp($mip_form['11']);
+mip_formsp($mip_form['12']);
+mip_formsp($mip_form['20']);
+mip_formsp($mip_form['21']);
+
+mip_formsp($mip_form['27']);	// Beschreibung
+mip_formsp($mip_form['13']);
+echo &quot;&lt;br&gt;&quot;;
+mip_formsp($mip_form['14']);
+echo &quot;&lt;br&gt;&quot;;
+mip_formsp($mip_form['15']);
+mip_formsp($mip_form['16']);
+mip_formsp($mip_form['17']);
+echo &quot;&lt;br&gt;&quot;;
+mip_formsp($mip_form['18']);
+mip_formsp($mip_form['19']);
+
+mip_formsp($mip_form['26']);	// Beschreibung
+mip_formsp($mip_form['22']);
+mip_formsp($mip_form['23']);
+mip_formsp($mip_form['24']);
+mip_formsp($mip_form['25']);
+
+mip_formsp($mip_form['37']);	// Beschreibung
+mip_formsp($mip_form['30']);
+mip_formsp($mip_form['33']);
+mip_formsp($mip_form['34']);
+mip_formsp($mip_form['31']);
+mip_formsp($mip_form['32']);
+mip_formsp($mip_form['38']);
+mip_formsp($mip_form['35']);
+mip_formsp($mip_form['36']);
+mip_formsp($mip_form['40']);
+mip_formsp($mip_form['41']);
+
+
+// ----------------------------------------------------------------------------
+}
+unset($mip_form);
+?&gt;</input>
+   <output>&lt;CMSPHP&gt;
+include_once($cms_path.'inc/fnc.search.php');
+
+//  zur Fehlersuche
+//if(isset($test))
+//{
+//    $mod['test'] = &quot;true&quot;;
+//}
+
+##########################################################################################################################
+
+echo &quot;MOD_VALUE[40]&quot;;
+
+if ( !function_exists('suchmodul_createPageLinks') ) {
+function suchmodul_createPageLinks($isFloating, $separator, $showNavLinks,$id) {
+        global $mod, $cfg_client, $idcatside, $cms_mod;
+        if ($isFloating &gt; 0) {
+                $floatdiff = ceil($isFloating / 2);
+
+                $start = $id - $floatdiff;
+                if ($start &gt; $mod[&quot;anz&quot;]) $start = $mod[&quot;anz&quot;] - $floatdiff;
+                if ($start &lt; 1) $start = 1;
+
+                $stop = $id + $floatdiff;
+                if ($stop &gt; $mod[&quot;anz&quot;]) $stop = $mod[&quot;anz&quot;];
+        } else {
+                $start = 1;
+                $stop = $mod[&quot;anz&quot;];
+        }
+
+        if ($id &gt; 1 &amp;&amp; $showNavLinks == 'true') {
+                $previd = $id - 1;
+                $returnvalue .= &quot;\n&lt;a href=\&quot;&quot;.$mod['idcatlink'].&quot;&amp;amp;page=&quot;.$previd.$mod['query'].&quot;\&quot;&gt;MOD_VALUE[33]&lt;/a&gt;\n&quot;;
+        }
+
+        for ( $mod[&quot;pagecounter&quot;] = $start; $mod[&quot;pagecounter&quot;] &lt;= $stop; $mod[&quot;pagecounter&quot;]++ )
+        {
+                if ($mod[&quot;pagecounter&quot;] &gt; $start) $returnvalue .= $separator;
+                if ($mod[&quot;pagecounter&quot;] == $id) {
+                       if (&quot;MOD_VALUE[38]&quot; == 'false'){
+                        $returnvalue .= &quot;&lt;span class=\&quot;MOD_VALUE[36]\&quot; &gt;[&quot;.$mod[&quot;pagecounter&quot;].&quot;]&lt;/span&gt;&quot;;
+                        } else {
+                        $returnvalue .= &quot;\n&lt;a class=\&quot;MOD_VALUE[36]\&quot; href=\&quot;&quot;.$mod['idcatlink'].&quot;&amp;amp;page=&quot;.$mod[&quot;pagecounter&quot;].$mod['query'].&quot;\&quot;&gt;[&quot;.$mod[&quot;pagecounter&quot;].&quot;]&lt;/a&gt;&quot;;
+                        }
+                } else {
+                        $returnvalue .= &quot;\n&lt;a class=\&quot;MOD_VALUE[35]\&quot; href=\&quot;&quot;.$mod['idcatlink'].&quot;&amp;amp;page=&quot;.$mod[&quot;pagecounter&quot;].$mod['query'].&quot;\&quot;&gt;&quot;.$mod[&quot;pagecounter&quot;].&quot;&lt;/a&gt;&quot;;
+                }
+        }
+
+        if ($id &lt; $mod[&quot;anz&quot;] &amp;&amp; $showNavLinks == 'true') {
+                $nextid = $id + 1;
+                $returnvalue .= &quot;\n&lt;a class=\&quot;MOD_VALUE[35]\&quot; href=\&quot;&quot;.$mod['idcatlink'].&quot;&amp;amp;page=&quot;.$nextid.$mod['query'].&quot;\&quot;&gt;MOD_VALUE[34]&lt;/a&gt;&quot;;
+        }
+        return $returnvalue;
+}  // end function
+
+} // end if exist
+
+
+
+###########################
+
+
+//catch global vals
+$sf_wr =&amp; $GLOBALS['sf_factory']-&gt;getObject('HTTP', 'WebRequest');
+$suche = $sf_wr-&gt;getVal('suche'); 
+
+
+$mod['hidden'] = &quot;&quot;;
+if(&quot;MOD_VALUE[6]&quot; != &quot;none&quot;){
+        // Suchformular aufbauen
+        if(!$modus)
+        {
+                $modus = &quot;MOD_VALUE[6]&quot;;
+                $mod['newmodus'] = false;
+        } else {
+                $mod['newmodus'] = true;
+        }
+        if($modus == &quot;1&quot;){ $mod['tpl_form'] = &quot;MOD_VALUE[13]&quot;; $mod['xmodus'] = &quot;2&quot;;} else { $mod['tpl_form'] = &quot;MOD_VALUE[14]&quot;; $mod['xmodus'] = &quot;1&quot;;}
+        $mod['tpl_form'] = str_replace(&quot;{search}&quot;,&quot;\n&lt;input type='text' name='suche' value='$suche' class='MOD_VALUE[3]' /&gt;&quot;,$mod['tpl_form']);
+        $mod['tpl_form'] = str_replace(&quot;{submit}&quot;,&quot;\n&lt;input type='submit' value='MOD_VALUE[21]' class='button' /&gt;&quot;,$mod['tpl_form']);
+        if ($suche == &quot;&quot;) {
+        	$mod['tpl_form'] = preg_replace(&quot;/\{modus \[([^\]]+)\]\}/&quot;,&quot;\n&lt;a class='MOD_VALUE[5]' href='&quot;.$con_side[$idcatside]['link'].&quot;&amp;amp;modus=&quot;.$mod['xmodus'].&quot;'&gt;\\1&lt;/a&gt;&quot;,$mod['tpl_form']);
+        } else {
+        	$mod['tpl_form'] = preg_replace(&quot;/\{modus \[([^\]]+)\]\}/&quot;,&quot;\n&lt;a class='MOD_VALUE[5]' href='&quot;.$con_side[$idcatside]['link'].&quot;&amp;amp;suche=$suche&amp;amp;modus=&quot;.$mod['xmodus'].&quot;&amp;amp;w_70=$w_70&amp;amp;w_71=$w_71&amp;amp;w_72=$w_72&amp;amp;w_73=$w_73&amp;amp;w_74=$w_74'&gt;\\1&lt;/a&gt;&quot;,$mod['tpl_form']);
+        }
+        // where - Suche in folgenden Feldern
+        if(strstr($mod['tpl_form'],&quot;{where}&quot;)){
+                $mod['repl_string'] = &quot;\n&lt;input type='checkbox' name='w_70' id='w_70' value='B.title' &quot;;
+                if($w_70 || (&quot;MOD_VALUE[70]&quot; != &quot;&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot;checked=\&quot;checked\&quot;&quot;;}
+                $mod['repl_string'] .=&quot; /&gt;&lt;label class='MOD_VALUE[2]' for='w_70'&gt; Titel&lt;/label&gt;&lt;br /&gt;\n&lt;input type='checkbox' name='w_71' id='w_71' value='B.summary' &quot;;
+                if($w_71 || (&quot;MOD_VALUE[71]&quot; != &quot;&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot;checked=\&quot;checked\&quot;&quot;;}
+                $mod['repl_string'] .=&quot; /&gt;&lt;label class='MOD_VALUE[2]' for='w_71'&gt; Notizen&lt;/label&gt;&lt;br /&gt;\n&lt;input type='checkbox' name='w_72' id='w_72' value='B.meta_description' &quot;;
+                if($w_72 || (&quot;MOD_VALUE[72]&quot; != &quot;&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot;checked=\&quot;checked\&quot;&quot;;}
+                $mod['repl_string'] .=&quot; /&gt;&lt;label class='MOD_VALUE[2]' for='w_72'&gt; Beschreibung&lt;/label&gt;&lt;br /&gt;\n&lt;input type='checkbox' name='w_73' id='w_73' value='B.meta_keywords' &quot;;
+                if($w_73 || (&quot;MOD_VALUE[73]&quot; != &quot;&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot;checked=\&quot;checked\&quot;&quot;;}
+                $mod['repl_string'] .=&quot; /&gt;&lt;label class='MOD_VALUE[2]' for='w_73'&gt; Schlüsselwörter&lt;/label&gt;&lt;br /&gt;\n&lt;input type='checkbox' name='w_74' id='w_74' value='A.value' &quot;;
+                if($w_74 || (&quot;MOD_VALUE[74]&quot; != &quot;&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot;checked=\&quot;checked\&quot;&quot;;}
+                $mod['repl_string'] .=&quot; /&gt;&lt;label class='MOD_VALUE[2]' for='w_74'&gt; Seiteninhalt&lt;/label&gt;\n&quot;;
+
+                $mod['tpl_form'] = str_replace(&quot;{where}&quot;,$mod['repl_string'],$mod['tpl_form']);
+        } else {
+                $mod['hidden'] .= &quot;&lt;input type='hidden' name='w_70' value='MOD_VALUE[70]' /&gt;\n&lt;input type='hidden' name='w_71' value='MOD_VALUE[71]' /&gt;&quot;;
+                $mod['hidden'] .= &quot;\n&lt;input type='hidden' name='w_72' value='MOD_VALUE[72]' /&gt;\n&lt;input type='hidden' name='w_73' value='MOD_VALUE[73]' /&gt;&quot;;
+                $mod['hidden'] .= &quot;\n&lt;input type='hidden' name='w_74' value='MOD_VALUE[74]' /&gt;&quot;;
+        }
+        // what - zusaetzlich anzeigen
+        if(strstr($mod['tpl_form'],&quot;{what}&quot;)){
+                $mod['repl_string'] = &quot;\n&lt;select name='what'&gt;\n&lt;option value='none'&quot;;
+                if($what == &quot;none&quot; || (&quot;MOD_VALUE[8]&quot; == &quot;none&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot; selected='selected'&quot;; }
+                $mod['repl_string'] .= &quot;&gt;Nichts&lt;/option&gt;\n&lt;option value='summary'&quot;;
+                if($what == &quot;summary&quot; || (&quot;MOD_VALUE[8]&quot; == &quot;summary&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot; selected='selected'&quot;; }
+                $mod['repl_string'] .= &quot;&gt;Notizen&lt;/option&gt;\n&lt;option value='meta_description'&quot;;
+                if($what == &quot;meta_description&quot; || (&quot;MOD_VALUE[8]&quot; == &quot;meta_description&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot; selected='selected'&quot;; }
+                $mod['repl_string'] .= &quot;&gt;Beschreibung&lt;/option&gt;\n&lt;option value='body'&quot;;
+                if($what == &quot;body&quot; || (&quot;MOD_VALUE[8]&quot; == &quot;body&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot; selected='selected'&quot;; }
+                $mod['repl_string'] .= &quot;&gt;Textausschnitt&lt;/option&gt;\n&lt;/select&gt;&quot;;
+                $mod['tpl_form'] = str_replace(&quot;{what}&quot;,$mod['repl_string'],$mod['tpl_form']);
+        } else {
+                $mod['hidden'] .= &quot;\n&lt;input type='hidden' name='what' value='MOD_VALUE[8]' /&gt;\n&quot;;
+        }
+        // how - logische Verbindung
+        if(strstr($mod['tpl_form'],&quot;{how}&quot;)){
+                $mod['repl_string'] = &quot;&lt;select name='how'&gt;\n&lt;option value='AND'&quot;;
+                if($how == &quot;AND&quot; || (&quot;MOD_VALUE[9]&quot; == &quot;AND&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot; selected='selected'&quot;; }
+                $mod['repl_string'] .= &quot;&gt;\nUND&lt;/option&gt;\n&lt;option value='OR'&quot;;
+                if($how == &quot;OR&quot; || (&quot;MOD_VALUE[9]&quot; == &quot;OR&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot; selected='selected'&quot;; }
+                $mod['repl_string'] .= &quot;&gt;\nODER&lt;/option&gt;&lt;option value='QUOT'&quot;;
+                if($how == &quot;QUOT&quot; || (&quot;MOD_VALUE[9]&quot; == &quot;QUOT&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot; selected='selected'&quot;; }
+                $mod['repl_string'] .= &quot;&gt;exakt&lt;/option&gt;\n&lt;/select&gt;&quot;;
+                $mod['tpl_form'] = str_replace(&quot;{how}&quot;,$mod['repl_string'],$mod['tpl_form']);
+        } else {
+                $mod['hidden'] .= &quot;\n&lt;input type='hidden' name='how' value='MOD_VALUE[9]' /&gt;\n&quot;;
+        }
+        // sort - Sortierungsoption
+        if(strstr($mod['tpl_form'],&quot;{sort}&quot;)){
+                $mod['repl_string'] = &quot;&lt;select name='sort'&gt;\n&lt;option value='C.idcatside'&quot;;
+                if($sort == &quot;C.idcatside&quot; || (&quot;MOD_VALUE[10]&quot; == &quot;C.idcatside&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot; selected='selected'&quot;; }
+                $mod['repl_string'] .= &quot;&gt;Index&lt;/option&gt;\n&lt;option value='B.title'&quot;;
+                if($sort == &quot;B.title&quot; || (&quot;MOD_VALUE[10]&quot; == &quot;B.title&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot; selected='selected'&quot;; }
+                $mod['repl_string'] .= &quot;&gt;Titel&lt;/option&gt;\n&lt;option value='B.summary'&quot;;
+                if($sort == &quot;B.summary&quot; || (&quot;MOD_VALUE[10]&quot; == &quot;B.summary&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot; selected='selected'&quot;; }
+                $mod['repl_string'] .= &quot;&gt;Notizen&lt;/option&gt;\n&lt;option value='B.meta_description'&quot;;
+                if($sort == &quot;B.meta_description&quot; || (&quot;MOD_VALUE[10]&quot; == &quot;B.meta_description&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot; selected='selected'&quot;; }
+                $mod['repl_string'] .= &quot;&gt;Beschreibung&lt;/option&gt;\n&lt;option value='B.meta_keywords'&quot;;
+                if($sort == &quot;B.meta_keywords&quot; || (&quot;MOD_VALUE[10]&quot; == &quot;B.meta_keywords&quot; &amp;&amp; ( $mod['newmodus'] || !$suche ))){ $mod['repl_string'] .= &quot; selected='selected'&quot;; }
+                $mod['repl_string'] .= &quot;&gt;Schlüsselwörter&lt;/option&gt;\n&lt;/select&gt;&quot;;
+                $mod['tpl_form'] = str_replace(&quot;{sort}&quot;,$mod['repl_string'],$mod['tpl_form']);
+        } else {
+                $mod['hidden'] .= &quot;\n&lt;input type='hidden' name='sort' value='MOD_VALUE[10]' /&gt;\n&quot;;
+        }
+        echo &quot;\n&lt;form action='&quot;;
+        if(&quot;MOD_VALUE[12]&quot; != &quot;0&quot;){ echo $con_side['MOD_VALUE[12]']['link']; } else { echo $con_side[$idcatside]['link']; }
+        echo &quot;' method='post'&gt;\n&lt;div&gt;\n&quot;.$mod['tpl_form'].$mod['hidden'].&quot;\n&lt;input type='hidden' name='page' value='1' /&gt;&lt;input type='hidden' name='modus' value='&quot;.$modus.&quot;' /&gt;\n&lt;/div&gt;\n&lt;/form&gt;\n&quot;;
+}
+if(strlen($suche) &gt; 0){
+        $mod['tpl_output'] = &quot;&quot;;
+        // Die uebergebenen Werte ueberpruefen
+        if (!($w_70 == &quot;B.title&quot; OR $w_70 == &quot;&quot;)) { $w_70 =&quot;B.title&quot;; }
+        if (!($w_71 == &quot;B.summary&quot; OR $w_71 == &quot;&quot;)) { $w_71 =&quot;B.summary&quot;; }
+        if (!($w_72 == &quot;B.meta_description&quot; OR $w_72 == &quot;&quot;)) { $w_72 =&quot;B.meta_description&quot;; }
+        if (!($w_73 == &quot;B.meta_keywords&quot; OR $w_73 == &quot;&quot;)) { $w_73 =&quot;B.meta_keywords&quot;; }
+        if (!($w_74 == &quot;A.value&quot; OR $w_74 == &quot;&quot;)) { $w_74 =&quot;A.value&quot;; }
+        //$what ueberpruefen
+        if (! sf_in_array($what,array(&quot;none&quot;,&quot;summary&quot;,&quot;meta_description&quot;,&quot;body&quot;))) {
+                $what = &quot;body&quot;;
+        }
+        //$how ueberpruefen
+        if (! sf_in_array($how,array(&quot;AND&quot;,&quot;OR&quot;,&quot;QUOT&quot;))) {
+                $how = &quot;AND&quot;;
+        }
+        //$sort ueberpruefen
+        if (! sf_in_array($sort,array(&quot;C.idcatside&quot;,&quot;B.title&quot;,&quot;B.summary&quot;,&quot;B.meta_description&quot;,&quot;B.meta_keywords&quot;))) {
+                $sort = &quot;C.idcatside&quot;;
+        }
+        $mod['sql_fields'] = sf_implode(&quot;,&quot;,array_diff(array($w_70,$w_71,$w_72,$w_73,$w_74),array(&quot;&quot;)));
+        switch($what){
+                case &quot;none&quot;: $mod['get_fields']    = &quot;B.title,C.idcatside&quot;; break;
+                case &quot;summary&quot;: $mod['get_fields'] = &quot;B.title,C.idcatside,B.summary&quot;; break;
+                case &quot;meta_description&quot;: $mod['get_fields'] = &quot;B.title,C.idcatside,B.meta_description&quot;; break;
+                case &quot;body&quot;: $mod['get_fields']    = &quot;B.title,C.idcatside,A.value&quot;; break;
+        }
+        if(&quot;MOD_VALUE[11]&quot; == &quot;0&quot;){
+                $mod['res_limit'] = &quot;&quot;;
+                $mod['res_start'] = &quot;&quot;;
+        } else {
+                $mod['res_limit'] = &quot;MOD_VALUE[11]&quot;;
+                if($page &lt; 1 || !$page)
+                        {
+                                $page = &quot;1&quot;;
+                                $mod['res_start'] = 0;
+                        } else {
+                                if (! is_numeric($page))
+                                {
+                                        $mod['res_start'] = 0;
+                                } else {
+                                        $mod['res_start'] = ($page-1) * &quot;MOD_VALUE[11]&quot;;
+                                }
+                        }
+        }
+
+                if ($mod['test'] == &quot;true&quot;) {echo &quot;&lt;hr /&gt;Diverses: [22]:MOD_VALUE[22] [23]:MOD_VALUE[23] [20]:MOD_VALUE[20]&lt;br /&gt;&quot;;}
+
+        
+// Suche auf Seiten beschraenken fals erwuenscht
+        $mod['sql_sidecat'] = &quot;&quot;;
+        if('MOD_VALUE[22]' == 'none') {
+                // alle Seiten/Kategorien ausschlissen bis auf die Ausgewaehlten
+                if(&quot;MOD_VALUE[23]&quot; != &quot;&quot; AND (substr_count(&quot;MOD_VALUE[23]&quot;,&quot;root&quot;)==0)) {
+                        $mod['sql_sidecat'] = &quot;(C.idcat IN (MOD_VALUE[23]))&quot;;
+                }
+                if(&quot;MOD_VALUE[24]&quot; != &quot;&quot; AND (substr_count(&quot;MOD_VALUE[24]&quot;,&quot;root&quot;)==0)) {
+                        if($mod['sql_sidecat'] == &quot;&quot;) {
+                                $mod['sql_sidecat'] = &quot; AND (C.idcatside IN (MOD_VALUE[24]))&quot;;
+                        } else {
+                                $mod['sql_sidecat'] = &quot; AND (&quot;.$mod['sql_sidecat'].&quot; OR (C.idcatside IN (MOD_VALUE[24])) )&quot;;
+                        }
+                } else {
+                        if($mod['sql_sidecat'] != &quot;&quot;) {
+                                $mod['sql_sidecat'] = &quot; AND &quot;.$mod['sql_sidecat'];
+                        }
+                }
+        } else {
+                // alle Seiten/Kategorien erlaube bis auf die Ausgewaehlten
+                if(&quot;MOD_VALUE[23]&quot; != &quot;&quot; AND (substr_count(&quot;MOD_VALUE[23]&quot;,&quot;root&quot;)==0)) {
+                        $mod['sql_sidecat'] .= &quot; AND (C.idcat NOT IN (MOD_VALUE[23]))&quot;;
+                }
+                if(&quot;MOD_VALUE[24]&quot; != &quot;&quot; AND (substr_count(&quot;MOD_VALUE[24]&quot;,&quot;root&quot;)==0)) {
+                        $mod['sql_sidecat'] .= &quot; AND (C.idcatside NOT IN (MOD_VALUE[24]))&quot;;
+                }
+        }
+
+        // Suche auf die aktuelle Sprache beschraenken fals erwuenscht
+        if(&quot;MOD_VALUE[20]&quot; == &quot;true&quot;) {
+                $mod['sql_lang'] = &quot;&quot;;
+        } else {
+                $mod['sql_lang'] = &quot; AND (B.idlang = &quot;.$lang.&quot;)&quot;;
+        }
+
+        // im Backend alle Seiten durchsuchen im Frontend nur die Seiten die Online sind und auf die er berechtigung hat.
+        if($sess-&gt;name == 'cms') {
+                $mod['sql_online'] = &quot;&quot;;
+        } else {
+                $mod['sql_online'] = &quot; AND (  (B.online &amp; 0x03) = 0x01 OR (  (B.online &amp; 0x02) = 0x02 AND ( UNIX_TIMESTAMP(NOW()) BETWEEN B.start AND B.end))) &quot;;
+
+                // Abfrage Recht: Darf geschuetzte Seiten sehen
+                $mod['sql_online'] .=  ( $perm-&gt;have_perm(2, 'area_frontend', 0) ) ?  '': ' AND (B.online &amp; 0x04) = 0x00 ';
+        }
+
+        if((&quot;MOD_VALUE[25]&quot; != &quot;&quot;) AND (substr_count(&quot;MOD_VALUE[25]&quot;,&quot;true&quot;)==0)) {
+                $mod['sql_content'] = &quot; AND (A.idtype IN (MOD_VALUE[25]))&quot;;
+        } else {
+                $mod['sql_content'] = &quot; AND (A.idtype IN (1,2,3,7,9,11,13))&quot;;
+        }
+
+        if ($mod['test'] == &quot;true&quot;) {echo &quot;&lt;hr /&gt;Kontrolle:&quot;.sf_implode(',',$_POST).&quot; --&gt; GET 70:&quot;.$w_70.&quot; 71:&quot;.$w_71.&quot; 72:&quot;.$w_72.&quot; 73:&quot;.$w_73.&quot; 74:&quot;.$w_74.&quot;&lt;br /&gt;lang: &quot;.$lang.&quot; sql: &quot;.$mod['sql_lang'];}
+        if ($mod['test'] == &quot;true&quot;) {echo &quot;&lt;br /&gt;Suche: $suche&lt;br /&gt;Suche in: &quot;.$mod['sql_fields'].&quot;&lt;br /&gt;Hole: &quot;.$mod['get_fields'].&quot;&lt;br /&gt;Verbinde: $how&lt;br /&gt;Sortiere: $sort&lt;br /&gt;Page: &quot;.$mod['res_start'].&quot;,&quot;.$mod['res_limit'];}
+        if ($mod['test'] == &quot;true&quot;) {echo &quot;&lt;br /&gt;sql_where:&quot;.$mod['sql_lang'].$mod['sql_online'].$mod['sql_content'].$mod['sql_sidecat'].&quot;&lt;br /&gt;&lt;hr /&gt;&quot;;}
+        $result = search(array(
+                        &quot;querystring&quot; =&gt; $suche,
+                        &quot;sql_tables&quot;  =&gt; $cms_db['content'].&quot; A, &quot;.$cms_db['side_lang'].&quot; B, &quot;.$cms_db['cat_side'].&quot; C,&quot;.$cms_db['side'].&quot; D&quot;,
+                        &quot;sql_fields&quot;  =&gt; $mod['sql_fields'],
+                        &quot;get_fields&quot;  =&gt; $mod['get_fields'],
+                        &quot;sql_where&quot;   =&gt; &quot;A.idsidelang = B.idsidelang AND B.idside = C.idside AND B.idside = D.idside AND D.idclient = &quot;.$client.$mod['sql_lang'].$mod['sql_online'].$mod['sql_content'].$mod['sql_sidecat'],
+                        &quot;sql_group&quot;   =&gt; &quot;C.idcatside&quot;,
+                        &quot;result_limit&quot;=&gt; $mod['res_limit'],
+                        &quot;result_start&quot;=&gt; $mod['res_start'],
+                        &quot;sort_index&quot;  =&gt; $sort,
+                        &quot;default_con&quot; =&gt; $how
+                        )
+        );
+        // Wir brauchen die Seiten, die wir ausschliessen wollen
+        if ($mod['test'] == &quot;true&quot;) {echo &quot;num_rows: &quot;.$result['num_rows'].&quot;&lt;hr /&gt;&quot;;}
+
+        $mod['nr'] = $mod['res_start']+1;
+        if($result['num_rows'] &gt; 0){
+                foreach($result['result'] as $mod['res']){
+                        if ($mod['test'] == &quot;true&quot;) {echo &quot;Kontrolle Result&lt;br /&gt;IDcatside: &quot;.$mod['res']['idcatside'].&quot;&lt;br /&gt;Title: &quot;.$mod['res']['title'].&quot;&lt;br&gt;Nr: &quot;.$mod['nr'].&quot;&lt;hr /&gt;&quot;;}
+                        $mod['repl_string'] = &quot;\n&lt;a href='&quot;.$con_side[$mod['res']['idcatside']]['link'].&quot;' class='MOD_VALUE[0]'&gt;&quot;.$mod['res']['title'].&quot;&lt;/a&gt;\n&quot;;
+                        $mod['tpl_res'] = str_replace(&quot;{link}&quot;,$mod['repl_string'],&quot;MOD_VALUE[16]&quot;);
+                        if($what == &quot;none&quot;){
+                                $mod['repl_string'] = &quot;&quot;;
+                        } elseif($what == &quot;summary&quot;){
+                                $mod['repl_string'] = &quot;&lt;p class='MOD_VALUE[1]'&gt;&quot;.$mod['res']['summary'].&quot;&lt;/p&gt;&quot;;
+                        } elseif($what == &quot;meta_description&quot;){
+                                $mod['repl_string'] = &quot;&lt;p class='MOD_VALUE[1]'&gt;&quot;.$mod['res']['meta_description'].&quot;&lt;/p&gt;&quot;;
+                        } else {
+                                $mod['repl_string'] = &quot;&lt;p class='MOD_VALUE[1]'&gt;&quot;;
+                                $mod['res']['value'] = strip_tags($mod['res']['value']);
+                                $mod['searchvalue'] = explode (&quot; &quot;, $suche);
+                                $mod['searchstart'] = strpos ($mod['res']['value'],$mod['searchvalue'][0])-40;
+                                if ($mod['searchstart'] &lt; 0) {
+                                        $mod['searchstart']=0;
+                                } else {
+                                        $mod['repl_string'] .= &quot;...&quot;;
+                                        $mod['searchstart'] = strpos ($mod['res']['value'],&quot; &quot;,$mod['searchstart']);
+                                }
+
+                                if ($mod['test'] == &quot;true&quot;) {echo &quot;Wort:'&quot;.$mod['searchvalue'][0].&quot;' Start:&quot;.$mod['searchstart'].&quot;&lt;hr /&gt;&quot;;}
+                                $mod['repl_string'] .= substr($mod['res']['value'],$mod['searchstart'],300).&quot;...&lt;/p&gt;&quot;;
+                        }
+                        $mod['tpl_res'] = str_replace(&quot;{descr}&quot;,$mod['repl_string'],$mod['tpl_res']);
+                        $mod['tpl_res'] = str_replace(&quot;{nr}&quot;,$mod['nr'],$mod['tpl_res']);
+                        $mod['tpl_output'] .= $mod['tpl_res'];
+                        $mod['nr']=$mod['nr']+1;
+                }
+        } else {
+                $mod['tpl_res'] = &quot;&lt;p class='MOD_VALUE[4]'&gt;MOD_VALUE[19]&lt;/p&gt;&quot;;
+                $mod['tpl_output'] .= $mod['tpl_res'];
+        }
+
+        $mod['tpl_res_pre'] = str_replace(&quot;{count}&quot;,$result['num_rows'],&quot;MOD_VALUE[15]&quot;);
+
+        if($result['num_rows'] &gt; 0 &amp;&amp; $mod['res_limit'] != &quot;&quot; ) {
+                $mod['anz'] = $result['num_rows'];
+                $mod['query'] = &quot;&amp;amp;w_70=$w_70&amp;amp;w_71=$w_71&amp;amp;w_72=$w_72&amp;amp;w_73=$w_73&amp;amp;w_74=$w_74&amp;amp;what=$what&amp;amp;how=$how&amp;amp;modus=$modus&amp;amp;sort=$sort&amp;amp;suche=&quot;;
+                $mod['query'] .= rawurlencode($suche);
+
+                // gesamtanzahl der seiten herausfinden
+                if(&quot;MOD_VALUE[11]&quot; == &quot;0&quot;){
+                        $mod[&quot;anz&quot;] = 1;
+                } else {
+                        $mod[&quot;anz&quot;] = ceil($result['num_rows'] / &quot;MOD_VALUE[11]&quot;);
+                }
+
+                // wenn mod_value_32 leer ist, default-separator verwenden.
+                if (&quot;MOD_VALUE[32]&quot; == &quot;&quot;)
+                {
+                        $separator = &quot;&amp;nbsp;&amp;nbsp;|&amp;nbsp;&amp;nbsp;&quot;;
+                } else {
+                        $separator = &quot;MOD_VALUE[32]&quot;;
+                }
+                $mod['idcatlink']= $con_side[$idcatside]['link'];
+                // vor/zurück-links anzeigen?
+                if ($mod[&quot;anz&quot;]&gt; 1)$mod[&quot;nav&quot;] .= suchmodul_createPageLinks(&quot;MOD_VALUE[31]&quot;, $separator, &quot;MOD_VALUE[30]&quot;, $page);
+      
+          if ($mod['test'] == &quot;true&quot;) {echo &quot;&lt;hr /&gt;Kontrolle Navigation: Anz &quot;.$mod[&quot;anz&quot;].&quot; Seperator:&quot;.$separato.&quot;:   &lt;br&gt;Page: &quot;.$page.&quot; [31]:MOD_VALUE[31] [30]:MOD_VALUE[30] [18]:MOD_VALUE[18]&lt;br /&gt;&quot;;}
+
+                $mod['tpl_nav'] = str_replace(&quot;{nav}&quot;, $mod['nav'],&quot;MOD_VALUE[18]&quot;);
+		
+		$mod['tpl_res_pre']  = str_replace(&quot;{nav}&quot;, $mod['nav'],$mod['tpl_res_pre']);
+		$mod['tpl_res_past'] = str_replace(&quot;{nav}&quot;, $mod['nav'],&quot;MOD_VALUE[17]&quot;);
+		
+		$mod['tpl_output'] = $mod['tpl_res_pre'].$mod['tpl_output'].$mod['tpl_res_past'];
+		
+	        echo $mod['tpl_output'];
+		echo $mod['tpl_nav'];
+		
+        } else {
+        	$mod['tpl_output'] = $mod['tpl_res_pre'].$mod['tpl_output'];
+	        echo $mod['tpl_output'];
+		
+	        echo &quot;MOD_VALUE[17]&quot;;
+	}        	
+}
+echo &quot;MOD_VALUE[41]&quot;;
+unset($mod,$separator,$result);
+&lt;/CMSPHP&gt;</output>
+   <config></config>
+   <repository_id>mod:931d2fc5c322bbcd2be1842c6a3c5db2:f7d22b0f</repository_id>
+   <install_sql></install_sql>
+   <uninstall_sql></uninstall_sql>
+   <update_sql></update_sql>
+</modul>

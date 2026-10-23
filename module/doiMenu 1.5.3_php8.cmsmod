@@ -1,0 +1,689 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<modul version='0.4' date='1792755912'>
+   <name>doiMenu 1.5.3</name>
+   <cat>Navigation</cat>
+   <version>1.1</version>
+   <author>1</author>
+   <created>1341749284</created>
+   <lastmodified>1342369294</lastmodified>
+   <deletable>1</deletable>
+   <description></description>
+   <input>&lt;?PHP
+// Defaultwerte setzen
+if ($cms_mod['value']['1'] == '') $cms_mod['value']['1'] = 'simple_mode';
+if ($cms_mod['value']['2'] == '') $cms_mod['value']['2'] = 'horizontal';
+$mip_form['0']['cms_val_default'] = 'root';
+$mip_form['10']['cms_val_default'] = &quot;'white', '', '', ''&quot;;
+$mip_form['12']['cms_val_default'] = &quot;'1', 'gray', 'solid'&quot;;
+$mip_form['13']['cms_val_default'] = &quot;'1', 'gray', 'solid'&quot;;
+$mip_form['14']['cms_val_default'] = &quot;'1', 'gray', 'solid'&quot;;
+$mip_form['15']['cms_val_default'] = &quot;'1', 'gray', 'solid'&quot;;
+$mip_form['16']['cms_val_default'] = &quot;'2'&quot;;
+$mip_form['17']['cms_val_default'] = &quot;'0', '1'&quot;;
+$mip_form['18']['cms_val_default'] = &quot;'true', '', '6'&quot;;
+$mip_form['19']['cms_val_default'] = &quot;'verdana,arial', '10px'&quot;;
+$mip_form['20']['cms_val_default'] = &quot;'white', '', '', ''&quot;;
+$mip_form['22']['cms_val_default'] = &quot;'#B6BDD2', '', '', ''&quot;;
+$mip_form['24']['cms_val_default'] = &quot;'1', 'gray', 'solid'&quot;;
+$mip_form['25']['cms_val_default'] = &quot;'1', 'gray', 'solid'&quot;;
+$mip_form['26']['cms_val_default'] = &quot;'1', 'gray', 'solid'&quot;;
+$mip_form['27']['cms_val_default'] = &quot;'1', 'gray', 'solid'&quot;;
+$mip_form['34']['cms_val_default'] = &quot;'1', '#000080', 'solid'&quot;;
+$mip_form['35']['cms_val_default'] = &quot;'1', '#000080', 'solid'&quot;;
+$mip_form['36']['cms_val_default'] = &quot;'1', '#000080', 'solid'&quot;;
+$mip_form['37']['cms_val_default'] = &quot;'1', '#000080', 'solid'&quot;;
+$mip_form['38']['cms_val_default'] = &quot;'', '20'&quot;;
+$mip_form['39']['cms_val_default'] = &quot;'black', 'center', 'normal', 'none', 'nowrap'&quot;;
+$mip_form['41']['cms_val_default'] = &quot;'black', 'center', 'normal', 'none', 'nowrap'&quot;;
+$mip_form['42']['cms_val_default'] = &quot;''&quot;;
+$mip_form['43']['cms_val_default'] = &quot;'', '', ''&quot;;
+$mip_form['44']['cms_val_default'] = &quot;'', '', ''&quot;;
+$mip_form['45']['cms_val_default'] = &quot;'normal'&quot;;
+$mip_form['46']['cms_val_default'] = &quot;''&quot;;
+$mip_form['47']['cms_val_default'] = &quot;'75'&quot;;
+$mip_form['48']['cms_val_default'] = &quot;'#F2F2F2', '', '', ''&quot;;
+$mip_form['50']['cms_val_default'] = &quot;'1', 'gray', 'solid'&quot;;
+$mip_form['51']['cms_val_default'] = &quot;'1', 'gray', 'solid'&quot;;
+$mip_form['52']['cms_val_default'] = &quot;'1', 'gray', 'solid'&quot;;
+$mip_form['53']['cms_val_default'] = &quot;'1', 'gray', 'solid'&quot;;
+$mip_form['54']['cms_val_default'] = &quot;'', ''&quot;;
+$mip_form['55']['cms_val_default'] = &quot;'500'&quot;;
+$mip_form['56']['cms_val_default'] = &quot;'true', '', '6'&quot;;
+$mip_form['57']['cms_val_default'] = &quot;'verdana,arial', '10px'&quot;;
+$mip_form['58']['cms_val_default'] = &quot;'#F2F2F2', '', '', ''&quot;;
+$mip_form['59']['cms_val_default'] = &quot;'#B6BDD2', '', '', ''&quot;;
+$mip_form['61']['cms_val_default'] = &quot;'1', '#F2F2F2', 'solid'&quot;;
+$mip_form['62']['cms_val_default'] = &quot;'1', '#F2F2F2', 'solid'&quot;;
+$mip_form['63']['cms_val_default'] = &quot;'1', '#F2F2F2', 'solid'&quot;;
+$mip_form['64']['cms_val_default'] = &quot;'1', '#F2F2F2', 'solid'&quot;;
+$mip_form['66']['cms_val_default'] = &quot;'1', '#000080', 'solid'&quot;;
+$mip_form['67']['cms_val_default'] = &quot;'1', '#000080', 'solid'&quot;;
+$mip_form['68']['cms_val_default'] = &quot;'1', '#000080', 'solid'&quot;;
+$mip_form['69']['cms_val_default'] = &quot;'1', '#000080', 'solid'&quot;;
+$mip_form['70']['cms_val_default'] = &quot;'150', '18'&quot;;
+$mip_form['71']['cms_val_default'] = &quot;'0', '0', '0', '0'&quot;;
+$mip_form['72']['cms_val_default'] = &quot;'0', '0', '0', '0'&quot;;
+$mip_form['73']['cms_val_default'] = &quot;'black', 'left', 'normal', 'none', 'nowrap'&quot;;
+$mip_form['74']['cms_val_default'] = &quot;'black', 'left', 'normal', 'none', 'nowrap'&quot;;
+$mip_form['75']['cms_val_default'] = &quot;'1', '1', '1', '1'&quot;;
+$mip_form['76']['cms_val_default'] = &quot;'', '', '', ''&quot;;
+$mip_form['77']['cms_val_default'] = &quot;'', '', ''&quot;;
+
+// Modus konfigurieren
+$mip_form['1']['desc'] = 'Konfigurationsmodus: ';
+$mip_form['1']['cat'] = 'option';
+$mip_form['1']['cms_var'] = 'MOD_VAR[1]';
+$mip_form['1']['cms_val'] = $cms_mod['value']['1'];
+$mip_form['1']['option_desc']['0'] = 'einfach';
+$mip_form['1']['option_desc']['1'] = 'erweitert';
+$mip_form['1']['option_val']['0'] = 'simple_mode';
+$mip_form['1']['option_val']['1'] = 'advanced_mode';
+$mip_form['1']['flag'] = 'reload';
+mip_formsp($mip_form['1']);
+
+// Struktur zur auswahl der Kategorie
+$mip_form['0']['desc'] = 'Verzeichnis wählen';
+$mip_form['0']['cat'] = 'app_cat';
+$mip_form['0']['output_cat'] = 'option';
+$mip_form['0']['cms_var'] = 'MOD_VAR[0]';
+$mip_form['0']['cms_val'] = $cms_mod['value']['0'];
+$mip_form['0']['size'] = '5';
+mip_formsp($mip_form['0']);
+
+// Welche Verzeichnisse sollen ausgeblendet werden?
+$mip_form['4']['desc'] = 'Welche Verzeichnisse sollen ausgeblendet werden?';
+$mip_form['4']['cat'] = 'app_cat';
+$mip_form['4']['output_cat'] = 'option';
+$mip_form['4']['cms_var'] = 'MOD_VAR[4]';
+$mip_form['4']['cms_val'] = $cms_mod['value']['4'];
+$mip_form['4']['size'] = '8';
+$mip_form['4']['flag'] = 'multiple';
+mip_formsp($mip_form['4']);
+
+// Modus konfigurieren
+$mip_form['2']['desc'] = 'Menü ausrichten: ';
+$mip_form['2']['cat'] = 'option';
+$mip_form['2']['cms_var'] = 'MOD_VAR[2]';
+$mip_form['2']['cms_val'] = $cms_mod['value']['2'];
+$mip_form['2']['option_desc']['0'] = 'vertikal';
+$mip_form['2']['option_desc']['1'] = 'horizontal';
+$mip_form['2']['option_val']['0'] = 'vertical';
+$mip_form['2']['option_val']['1'] = 'horizontal';
+mip_formsp($mip_form['2']);
+
+// Anzahl der Ebenen
+$mip_form['3']['desc'] = 'Wieviele Ebenen sollen angezeigt werden?';
+$mip_form['3']['cat'] = 'option';
+$mip_form['3']['cms_var'] = 'MOD_VAR[3]';
+$mip_form['3']['cms_val'] = $cms_mod['value']['3'];
+$mip_form['3']['cms_val_default'] = 'all';
+$mip_form['3']['option_desc']['0'] = 'alle';
+$mip_form['3']['option_desc']['1'] = '2';
+$mip_form['3']['option_desc']['2'] = '3';
+$mip_form['3']['option_desc']['3'] = '4';
+$mip_form['3']['option_desc']['4'] = '5';
+$mip_form['3']['option_desc']['5'] = '6';
+$mip_form['3']['option_desc']['6'] = '7';
+$mip_form['3']['option_desc']['7'] = '8';
+$mip_form['3']['option_desc']['8'] = '9';
+$mip_form['3']['option_desc']['9'] = '10';
+$mip_form['3']['option_val']['0'] = 'all';
+$mip_form['3']['option_val']['1'] = '2';
+$mip_form['3']['option_val']['2'] = '3';
+$mip_form['3']['option_val']['3'] = '4';
+$mip_form['3']['option_val']['4'] = '5';
+$mip_form['3']['option_val']['5'] = '6';
+$mip_form['3']['option_val']['6'] = '7';
+$mip_form['3']['option_val']['7'] = '8';
+$mip_form['3']['option_val']['8'] = '9';
+$mip_form['3']['option_val']['9'] = '10';
+mip_formsp($mip_form['3']);
+
+// Advanced-Mode
+if ($cms_mod['value']['1'] == 'advanced_mode') {
+	echo '&lt;hr&gt;';
+         echo &quot;&lt;br&gt;&lt;b&gt;Hauptmenüpunkte:&lt;/b&gt;&lt;br&gt;&lt;br&gt;&quot;;
+
+	// SetType
+	$mip_form['45']['cat'] = 'txt';
+	$mip_form['45']['desc'] = 'Menütyp: &lt;small&gt;\'Typ\' (free, float, normal) für free &amp; float mu�? Menüposition absolute sein&lt;/small&gt;';
+	$mip_form['45']['cms_var'] = 'MOD_VAR[45]';
+	$mip_form['45']['cms_val'] = $cms_mod['value']['45'];
+	mip_formsp($mip_form['45']);
+
+	// SetPosition
+	echo '&lt;br&gt;';
+	$mip_form['43']['cat'] = 'txt';
+	$mip_form['43']['desc'] = 'Menüposition: &lt;small&gt;\'Ausrichtung\' (absolute, relative), \'Pixel links\', \'Pixel oben\'&lt;/small&gt;';
+	$mip_form['43']['cms_var'] = 'MOD_VAR[43]';
+	$mip_form['43']['cms_val'] = $cms_mod['value']['43'];
+	mip_formsp($mip_form['43']);
+
+	// SetWidth
+	echo '&lt;br&gt;';
+	$mip_form['46']['cat'] = 'txt';
+	$mip_form['46']['desc'] = 'Menübreite: &lt;small&gt;\'Pixel\'&lt;/small&gt;';
+	$mip_form['46']['cms_var'] = 'MOD_VAR[46]';
+	$mip_form['46']['cms_val'] = $cms_mod['value']['46'];
+	mip_formsp($mip_form['46']);
+
+	// SetBackground
+	echo '&lt;br&gt;';
+	$mip_form['10']['cat'] = 'txt';
+	$mip_form['10']['desc'] = 'Menühintergrund: &lt;small&gt;\'Farbwert\', \'Bild-URL\', \'Wiederholung\' (repeat, repeat-x, repeat-y, no-repeat), \'Position\' (top left, top center, top right, center left, center center, center right, bottom left, bottom center, bottom right, x y, x% y%)&lt;/small&gt;';
+	$mip_form['10']['cms_var'] = 'MOD_VAR[10]';
+	$mip_form['10']['cms_val'] = $cms_mod['value']['10'];
+	mip_formsp($mip_form['10']);
+
+	// SetShadow
+	echo '&lt;br&gt;';
+	$mip_form['44']['cat'] = 'txt';
+	$mip_form['44']['desc'] = 'Menüschatten: &lt;small&gt;\'anzeigen\' (true, false), \'Farbwert\', \'Pixel Abstand\'&lt;/small&gt;';
+	$mip_form['44']['cms_var'] = 'MOD_VAR[44]';
+	$mip_form['44']['cms_val'] = $cms_mod['value']['44'];
+	mip_formsp($mip_form['44']);
+
+	// SetBorderTop
+	echo '&lt;br&gt;Menürahmen: &lt;small&gt;\'Pixel\', \'Farbwert\', \'Typ\' (none, hidden, dotted, dashed, solid, double, groove, ridge, inset, outset)&lt;/small&gt;';
+	$mip_form['12']['cat'] = 'txt';
+	$mip_form['12']['desc'] = 'oben';
+	$mip_form['12']['cms_var'] = 'MOD_VAR[12]';
+	$mip_form['12']['cms_val'] = $cms_mod['value']['12'];
+	mip_formsp($mip_form['12']);
+
+	// SetBorderLeft
+	$mip_form['13']['cat'] = 'txt';
+	$mip_form['13']['desc'] = 'links';
+	$mip_form['13']['cms_var'] = 'MOD_VAR[13]';
+	$mip_form['13']['cms_val'] = $cms_mod['value']['13'];
+	mip_formsp($mip_form['13']);
+
+	// SetBorderRight
+	$mip_form['14']['cat'] = 'txt';
+	$mip_form['14']['desc'] = 'rechts';
+	$mip_form['14']['cms_var'] = 'MOD_VAR[14]';
+	$mip_form['14']['cms_val'] = $cms_mod['value']['14'];
+	mip_formsp($mip_form['14']);
+
+	// SetBorderBottom
+	$mip_form['15']['cat'] = 'txt';
+	$mip_form['15']['desc'] = 'unten';
+	$mip_form['15']['cms_var'] = 'MOD_VAR[15]';
+	$mip_form['15']['cms_val'] = $cms_mod['value']['15'];
+	mip_formsp($mip_form['15']);
+
+	// SetItemDimension
+	echo '&lt;br&gt;';
+	$mip_form['38']['cat'] = 'txt';
+	$mip_form['38']['desc'] = 'Zellengrö�?e: &lt;small&gt;\'Pixel breit\', \'Pixel hoch\'&lt;/small&gt;';
+	$mip_form['38']['cms_var'] = 'MOD_VAR[38]';
+	$mip_form['38']['cms_val'] = $cms_mod['value']['38'];
+	mip_formsp($mip_form['38']);
+
+	// SetItemBackground
+	echo '&lt;br&gt;';
+	$mip_form['20']['cat'] = 'txt';
+	$mip_form['20']['desc'] = 'Zellenhintergrund: &lt;small&gt;\'Farbwert\', \'Bild-URL\', \'Wiederholung\' (repeat, repeat-x, repeat-y, no-repeat), \'Position\' (top left, top center, top right, center left, center center, center right, bottom left, bottom center, bottom right, x y, x% y%)&lt;/small&gt;';
+	$mip_form['20']['cms_var'] = 'MOD_VAR[20]';
+	$mip_form['20']['cms_val'] = $cms_mod['value']['20'];
+	mip_formsp($mip_form['20']);
+
+	// SetItemBackgroundHL
+	$mip_form['22']['cat'] = 'txt';
+	$mip_form['22']['desc'] = 'beim MouseOver';
+	$mip_form['22']['cms_var'] = 'MOD_VAR[22]';
+	$mip_form['22']['cms_val'] = $cms_mod['value']['22'];
+	mip_formsp($mip_form['22']);
+
+	// SetItemBorderTop
+	echo '&lt;br&gt;Zellenrahmen: &lt;small&gt;\'Pixel\', \'Farbwert\', \'Typ\' (none, hidden, dotted, dashed, solid, double, groove, ridge, inset, outset)&lt;/small&gt;';
+	$mip_form['24']['cat'] = 'txt';
+	$mip_form['24']['desc'] = 'oben';
+	$mip_form['24']['cms_var'] = 'MOD_VAR[24]';
+	$mip_form['24']['cms_val'] = $cms_mod['value']['24'];
+	mip_formsp($mip_form['24']);
+
+	// SetItemBorderLeft
+	$mip_form['25']['cat'] = 'txt';
+	$mip_form['25']['desc'] = 'links';
+	$mip_form['25']['cms_var'] = 'MOD_VAR[25]';
+	$mip_form['25']['cms_val'] = $cms_mod['value']['25'];
+	mip_formsp($mip_form['25']);
+
+	// SetItemBorderRight
+	$mip_form['26']['cat'] = 'txt';
+	$mip_form['26']['desc'] = 'rechts';
+	$mip_form['26']['cms_var'] = 'MOD_VAR[26]';
+	$mip_form['26']['cms_val'] = $cms_mod['value']['26'];
+	mip_formsp($mip_form['26']);
+
+	// SetItemBorderBottom
+	$mip_form['27']['cat'] = 'txt';
+	$mip_form['27']['desc'] = 'unten';
+	$mip_form['27']['cms_var'] = 'MOD_VAR[27]';
+	$mip_form['27']['cms_val'] = $cms_mod['value']['27'];
+	mip_formsp($mip_form['27']);
+
+	// SetItemBorderTopHL
+	$mip_form['34']['cat'] = 'txt';
+	$mip_form['34']['desc'] = 'beim MouseOver oben';
+	$mip_form['34']['cms_var'] = 'MOD_VAR[34]';
+	$mip_form['34']['cms_val'] = $cms_mod['value']['34'];
+	mip_formsp($mip_form['34']);
+
+	// SetItemBorderLeftHL
+	$mip_form['35']['cat'] = 'txt';
+	$mip_form['35']['desc'] = 'beim MouseOver links';
+	$mip_form['35']['cms_var'] = 'MOD_VAR[35]';
+	$mip_form['35']['cms_val'] = $cms_mod['value']['35'];
+	mip_formsp($mip_form['35']);
+
+	// SetItemBorderRightHL
+	$mip_form['36']['cat'] = 'txt';
+	$mip_form['36']['desc'] = 'beim MouseOver rechts';
+	$mip_form['36']['cms_var'] = 'MOD_VAR[36]';
+	$mip_form['36']['cms_val'] = $cms_mod['value']['36'];
+	mip_formsp($mip_form['36']);
+
+	// SetItemBorderBottomHL
+	$mip_form['37']['cat'] = 'txt';
+	$mip_form['37']['desc'] = 'beim MouseOver unten';
+	$mip_form['37']['cms_var'] = 'MOD_VAR[37]';
+	$mip_form['37']['cms_val'] = $cms_mod['value']['37'];
+	mip_formsp($mip_form['37']);
+
+	// SetCellSpacing
+	echo '&lt;br&gt;';
+	$mip_form['16']['cat'] = 'txt';
+	$mip_form['16']['desc'] = 'Zellenabstand: &lt;small&gt;\'Pixel\'&lt;/small&gt;';
+	$mip_form['16']['cms_var'] = 'MOD_VAR[16]';
+	$mip_form['16']['cms_val'] = $cms_mod['value']['16'];
+	mip_formsp($mip_form['16']);
+
+	// SetFont
+	echo '&lt;br&gt;';
+	$mip_form['19']['cat'] = 'txt';
+	$mip_form['19']['desc'] = 'Schriftart: &lt;small&gt;\'Schriftart\', \'Schriftgrö�?e\'&lt;/small&gt;';
+	$mip_form['19']['cms_var'] = 'MOD_VAR[19]';
+	$mip_form['19']['cms_val'] = $cms_mod['value']['19'];
+	mip_formsp($mip_form['19']);
+
+	// SetItemText
+	echo '&lt;br&gt;';
+	$mip_form['39']['cat'] = 'txt';
+	$mip_form['39']['desc'] = 'Schriftformatierung: &lt;small&gt;\'Farbwert\', \'Ausrichtung\' (left,center,right, justify), \'Schriftstärke\' (normal, bold, bolder, lighter, 100, 200, 300, 400, 500, 600, 700, 800, 900), \'Textauszeichnungen\' (none, underline, overline, line-through, blink), \'Formatierung\' (normal, pre, nowrap)&lt;/small&gt;';
+	$mip_form['39']['cms_var'] = 'MOD_VAR[39]';
+	$mip_form['39']['cms_val'] = $cms_mod['value']['39'];
+	mip_formsp($mip_form['39']);
+
+	// SetItemTextHL
+	$mip_form['41']['cat'] = 'txt';
+	$mip_form['41']['desc'] = 'beim MouseOver';
+	$mip_form['41']['cms_var'] = 'MOD_VAR[41]';
+	$mip_form['41']['cms_val'] = $cms_mod['value']['41'];
+	mip_formsp($mip_form['41']);
+
+	// SetCorrection
+	echo '&lt;br&gt;';
+	$mip_form['17']['cat'] = 'txt';
+	$mip_form['17']['desc'] = 'Abstand zu Untermenüpunkten: &lt;small&gt;\'Pixel links\', \'Pixel oben\'&lt;/small&gt;';
+	$mip_form['17']['cms_var'] = 'MOD_VAR[17]';
+	$mip_form['17']['cms_val'] = $cms_mod['value']['17'];
+	mip_formsp($mip_form['17']);
+
+	// SetExpandIcon
+	$mip_form['18']['cat'] = 'txt';
+	$mip_form['18']['desc'] = 'Untermenüzeichen: &lt;small&gt;\'anzeigen\' (true, false), \'Symbol\', \'Pixel\'&lt;/small&gt;';
+	$mip_form['18']['cms_var'] = 'MOD_VAR[18]';
+	$mip_form['18']['cms_val'] = $cms_mod['value']['18'];
+	mip_formsp($mip_form['18']);
+
+	// SetPopOnClick
+	$mip_form['42']['cat'] = 'txt';
+	$mip_form['42']['desc'] = 'Untermenü durch klick: &lt;small&gt;\'benutzen\' (true)&lt;/small&gt;';
+	$mip_form['42']['cms_var'] = 'MOD_VAR[42]';
+	$mip_form['42']['cms_val'] = $cms_mod['value']['42'];
+	mip_formsp($mip_form['42']);
+
+	// sub.SetAlpha
+         echo &quot;&lt;br&gt;&lt;b&gt;Untermenüpunkte:&lt;/b&gt;&lt;br&gt;&lt;br&gt;&quot;;
+	$mip_form['47']['cat'] = 'txt';
+	$mip_form['47']['desc'] = 'Durchsichtigkeit: &lt;small&gt;\'Prozent\'&lt;/small&gt;';
+	$mip_form['47']['cms_var'] = 'MOD_VAR[47]';
+	$mip_form['47']['cms_val'] = $cms_mod['value']['47'];
+	mip_formsp($mip_form['47']);
+
+	// sub.SetBackground
+	echo '&lt;br&gt;';
+	$mip_form['48']['cat'] = 'txt';
+	$mip_form['48']['desc'] = 'Menühintergrund: &lt;small&gt;\'Farbwert\', \'Bild-URL\', \'Wiederholung\' (repeat, repeat-x, repeat-y, no-repeat), \'Position\' (top left, top center, top right, center left, center center, center right, bottom left, bottom center, bottom right, x y, x% y%)&lt;/small&gt;';
+	$mip_form['48']['cms_var'] = 'MOD_VAR[48]';
+	$mip_form['48']['cms_val'] = $cms_mod['value']['48'];
+	mip_formsp($mip_form['48']);
+
+	// sub.SetShadow
+	echo '&lt;br&gt;';
+	$mip_form['77']['cat'] = 'txt';
+	$mip_form['77']['desc'] = 'Menüschatten: &lt;small&gt;\'anzeigen\' (true, false), \'Farbwert\', \'Pixel Abstand\'&lt;/small&gt;';
+	$mip_form['77']['cms_var'] = 'MOD_VAR[77]';
+	$mip_form['77']['cms_val'] = $cms_mod['value']['77'];
+	mip_formsp($mip_form['77']);
+
+	// sub.SetBorderTop
+	echo '&lt;br&gt;Menürahmen: &lt;small&gt;\'Pixel\', \'Farbwert\', \'Typ\' (none, hidden, dotted, dashed, solid, double, groove, ridge, inset, outset)&lt;/small&gt;';
+	$mip_form['50']['cat'] = 'txt';
+	$mip_form['50']['desc'] = 'oben';
+	$mip_form['50']['cms_var'] = 'MOD_VAR[50]';
+	$mip_form['50']['cms_val'] = $cms_mod['value']['50'];
+	mip_formsp($mip_form['50']);
+
+	// sub.SetBorderLeft
+	$mip_form['51']['cat'] = 'txt';
+	$mip_form['51']['desc'] = 'links';
+	$mip_form['51']['cms_var'] = 'MOD_VAR[51]';
+	$mip_form['51']['cms_val'] = $cms_mod['value']['51'];
+	mip_formsp($mip_form['51']);
+
+	// sub.SetBorderRight
+	$mip_form['52']['cat'] = 'txt';
+	$mip_form['52']['desc'] = 'rechts';
+	$mip_form['52']['cms_var'] = 'MOD_VAR[52]';
+	$mip_form['52']['cms_val'] = $cms_mod['value']['52'];
+	mip_formsp($mip_form['52']);
+
+	// sub.SetBorderBottom
+	$mip_form['53']['cat'] = 'txt';
+	$mip_form['53']['desc'] = 'unten';
+	$mip_form['53']['cms_var'] = 'MOD_VAR[53]';
+	$mip_form['53']['cms_val'] = $cms_mod['value']['53'];
+	mip_formsp($mip_form['53']);
+
+	// sub.SetPadding
+	echo '&lt;br&gt;';
+	$mip_form['75']['cat'] = 'txt';
+	$mip_form['75']['desc'] = 'Menüabstände: &lt;small&gt;\'Pixel oben\', \'Pixel rechts\', \'Pixel unten\', \'Pixel links\'&lt;/small&gt;';
+	$mip_form['75']['cms_var'] = 'MOD_VAR[75]';
+	$mip_form['75']['cms_val'] = $cms_mod['value']['75'];
+	mip_formsp($mip_form['75']);
+
+	// sub.SetItemDimension
+	echo '&lt;br&gt;';
+	$mip_form['70']['cat'] = 'txt';
+	$mip_form['70']['desc'] = 'Zellengrö�?e: &lt;small&gt;\'Pixel breit\', \'Pixel hoch\'&lt;/small&gt;';
+	$mip_form['70']['cms_var'] = 'MOD_VAR[70]';
+	$mip_form['70']['cms_val'] = $cms_mod['value']['70'];
+	mip_formsp($mip_form['70']);
+
+	// sub.SetItemBackground
+	echo '&lt;br&gt;';
+	$mip_form['58']['cat'] = 'txt';
+	$mip_form['58']['desc'] = 'Zellenhintergrund: &lt;small&gt;\'Farbwert\', \'Bild-URL\', \'Wiederholung\' (repeat, repeat-x, repeat-y, no-repeat), \'Position\' (top left, top center, top right, center left, center center, center right, bottom left, bottom center, bottom right, x y, x% y%)&lt;/small&gt;';
+	$mip_form['58']['cms_var'] = 'MOD_VAR[58]';
+	$mip_form['58']['cms_val'] = $cms_mod['value']['58'];
+	mip_formsp($mip_form['58']);
+
+	// sub.SetItemBackgroundHL
+	$mip_form['59']['cat'] = 'txt';
+	$mip_form['59']['desc'] = 'beim MouseOver';
+	$mip_form['59']['cms_var'] = 'MOD_VAR[59]';
+	$mip_form['59']['cms_val'] = $cms_mod['value']['59'];
+	mip_formsp($mip_form['59']);
+
+	// sub.SetItemBorderTop
+	echo '&lt;br&gt;Zellenrahmen: &lt;small&gt;\'Pixel\', \'Farbwert\', \'Typ\' (none, hidden, dotted, dashed, solid, double, groove, ridge, inset, outset)&lt;/small&gt;';
+	$mip_form['61']['cat'] = 'txt';
+	$mip_form['61']['desc'] = 'oben';
+	$mip_form['61']['cms_var'] = 'MOD_VAR[61]';
+	$mip_form['61']['cms_val'] = $cms_mod['value']['61'];
+	mip_formsp($mip_form['61']);
+
+	// sub.SetItemBorderLeft
+	$mip_form['62']['cat'] = 'txt';
+	$mip_form['62']['desc'] = 'links';
+	$mip_form['62']['cms_var'] = 'MOD_VAR[62]';
+	$mip_form['62']['cms_val'] = $cms_mod['value']['62'];
+	mip_formsp($mip_form['62']);
+
+	// sub.SetItemBorderRight
+	$mip_form['63']['cat'] = 'txt';
+	$mip_form['63']['desc'] = 'rechts';
+	$mip_form['63']['cms_var'] = 'MOD_VAR[63]';
+	$mip_form['63']['cms_val'] = $cms_mod['value']['63'];
+	mip_formsp($mip_form['63']);
+
+	// sub.SetItemBorderBottom
+	$mip_form['64']['cat'] = 'txt';
+	$mip_form['64']['desc'] = 'unten';
+	$mip_form['64']['cms_var'] = 'MOD_VAR[64]';
+	$mip_form['64']['cms_val'] = $cms_mod['value']['64'];
+	mip_formsp($mip_form['64']);
+
+	// sub.SetItemBorderTopHL
+	$mip_form['66']['cat'] = 'txt';
+	$mip_form['66']['desc'] = 'beim MouseOver oben';
+	$mip_form['66']['cms_var'] = 'MOD_VAR[66]';
+	$mip_form['66']['cms_val'] = $cms_mod['value']['66'];
+	mip_formsp($mip_form['66']);
+
+	// sub.SetItemBorderLeftHL
+	$mip_form['67']['cat'] = 'txt';
+	$mip_form['67']['desc'] = 'beim MouseOver links';
+	$mip_form['67']['cms_var'] = 'MOD_VAR[67]';
+	$mip_form['67']['cms_val'] = $cms_mod['value']['67'];
+	mip_formsp($mip_form['67']);
+
+	// sub.SetItemBorderRightHL
+	$mip_form['68']['cat'] = 'txt';
+	$mip_form['68']['desc'] = 'beim MouseOver rechts';
+	$mip_form['68']['cms_var'] = 'MOD_VAR[68]';
+	$mip_form['68']['cms_val'] = $cms_mod['value']['68'];
+	mip_formsp($mip_form['68']);
+
+	// sub.SetItemBorderBottomHL
+	$mip_form['69']['cat'] = 'txt';
+	$mip_form['69']['desc'] = 'beim MouseOver unten';
+	$mip_form['69']['cms_var'] = 'MOD_VAR[69]';
+	$mip_form['69']['cms_val'] = $cms_mod['value']['69'];
+	mip_formsp($mip_form['69']);
+
+	// sub.SetItemPadding
+	echo '&lt;br&gt;';
+	$mip_form['71']['cat'] = 'txt';
+	$mip_form['71']['desc'] = 'Zellenabstände: &lt;small&gt;\'Pixel oben\', \'Pixel rechts\', \'Pixel unten\', \'Pixel links\'&lt;/small&gt;';
+	$mip_form['71']['cms_var'] = 'MOD_VAR[71]';
+	$mip_form['71']['cms_val'] = $cms_mod['value']['71'];
+	mip_formsp($mip_form['71']);
+
+	// sub.SetItemPaddingHL
+	$mip_form['72']['cat'] = 'txt';
+	$mip_form['72']['desc'] = 'beim MouseOver';
+	$mip_form['72']['cms_var'] = 'MOD_VAR[72]';
+	$mip_form['72']['cms_val'] = $cms_mod['value']['72'];
+	mip_formsp($mip_form['72']);
+
+	// sub.SetFont
+	echo '&lt;br&gt;';
+	$mip_form['57']['cat'] = 'txt';
+	$mip_form['57']['desc'] = 'Schriftart: &lt;small&gt;\'Schriftart\', \'Schriftgrö�?e\'&lt;/small&gt;';
+	$mip_form['57']['cms_var'] = 'MOD_VAR[57]';
+	$mip_form['57']['cms_val'] = $cms_mod['value']['57'];
+	mip_formsp($mip_form['57']);
+
+	// sub.SetItemText
+	$mip_form['73']['cat'] = 'txt';
+	$mip_form['73']['desc'] = 'Schriftformatierung: &lt;small&gt;\'Farbwert\', \'Ausrichtung\' (left,center,right, justify), \'Schriftstärke\' (normal, bold, bolder, lighter, 100, 200, 300, 400, 500, 600, 700, 800, 900), \'Textauszeichnungen\' (none, underline, overline, line-through, blink), \'Formatierung\' (normal, pre, nowrap)&lt;/small&gt;';
+	$mip_form['73']['cms_var'] = 'MOD_VAR[73]';
+	$mip_form['73']['cms_val'] = $cms_mod['value']['73'];
+	mip_formsp($mip_form['73']);
+
+	// sub.SetItemTextHL
+	$mip_form['74']['cat'] = 'txt';
+	$mip_form['74']['desc'] = 'beim MouseOver';
+	$mip_form['74']['cms_var'] = 'MOD_VAR[74]';
+	$mip_form['74']['cms_val'] = $cms_mod['value']['74'];
+	mip_formsp($mip_form['74']);
+
+	// sub.SetCorrection
+	echo '&lt;br&gt;';
+	$mip_form['54']['cat'] = 'txt';
+	$mip_form['54']['desc'] = 'Abstand zu Untermenüpunkten: &lt;small&gt;\'Pixel links\', \'Pixel oben\'&lt;/small&gt;';
+	$mip_form['54']['cms_var'] = 'MOD_VAR[54]';
+	$mip_form['54']['cms_val'] = $cms_mod['value']['54'];
+	mip_formsp($mip_form['54']);
+
+	// sub.SetExpandIcon
+	$mip_form['56']['cat'] = 'txt';
+	$mip_form['56']['desc'] = 'Untermenüzeichen: &lt;small&gt;\'anzeigen\' (true, false), \'Symbol\', \'Pixel\'&lt;/small&gt;';
+	$mip_form['56']['cms_var'] = 'MOD_VAR[56]';
+	$mip_form['56']['cms_val'] = $cms_mod['value']['56'];
+	mip_formsp($mip_form['56']);
+
+	// sub.SetSeparator
+	$mip_form['76']['cat'] = 'txt';
+	$mip_form['76']['desc'] = 'Abstandshalter: &lt;small&gt;\'Pixel breite\', \'Ausrichtung\', \'Farbwert oben\', \'Farbwert unten\'&lt;/small&gt;';
+	$mip_form['76']['cms_var'] = 'MOD_VAR[76]';
+	$mip_form['76']['cms_val'] = $cms_mod['value']['76'];
+	mip_formsp($mip_form['76']);
+
+	// sub.SetDelay
+	$mip_form['55']['cat'] = 'txt';
+	$mip_form['55']['desc'] = 'Zeitabstand vor ausblenden des Menüs: &lt;small&gt;\'Millisekunden\'&lt;/small&gt;';
+	$mip_form['55']['cms_var'] = 'MOD_VAR[55]';
+	$mip_form['55']['cms_val'] = $cms_mod['value']['55'];
+	mip_formsp($mip_form['55']);
+
+
+// Simple-Mode
+} else {
+	// advanced Daten als hidden übergeben
+	for($mip_form['count']=10;$mip_form['count']&lt;=77;$mip_form['count']++) {
+		$mip_form[$mip_form['count']]['cat'] = 'hidden';
+		$mip_form[$mip_form['count']]['cms_var'] = 'MOD_VAR['.$mip_form['count'].']';
+		$mip_form[$mip_form['count']]['cms_val'] = $cms_mod['value'][$mip_form['count']];
+		mip_formsp($mip_form[$mip_form['count']]);
+	}
+}
+unset($mip_form);
+?&gt;</input>
+   <output>&lt;script language=&quot;JavaScript&quot;&gt;
+&lt;!--
+var &lt;?PHP echo $cms_mod['key']; ?&gt;menu = new TMainMenu('&lt;?PHP echo $cms_mod['key']; ?&gt;menu','MOD_VALUE[2]');
+&lt;CMSPHP&gt;
+// Navigationsbaum erstellen
+if(&quot;MOD_VALUE[0]&quot; == 'root') $mod['start'] = '0';
+elseif(&quot;MOD_VALUE[0]&quot; == 'this') $mod['start'] = $idcat;
+else $mod['start'] = MOD_VALUE[0];
+tree_level_order($mod['start'], 'mod_tree');
+$mod['startlevel'] = ($mod['start'] != 0) ? $catlist_level[$mod['start']]+1 : '0';
+
+// Seitenliste vorbereiten
+if (!isset($con_side['list'])) {
+	foreach (sf_array_keys($con_side) as $mod['idcatside']) {
+		if (isset($cms_side['view']) || ($con_side[$mod['idcatside']]['online'] &amp;&amp; $con_side[$mod['idcatside']]['online'] != '0')) {
+			if(!is_array($con_side['list'][$con_side[$mod['idcatside']]['idcat']])) $con_side['list'][$con_side[$mod['idcatside']]['idcat']] = array();
+			sf_array_push($con_side['list'][$con_side[$mod['idcatside']]['idcat']], $mod['idcatside']);
+			if ($con_side[$mod['idcatside']]['is_start'] == '1') $con_side['list'][$con_side[$mod['idcatside']]['idcat']]['is_start'] = true;
+		}
+	}
+}
+
+// gibt es Navigation?
+if (is_array($mod_tree)) {
+	$mod['offline_idcat'] = explode (',', &quot;MOD_VALUE[4]&quot;);
+	foreach($mod_tree as $mod['idcat']) {
+		if (!sf_in_array($mod['idcat'], $mod['offline_idcat'])) {
+			$mod['max_deep'] = $catlist_level[$mod['idcat']]+1 - $mod['startlevel'];
+			for($mod['deep']=$mod['max_deep'];$mod['deep'] &gt; 0;$mod['deep']--) {
+				$mod['parent'] = $mod['idcat'];
+				for($mod['i']=1;$mod['i'] &lt;= $mod['deep'];$mod['i']++) {
+					if ($mod['i'] == $mod['deep']) {
+                                         	$mod['menu'] = ($mod['deep'] == 1) ? $mod['menu'].'_'.round($mod['counter']['menu'.$mod['menu']]+1) : $mod['menu'].'_'.$mod['counter']['menu'.$mod['menu']];
+					}
+					$mod['parent'] = $con_tree[$mod['parent']]['parent'];
+				}
+			}
+
+			$mod['menuparent'] = substr($mod['menu'], 0, strrpos($mod['menu'], '_'));
+
+			// Ordner einfügen
+			if (((&quot;MOD_VALUE[3]&quot; == 'all' || $mod['max_deep'] &lt;= &quot;MOD_VALUE[3]&quot;) &amp;&amp; (isset($cms_side['view']) || ($con_tree[$mod['idcat']]['visible'] == 1))) &amp;&amp; ($mod['menuparent'] == $mod['lastentry'] || isset($mod['counter']['menu'.$mod['menuparent']]))){
+				// Ordner anklickbar?
+				if (is_array($con_side['list'][$mod['idcat']]) &amp;&amp; isset($con_side['list'][$mod['idcat']]['is_start'])) {
+					echo 'var '.$cms_mod['key'].'menu'.$mod['menu'].' = new TPopMenu(\''.cms_addslashes($con_tree[$mod['idcat']]['name']).'\',\'5\',\'a\',\''.$con_tree[$mod['idcat']]['link'].'\',\''.cms_addslashes($con_tree[$mod['idcat']]['name']).'\'); ';
+				} else {
+					echo 'var '.$cms_mod['key'].'menu'.$mod['menu'].' = new TPopMenu(\''.cms_addslashes($con_tree[$mod['idcat']]['name']).'\',\'5\',\'\',\'\',\''.cms_addslashes($con_tree[$mod['idcat']]['name']).'\'); ';
+                                 }
+				$mod['lastentry'] = $mod['menu'];
+				echo $cms_mod['key'].'menu'.$mod['menuparent'].'.Add('.$cms_mod['key'].'menu'.$mod['menu'].');'.&quot;\n&quot;;
+				$mod['counter']['menu'.$mod['menuparent']] = $mod['counter']['menu'.$mod['menuparent']]+1;
+			}
+			unset($mod['menu']);
+		}
+         }
+}
+unset($mod, $mod_tree);
+&lt;/CMSPHP&gt;
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetBackground(MOD_VALUE[10]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetBorderTop(MOD_VALUE[12]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetBorderLeft(MOD_VALUE[13]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetBorderRight(MOD_VALUE[14]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetBorderBottom(MOD_VALUE[15]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetCellSpacing(MOD_VALUE[16]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetCorrection(MOD_VALUE[17]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetExpandIcon(MOD_VALUE[18]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetFont(MOD_VALUE[19]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetItemBackground(MOD_VALUE[20]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetItemBackgroundHL(MOD_VALUE[22]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetItemBorderTop(MOD_VALUE[24]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetItemBorderLeft(MOD_VALUE[25]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetItemBorderRight(MOD_VALUE[26]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetItemBorderBottom(MOD_VALUE[27]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetItemBorderTopHL(MOD_VALUE[34]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetItemBorderLeftHL(MOD_VALUE[35]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetItemBorderRightHL(MOD_VALUE[36]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetItemBorderBottomHL(MOD_VALUE[37]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetItemDimension(MOD_VALUE[38]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetItemText(MOD_VALUE[39]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetItemTextHL(MOD_VALUE[41]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetPopOnClick(MOD_VALUE[42]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetPosition(MOD_VALUE[43]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetShadow(MOD_VALUE[44]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetType(MOD_VALUE[45]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.SetWidth(MOD_VALUE[46]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetAlpha(MOD_VALUE[47]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetBackground(MOD_VALUE[48]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetBorderTop(MOD_VALUE[50]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetBorderLeft(MOD_VALUE[51]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetBorderRight(MOD_VALUE[52]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetBorderBottom(MOD_VALUE[53]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetCorrection(MOD_VALUE[54]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetDelay(MOD_VALUE[55]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetExpandIcon(MOD_VALUE[56]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetFont(MOD_VALUE[57]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemBackground(MOD_VALUE[58]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemBackgroundHL(MOD_VALUE[59]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemBorderTop(MOD_VALUE[61]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemBorderLeft(MOD_VALUE[62]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemBorderRight(MOD_VALUE[63]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemBorderBottom(MOD_VALUE[64]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemBorderTopHL(MOD_VALUE[66]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemBorderLeftHL(MOD_VALUE[67]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemBorderRightHL(MOD_VALUE[68]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemBorderBottomHL(MOD_VALUE[69]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemDimension(MOD_VALUE[70]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemPadding(MOD_VALUE[71]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemPaddingHL(MOD_VALUE[72]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemText(MOD_VALUE[73]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetItemTextHL(MOD_VALUE[74]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetPadding(MOD_VALUE[75]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetSeparator(MOD_VALUE[76]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu._pop.SetShadow(MOD_VALUE[77]);
+&lt;?PHP echo $cms_mod['key']; ?&gt;menu.Build();
+//--&gt;
+&lt;/script&gt;</output>
+   <config></config>
+   <repository_id>mod:28eb4673f7fedeb44f2b5550dbf01e1a:bf895040</repository_id>
+   <install_sql></install_sql>
+   <uninstall_sql></uninstall_sql>
+   <update_sql></update_sql>
+</modul>

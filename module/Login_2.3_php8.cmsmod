@@ -1,0 +1,436 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<modul version='0.4' date='1792759065'>
+   <name>Login</name>
+   <cat>System</cat>
+   <version>2.3</version>
+   <author>1</author>
+   <created>1079610875</created>
+   <lastmodified>1215636782</lastmodified>
+   <deletable>1</deletable>
+   <description>Login/out-Formular für die geschützten Bereiche.</description>
+   <input>&lt;?PHP
+//val ref
+// 01 txt Datumsformat
+// 02 txt Zeitformat
+// 03 txtarea Template für die Fehlermeldung
+// 06 txt attribute benutzername
+// 07 txt attribute passwort
+// 08 Template Anmeldung
+// 09 Template Logout
+// 10 Frontendbearbeitung erlauben 
+// 12 txt weiterleitung nach login
+// 13 txt weiterleitung nach logout
+// 14 txtarea tpl date
+// 15 txtarea tpl date_empty
+// 16 txt weiterleitung wenn eingeloggt
+// 17 txt weiterleitung wenn eingeloggt nicht im backend
+// 18 chkbox Login nur mit Benutzernamen (Benutzername und Passwort sind identisch) 
+
+//Template Fehlermeldung
+$mip_form['3']['desc'] = 'Template Fehlermeldung bei ungültigem Login';
+$mip_form['3']['type'] = 'long';
+$mip_form['3']['rows'] = '3';
+$mip_form['3']['cat'] = 'txtarea';
+$mip_form['3']['cms_var'] = 'MOD_VAR[3]';
+$mip_form['3']['cms_val'] = $cms_mod['value']['3'];
+$mip_form['3']['cms_val_default'] = '&lt;tr&gt;
+    &lt;td colspan=&quot;2&quot;&gt;Login fehlgeschlagen! Falscher Benutzername oder falsches Passwort!&lt;/td&gt;
+&lt;/tr&gt;';
+$mip_form['3']['tab'] = '0';
+
+//attribute benutzername
+$mip_form['6']['desc'] = 'Optionale Formularattribute f&amp;uuml;r Benutzername';
+$mip_form['6']['cat'] = 'txt';
+$mip_form['6']['cms_var'] = 'MOD_VAR[6]';
+$mip_form['6']['cms_val'] = $cms_mod['value']['6'];
+$mip_form['6']['cms_val_default'] = '';
+
+//attribute passwort
+$mip_form['7']['desc'] = 'Optionale Formularattribute f&amp;uuml;r Passwort';
+$mip_form['7']['cat'] = 'txt';
+$mip_form['7']['cms_var'] = 'MOD_VAR[7]';
+$mip_form['7']['cms_val'] = $cms_mod['value']['7'];
+$mip_form['7']['cms_val_default'] = '';
+
+//Datumsformat 
+$mip_form['1']['desc'] = 'Formatierung Datum letzter Login';
+$mip_form['1']['cat'] = 'txt';
+$mip_form['1']['cms_var'] = 'MOD_VAR[1]';
+$mip_form['1']['cms_val'] = $cms_mod['value']['1'];
+$mip_form['1']['cms_val_default'] = 'd.m.Y';
+
+//Zeitformat
+$mip_form['2']['desc'] = 'Formatierung Uhrzeit letzter Login';
+$mip_form['2']['cat'] = 'txt';
+$mip_form['2']['cms_var'] = 'MOD_VAR[2]';
+$mip_form['2']['cms_val'] = $cms_mod['value']['2'];
+$mip_form['2']['cms_val_default'] = 'H:i:s';
+
+// Template Anmeldung
+$mip_form['8']['cat'] = 'txtarea';
+$mip_form['8']['type'] = 'long';
+$mip_form['8']['rows'] = '8';
+$mip_form['8']['desc'] = 'Template&lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {form_attributes}, {input_name}, {input_password}, {errortemplate}&lt;/small&gt;';
+$mip_form['8']['cms_var'] = 'MOD_VAR[8]';
+$mip_form['8']['cms_val'] = $cms_mod['value']['8'];
+$mip_form['8']['cms_val_default'] = '&lt;form {form_attributes}&gt;
+&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; border=&quot;0&quot;&gt;
+  {errortemplate}
+  &lt;tr&gt;
+    &lt;td&gt;&amp;nbsp;Username :&amp;nbsp;&lt;/td&gt;
+    &lt;td&gt;&amp;nbsp;{input_name}&amp;nbsp;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&amp;nbsp;Passwort :&amp;nbsp;&lt;/td&gt;
+    &lt;td&gt;&amp;nbsp;{input_password}&amp;nbsp;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td colspan=&quot;2&quot; align=&quot;right&quot;&gt;&lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;Einloggen&quot; \&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;/form&gt;';
+
+// Template Logout
+$mip_form['9']['cat'] = 'txtarea';
+$mip_form['9']['type'] = 'long';
+$mip_form['9']['rows'] = '8';
+$mip_form['9']['desc'] = 'Template Logout&lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {name}, {surname}, {firm}, {position}, {salutation}, {street}, {zip}, {location}, {phone}, {fax}, {comment}, {email}, {lastlogin}, {form_attributes}, {form_hiddenvals}&lt;/small&gt;';
+$mip_form['9']['cms_var'] = 'MOD_VAR[9]';
+$mip_form['9']['cms_val'] = $cms_mod['value']['9'];
+$mip_form['9']['cms_val_default'] = '&lt;form {form_attributes}&gt;
+&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; border=&quot;0&quot;&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Guten Tag {salutation} {name} {surname}!&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td align=&quot;right&quot;&gt;&lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;Ausloggen&quot; /&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+{form_hiddenvals}
+&lt;/form&gt;';
+
+// Frontendbearbeitung erlauben
+$mip_form['10']['desc'] = 'Frontendbearbeitung erlauben';
+$mip_form['10']['cat'] = 'chk';
+$mip_form['10']['option_var']['0'] = &quot;MOD_VAR[10]&quot;;
+$mip_form['10']['option_val']['0'] = $cms_mod['value']['10'];
+$mip_form['10']['option_desc']['0'] = 'ja';
+$mip_form['10']['option_val_select']['0'] = 'true';
+
+//Weiterleitung nach Login
+$mip_form['12']['desc'] = 'Nach Login weiterleiten auf Seite &lt;small&gt;(Idcatside angeben, Eingabe &quot;0&quot; = keine Weiterleitung)&lt;/small&gt;';
+$mip_form['12']['cat'] = 'txt';
+$mip_form['12']['cms_var'] = 'MOD_VAR[12]';
+$mip_form['12']['cms_val'] = $cms_mod['value']['12'];
+$mip_form['12']['cms_val_default'] = '0';
+
+//Weiterleitung nach Logout
+$mip_form['13']['desc'] = 'Nach Logout weiterleiten auf Seite &lt;small&gt;(Idcatside angeben, Eingabe &quot;0&quot; = keine Weiterleitung)&lt;/small&gt;';
+$mip_form['13']['cat'] = 'txt';
+$mip_form['13']['cms_var'] = 'MOD_VAR[13]';
+$mip_form['13']['cms_val'] = $cms_mod['value']['13'];
+$mip_form['13']['cms_val_default'] = '0';
+
+//Template Datum
+$mip_form['14']['desc'] = 'Template Letzter Login&lt;br /&gt;&lt;small&gt;Templatevariablen: {lastlogin_date}, {lastlogin_time}&lt;/small&gt;';
+$mip_form['14']['type'] = 'long';
+$mip_form['14']['rows'] = '2';
+$mip_form['14']['cat'] = 'txtarea';
+$mip_form['14']['cms_var'] = 'MOD_VAR[14]';
+$mip_form['14']['cms_val'] = $cms_mod['value']['14'];
+$mip_form['14']['cms_val_default'] = 'Letzter Login am {lastlogin_date}, um {lastlogin_time} Uhr';
+$mip_form['14']['tab'] = '0';
+
+//Template Datum leer
+$mip_form['15']['desc'] = 'Template letzer Login, wenn kein Wert vorhanden';
+$mip_form['15']['type'] = 'long';
+$mip_form['15']['rows'] = '2';
+$mip_form['15']['cat'] = 'txtarea';
+$mip_form['15']['cms_var'] = 'MOD_VAR[15]';
+$mip_form['15']['cms_val'] = $cms_mod['value']['15'];
+$mip_form['15']['cms_val_default'] = 'Sie haben sich noch nie eingeloggt.';
+$mip_form['15']['tab'] = '0';
+
+//Weiterleitung wenn eingeloggt
+$mip_form['16']['desc'] = 'Wenn eingeloggt, grundsätzlich weiterleiten auf Seite &lt;small&gt;(Idcatside angeben, Eingabe &quot;0&quot; = keine Weiterleitung, Weiterleitung gilt nur für das Frontend)&lt;/small&gt;';
+$mip_form['16']['cat'] = 'txt';
+$mip_form['16']['cms_var'] = 'MOD_VAR[16]';
+$mip_form['16']['cms_val'] = $cms_mod['value']['16'];
+$mip_form['16']['cms_val_default'] = '0';
+
+
+// Weiterleitung auch im Backend
+$mip_form['17']['desc'] = 'Wenn eingeloggt Weiterleitung auch im Backend';
+$mip_form['17']['cat'] = 'chk';
+$mip_form['17']['option_var']['0'] = &quot;MOD_VAR[17]&quot;;
+$mip_form['17']['option_val']['0'] = $cms_mod['value']['17'];
+$mip_form['17']['option_desc']['0'] = 'ja';
+$mip_form['17']['option_val_select']['0'] = 'true';
+
+// Login nur mit Benutzernamen (Benutzername und Passwort sind identisch) 
+$mip_form['18']['desc'] = 'Login nur mit Benutzernamen  &lt;small&gt;(Benutzername und Passwort sind identisch, es wird nur die Variable {input_name} geprüft)&lt;/small&gt;';
+$mip_form['18']['cat'] = 'chk';
+$mip_form['18']['option_var']['0'] = &quot;MOD_VAR[18]&quot;;
+$mip_form['18']['option_val']['0'] = $cms_mod['value']['18'];
+$mip_form['18']['option_desc']['0'] = 'ja';
+$mip_form['18']['option_val_select']['0'] = 'true';
+
+
+mip_formsp($mip_form['12']); //Weiterleitung nach login
+mip_formsp($mip_form['16']); //Weiterleitung wenn eingeloggt
+mip_formsp($mip_form['17']); //Weiterleitung wenn eingeloggt, auch im Backend
+mip_formsp($mip_form['13']); //Weiterleitung nach logout
+mip_formsp($mip_form['10']); //Frontendbearbeitung erlauben
+mip_formsp($mip_form['18']); //Login nur mit Benutzernamen
+mip_formsp($mip_form['6']);  //Attribute benutzername
+mip_formsp($mip_form['7']);  //Attribute passwort
+mip_formsp($mip_form['8']);  //Template Anmeldung  
+mip_formsp($mip_form['3']);  //Template für die Fehlermeldung
+mip_formsp($mip_form['9']);  //Template Logout
+mip_formsp($mip_form['1']);  //Datumsformat
+mip_formsp($mip_form['2']);  //Zeitformat
+mip_formsp($mip_form['14']); //Template Datum
+mip_formsp($mip_form['15']); //Template Datum leer
+
+unset($mip_form);
+?&gt;</input>
+   <output>&lt;CMSPHP&gt;
+$is_dev = false;
+
+//config
+$mod['dateformat'] = &quot;MOD_VALUE[1]&quot;;
+$mod['timeformat'] = &quot;MOD_VALUE[2]&quot;;
+$mod['tpl_lastlogin'] = &quot;MOD_VALUE[14]&quot;;
+$mod['tpl_lastlogin_empty'] = &quot;MOD_VALUE[15]&quot;;
+$mod['tpl_login'] = &quot;MOD_VALUE[8]&quot;;
+$mod['tpl_login_error'] = &quot;MOD_VALUE[3]&quot;;
+$mod['tpl_logout'] = &quot;MOD_VALUE[9]&quot;;
+$mod['redirect_login'] = (int) trim(&quot;MOD_VALUE[12]&quot;);
+$mod['redirect_logout'] = (int) trim(&quot;MOD_VALUE[13]&quot;);
+$mod['redirect_if_logged_in_and backend'] = &quot;MOD_VALUE[17]&quot;;
+$mod['allow_backendlogin'] = &quot;MOD_VALUE[10]&quot;;
+$mod['attributes_username'] = &quot;MOD_VALUE[6]&quot;;
+$mod['attributes_password'] = &quot;MOD_VALUE[7]&quot;;
+$mod['redirect_if_logged_in'] = (int) &quot;MOD_VALUE[16]&quot;;
+$mod['username_is_password'] = &quot;MOD_VALUE[18]&quot;;
+
+$mod['throw_error'] = false;
+
+if ($is_dev) {
+   include_once &quot;C:/Programme/xampp/htdocs/sefrengo_dev/moddev/login-out.php&quot;;
+} else {
+
+
+if ($_REQUEST['action'] == 'login') 
+{
+	//write loginaction to log
+    $sf_wr =&amp; $GLOBALS['sf_factory']-&gt;getObject('HTTP', 'WebRequest');
+	$username = $sf_wr-&gt;getVal('username'); 
+	$password = ($mod['username_is_password'] == 'true') ? $username : $sf_wr-&gt;getVal('password'); 
+	$sf_user =&amp; sf_factoryGetObject('ADMINISTRATION', 'User'); 
+    $sf_login_ok = $sf_user-&gt;loadByUsernamePassword($username, $password, true);
+    unset($sf_user);
+    
+	if ($username != '') {
+        $auth-&gt;auth['uname'] = $username;
+    } else if ($auth-&gt;nobody) {
+		$uid = $auth-&gt;auth['uname'] = $auth-&gt;auth['uid'] = 'nobody';
+	}
+	
+    // User aus der Datenbank suchen
+	$username = $db-&gt;escape($username);
+	$sql = &quot;SELECT 
+		firm, position, salutation, street, zip, location, phone, fax, comment, A.user_id, password, A.name, surname, email, C.name AS groupname, C.description
+		FROM &quot;.$cms_db['users'].&quot; A
+		LEFT JOIN &quot;.$cms_db['users_groups'].&quot; B USING(user_id)
+		LEFT JOIN &quot;.$cms_db['groups'].&quot; C USING(idgroup)
+		LEFT JOIN &quot;.$cms_db['perms'].&quot; D USING(idgroup)
+		WHERE A.username='$username'
+		AND A.is_active='1'
+		AND C.is_active='1'
+		AND ((D.type='cms_access' AND D.id='area_backend' AND D.perm&gt;0) OR C.is_sys_admin='1') LIMIT 0, 1&quot;;
+	$db-&gt;query($sql);
+	
+	//login to backend
+	if ($sf_login_ok &amp;&amp; $db-&gt;next_record() &amp;&amp; $mod['allow_backendlogin'] == 'true') {
+		
+		// Backenduser Login
+		$auth-&gt;logout();
+		$sess = new cms_Backend_Session;
+		$auth = new cms_Backend_Auth;
+		$HTTP_GET_VARS['cms'] = $_GET['cms'] = bin2hex(random_bytes(16));
+		$sess-&gt;start();
+		$sess-&gt;regenerate_id();
+		$auth-&gt;auth['name'] = $db-&gt;f('name');
+		$auth-&gt;auth['surname'] = $db-&gt;f('surname');
+		$auth-&gt;auth['group_name'] = $db-&gt;f('groupname');
+		$auth-&gt;auth['group_desc'] = $db-&gt;f('description');
+		$auth-&gt;auth['email'] = $db-&gt;f('email');
+		$auth-&gt;auth['firm'] = $db-&gt;f('firm');
+		$auth-&gt;auth['position'] = $db-&gt;f('position');
+		$auth-&gt;auth['salutation'] = $db-&gt;f('salutation');
+		$auth-&gt;auth['street'] = $db-&gt;f('street');
+		$auth-&gt;auth['zip'] = $db-&gt;f('zip');
+		$auth-&gt;auth['location'] = $db-&gt;f('location');
+		$auth-&gt;auth['phone'] = $db-&gt;f('phone');
+		$auth-&gt;auth['fax'] = $db-&gt;f('fax');
+		$auth-&gt;auth['comment'] = $db-&gt;f('comment');
+		$auth-&gt;auth['uid'] = $db-&gt;f('user_id');
+		$auth-&gt;auth['uname'] = $username;
+		$auth-&gt;auth['exp'] = time() + (60 * $auth-&gt;lifetime);
+		$auth-&gt;auth['refresh'] = time() + (60 * $auth-&gt;refresh);
+		$sess-&gt;register('auth');
+		$sess-&gt;register('sid_sniffer');
+		$sess-&gt;freeze();
+
+		// redirect
+		$sf_idcatside_redirect = $mod['redirect_login'];
+		if ($sf_idcatside_redirect &lt; 1) {
+		  $sf_idcatside_redirect = $idcatside;
+		}
+
+		sf_header_redirect($cfg_client['contentfile'].&quot;?lang=$lang&amp;idcatside=$sf_idcatside_redirect&amp;view=preview&quot;);
+	//login to frontend
+    } else {
+		$sql = &quot;SELECT 
+		firm, position, salutation, street, zip, location, phone, fax, comment, A.user_id, password, A.name, surname, email, C.name AS groupname, C.description
+		FROM &quot;.$cms_db['users'].&quot; A
+		LEFT JOIN &quot;.$cms_db['users_groups'].&quot; B USING(user_id)
+		LEFT JOIN &quot;.$cms_db['groups'].&quot; C USING(idgroup)
+		LEFT JOIN &quot;.$cms_db['perms'].&quot; D USING(idgroup)
+		WHERE A.username='$username'
+		AND A.is_active='1'
+		AND C.is_active='1'
+		AND ((D.type='cms_access' AND D.id='area_frontend' AND D.perm='1') OR C.is_sys_admin='1') LIMIT 0, 1&quot;;
+		$db-&gt;query($sql);
+		if ($sf_login_ok &amp;&amp; $db-&gt;next_record()) {
+			// Frontenduser Login
+			$auth-&gt;auth['name'] = $db-&gt;f('name');
+			$auth-&gt;auth['surname'] = $db-&gt;f('surname');
+			$auth-&gt;auth['group_name'] = $db-&gt;f('groupname');
+			$auth-&gt;auth['group_desc'] = $db-&gt;f('description');
+			$auth-&gt;auth['email'] = $db-&gt;f('email');
+			$auth-&gt;auth['firm'] = $db-&gt;f('firm');
+			$auth-&gt;auth['position'] = $db-&gt;f('position');
+			$auth-&gt;auth['salutation'] = $db-&gt;f('salutation');
+			$auth-&gt;auth['street'] = $db-&gt;f('street');
+			$auth-&gt;auth['zip'] = $db-&gt;f('zip');
+			$auth-&gt;auth['location'] = $db-&gt;f('location');
+			$auth-&gt;auth['phone'] = $db-&gt;f('phone');
+			$auth-&gt;auth['fax'] = $db-&gt;f('fax');
+			$auth-&gt;auth['comment'] = $db-&gt;f('comment');
+			$auth-&gt;auth['uid'] = $db-&gt;f('user_id');
+			$auth-&gt;auth['uname'] = $username;
+			$auth-&gt;auth['exp'] = time() + (60 * $auth-&gt;lifetime);
+			$auth-&gt;auth['refresh'] = time() + (60 * $auth-&gt;refresh);
+			$sess-&gt;register('auth');
+			$sess-&gt;register('sid_sniffer');
+			$sess-&gt;freeze();
+			
+            // redirect
+    		$sf_idcatside_redirect = $mod['redirect_login'];
+    		if ($sf_idcatside_redirect &lt; 1) {
+    		  $sf_idcatside_redirect = $idcatside;
+    		}
+			sf_header_redirect($cfg_client['contentfile'].&quot;?lang=$lang&amp;idcatside=$sf_idcatside_redirect&quot;);
+		}
+	}
+
+	// Login fails
+	if ($auth-&gt;auth['uid'] == 'nobody') {
+		$mod['throw_error'] = true;
+	}
+}
+
+if ($action == 'logout') {
+	$auth-&gt;logout();
+	$sf_idcatside_redirect = $mod['redirect_logout'];
+
+	if ($sf_idcatside_redirect &gt; 0) {
+	    sf_header_redirect($cfg_client['contentfile'].&quot;?lang=$lang&amp;idcatside=$sf_idcatside_redirect&quot;);
+	} else {
+        sf_header_redirect($cfg_client['contentfile'].&quot;?lang=$lang&amp;idcatside=$idcatside&quot;);
+    }
+}
+if ($uid != 'nobody') {
+    $auth-&gt;auth['exp'] = time() + (60 * $auth-&gt;lifetime);
+}
+
+//tpl login
+if ($auth-&gt;auth['uid'] == 'nobody') {
+    $mod['tpl_login_error'] = ($mod['throw_error']) ? $mod['tpl_login_error']:''; 
+
+	$mod['usr_input'] = &quot;&lt;input type=\&quot;text\&quot; name=\&quot;username\&quot; value=\&quot;&quot;.htmlentities($username, ENT_COMPAT, 'UTF-8').&quot;\&quot; size=\&quot;10\&quot; maxlength=\&quot;32\&quot; &quot;.$mod['attributes_username'].&quot; /&gt;
+							&lt;input type=\&quot;hidden\&quot; name=\&quot;action\&quot; value=\&quot;login\&quot; /&gt;&quot;;
+    $mod['pwd_input'] = &quot;&lt;input type=\&quot;password\&quot; name=\&quot;password\&quot; size=\&quot;10\&quot; maxlength=\&quot;32\&quot; &quot;.$mod['attributes_username'].&quot; /&gt;&quot;;
+    
+    $mod['tpl_form'] = $mod['tpl_login'];
+	$mod['tpl_form'] = str_replace('{input_name}', $mod['usr_input'], $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{input_password}', $mod['pwd_input'], $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{input_password}', $mod['pwd_input'], $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{errortemplate}', $mod['tpl_login_error'], $mod['tpl_form']);
+	   
+//tpl logout
+} else {
+
+    if ($mod['redirect_if_logged_in'] &gt; 0 &amp;&amp; $_REQUEST['action'] != 'login' &amp;&amp; $_REQUEST['action'] != 'logout' &amp;&amp;
+    		( ($mod['redirect_if_logged_in_and backend'] == 'true' &amp;&amp; $sess-&gt;name == 'sefrengo')
+    		|| ($sess-&gt;name != 'sefrengo') ) )
+    
+    {
+$addon = '';
+if ($sess-&gt;name == 'sefrengo')
+{
+  $addon = '&amp;view='.$view;
+}
+        sf_header_redirect($cfg_client['htmlpath'].$cfg_client['contentfile'].&quot;?lang=$lang&amp;idcatside=&quot;.$mod['redirect_if_logged_in'].$addon);
+    }
+    
+    $sf_user =&amp; sf_factoryGetObject('ADMINISTRATION', 'User'); 
+    $sf_user-&gt;loadByIduser( $auth-&gt;auth['uid'] );
+	$mod['tpl_form'] = $mod['tpl_logout'];
+	$mod['tpl_form'] = str_replace('{id}', $sf_user-&gt;getIduser(), $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{loginname}', $sf_user-&gt;getUsername(), $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{name}', $sf_user-&gt;getName(), $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{surname}', $sf_user-&gt;getSurname(), $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{email}', $sf_user-&gt;getEmail(), $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{firm}', $sf_user-&gt;getFirm(), $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{position}', $sf_user-&gt;getPosition(), $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{salutation}', $sf_user-&gt;getSalutation(), $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{street}', $sf_user-&gt;getStreet(), $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{zip}', $sf_user-&gt;getZip(), $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{location}', $sf_user-&gt;getLocation(), $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{phone}', $sf_user-&gt;getPhone(), $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{fax}', $sf_user-&gt;getFax(), $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{homepage}', $sf_user-&gt;getHomepage(), $mod['tpl_form']);
+	$mod['tpl_form'] = str_replace('{comment}', $sf_user-&gt;getComment(), $mod['tpl_form']);
+	
+    $mod['timestamp_lastlogin'] = (int) $sf_user-&gt;getLastLoginTimestamp();
+    if ($mod['timestamp_lastlogin'] &gt; 0) {
+        $mod['tpl_lastlogin'] = str_replace('{lastlogin_date}', date($mod['dateformat'], $mod['timestamp_lastlogin']), $mod['tpl_lastlogin']);
+        $mod['tpl_lastlogin'] = str_replace('{lastlogin_time}', date($mod['timeformat'], $mod['timestamp_lastlogin']), $mod['tpl_lastlogin']);
+        $mod['tpl_form'] = str_replace('{lastlogin}', $mod['tpl_lastlogin'], $mod['tpl_form']);
+    } else {
+        $mod['tpl_form'] = str_replace('{lastlogin}', $mod['tpl_lastlogin_empty'], $mod['tpl_form']);
+    }
+    
+    $mod['hidden_input'] = &quot;&lt;input type=\&quot;hidden\&quot; name=\&quot;action\&quot; value=\&quot;logout\&quot; /&gt;&quot;;
+	$mod['tpl_form'] = str_replace('{form_hiddenvals}', $mod['hidden_input'], $mod['tpl_form']);
+	
+    unset($sf_user);
+}
+
+$mod['tpl_form'] = str_replace('{form_attributes}', &quot;action=\&quot;&quot;.$con_side[$idcatside]['link'].&quot;\&quot; method=\&quot;post\&quot; name=\&quot;login\&quot;&quot;, $mod['tpl_form']);
+echo $mod['tpl_form'];
+unset($mod);
+
+
+}
+&lt;/CMSPHP&gt;
+</output>
+   <config></config>
+   <repository_id>mod:d56b699830e77ba53855679cb1d252da:a75a7742</repository_id>
+   <install_sql></install_sql>
+   <uninstall_sql></uninstall_sql>
+   <update_sql></update_sql>
+</modul>

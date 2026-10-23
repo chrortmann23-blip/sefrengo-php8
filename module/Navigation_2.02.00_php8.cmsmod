@@ -1,0 +1,907 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<modul version='0.4' date='1792759064'>
+   <name>Navigation</name>
+   <cat>Navigation</cat>
+   <version>2.02.00</version>
+   <author>1</author>
+   <created>1077574226</created>
+   <lastmodified>1177011989</lastmodified>
+   <deletable>1</deletable>
+   <description>Stellt eine umfangreich konfigurierbare Navigation für Ordner und Seiten zur Verfügung. Ist primär darauf ausgerichtet, die einzelnen Menüpunkte als Textlinks in einer HTML Tabelle zu organisieren.</description>
+   <input>&lt;?PHP
+// Defaultwerte setzen
+if ($cms_mod['value']['29'] == '') $cms_mod['value']['29'] = 'simple_mode';
+if ($cms_mod['value']['6'] == '') $cms_mod['value']['6'] = 'groupside';
+$mip_form['1']['cms_val_default'] = 'Navigation-Ordner';
+$mip_form['2']['cms_val_default'] = 'Navigation-Seiten';
+$mip_form['4']['cms_val_default'] = 'sortindex';
+$mip_form['5']['cms_val_default'] = 'SORT_ASC';
+$mip_form['7']['cms_val_default'] = 'autosub';
+$mip_form['9']['cms_val_default'] = 'root';
+$mip_form['10']['cms_val_default'] = '&lt;table width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;0&quot; border=&quot;0&quot;&gt;';
+$mip_form['11']['cms_val_default'] = &quot;&lt;tr&gt;&lt;td onMouseOver=\&quot;this.style['background']='#5A7BAD';\&quot; onMouseOut=\&quot;this.style['background']='#A8BADE';\&quot; bgcolor=\&quot;#A8BADE\&quot; nowrap&gt;&amp;nbsp;&amp;nbsp;{space}&lt;a href=\&quot;{link}\&quot; class=\&quot;{font1}\&quot;&gt;{name}&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&quot;;
+$mip_form['12']['cms_val_default'] = &quot;&lt;tr&gt;&lt;td bgcolor=\&quot;#5A7BAD\&quot; nowrap&gt;&amp;nbsp;&amp;nbsp;{space}&lt;a href=\&quot;{link}\&quot; class=\&quot;{font1}\&quot;&gt;{name}&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&quot;;
+$mip_form['14']['cms_val_default'] = &quot;&lt;tr&gt;&lt;td onMouseOver=\&quot;this.style['background']='#5A7BAD';\&quot; onMouseOut=\&quot;this.style['background']='#A8BADE';\&quot; bgcolor=\&quot;#A8BADE\&quot; nowrap&gt;&amp;nbsp;&amp;nbsp;{space}&lt;a href=\&quot;{link}\&quot; class=\&quot;{font1}\&quot;&gt;{name}&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&quot;;
+$mip_form['15']['cms_val_default'] = &quot;&lt;tr&gt;&lt;td bgcolor=\&quot;#5A7BAD\&quot; nowrap&gt;&amp;nbsp;&amp;nbsp;{space}&lt;a href=\&quot;{link}\&quot; class=\&quot;{font1}\&quot;&gt;{name}&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&quot;;
+$mip_form['17']['cms_val_default'] = &quot;&lt;tr&gt;&lt;td onMouseOver=\&quot;this.style['background']='#C7D5EB';\&quot; onMouseOut=\&quot;this.style['background']='#DBE3EF';\&quot; bgcolor=\&quot;#DBE3EF\&quot; nowrap&gt;&amp;nbsp;&amp;nbsp;{space}&lt;a href=\&quot;{link}\&quot; class=\&quot;{font2}\&quot;&gt;{name}&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&quot;;
+$mip_form['18']['cms_val_default'] = &quot;&lt;tr&gt;&lt;td bgcolor=\&quot;#C7D5EB\&quot; nowrap&gt;&amp;nbsp;&amp;nbsp;{space}&lt;span class=\&quot;{font2}\&quot;&gt;{name}&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&quot;;
+$mip_form['20']['cms_val_default'] = &quot;&lt;/table&gt;&quot;;
+$mip_form['21']['cms_val_default'] = &quot;&lt;tr&gt;&lt;td onMouseOver=\&quot;this.style['background']='#C7D5EB';\&quot; onMouseOut=\&quot;this.style['background']='#DBE3EF';\&quot; bgcolor=\&quot;#DBE3EF\&quot; nowrap&gt;&amp;nbsp;&amp;nbsp;{space}&lt;a href=\&quot;{link}\&quot;class=\&quot;{font2}\&quot;&gt;{name}&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&quot;;
+$mip_form['22']['cms_val_default'] = &quot;&lt;tr&gt;&lt;td bgcolor=\&quot;#C7D5EB\&quot; nowrap&gt;&amp;nbsp;&amp;nbsp;{space}&lt;span class=\&quot;{font2}\&quot;&gt;{name}&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&quot;;
+$mip_form['28']['cms_val_default'] = '0';
+
+// Modus konfigurieren
+$mip_form['29']['desc'] = 'Konfigurationsmodus: ';
+$mip_form['29']['cat'] = 'option';
+$mip_form['29']['cms_var'] = 'MOD_VAR[29]';
+$mip_form['29']['cms_val'] = $cms_mod['value']['29'];
+$mip_form['29']['option_desc']['0'] = 'einfach';
+$mip_form['29']['option_desc']['1'] = 'erweitert';
+$mip_form['29']['option_val']['0'] = 'simple_mode';
+$mip_form['29']['option_val']['1'] = 'advanced_mode';
+$mip_form['29']['flag'] = 'reload';
+
+//Struktur zur auswahl der Kategorie
+$mip_form['9']['desc'] = 'Verzeichnis wählen';
+$mip_form['9']['cat'] = 'app_cat';
+$mip_form['9']['output_cat'] = 'option';
+$mip_form['9']['cms_var'] = 'MOD_VAR[9]';
+$mip_form['9']['cms_val'] = $cms_mod['value']['9'];
+$mip_form['9']['size'] = '5';
+
+//Kategorieauswahl Ordner/Seiten
+$mip_form['6']['desc'] = 'anzeigen von';
+$mip_form['6']['cat'] = 'option';
+$mip_form['6']['cms_var'] = 'MOD_VAR[6]';
+$mip_form['6']['cms_val'] = $cms_mod['value']['6'];
+$mip_form['6']['option_desc']['0'] = 'nur Ordner';
+$mip_form['6']['option_desc']['1'] = 'Ordner mit Seiten';
+$mip_form['6']['option_desc']['2'] = 'nur Seiten';
+$mip_form['6']['option_val']['0'] = 'group';
+$mip_form['6']['option_val']['1'] = 'groupside';
+$mip_form['6']['option_val']['2'] = 'side';
+$mip_form['6']['flag'] = 'reload';
+
+//Darstellungsform (Unterordner)
+if ($cms_mod['value']['6'] != 'side') {
+	$mip_form['7']['desc'] = 'Darstellungsform';
+	$mip_form['7']['cat'] = 'option';
+	$mip_form['7']['cms_var'] = 'MOD_VAR[7]';
+	$mip_form['7']['cms_val'] = $cms_mod['value']['7'];
+	$mip_form['7']['option_desc']['0'] = 'keine Unterordner anzeigen';
+	$mip_form['7']['option_desc']['1'] = 'Unterordner automatisch anzeigen';
+	$mip_form['7']['option_desc']['2'] = 'alle Unterordner anzeigen';
+	$mip_form['7']['option_val']['0'] = 'nosub';
+	$mip_form['7']['option_val']['1'] = 'autosub';
+	$mip_form['7']['option_val']['2'] = 'allsub';
+	if ($cms_mod['value']['29'] == 'advanced_mode') $mip_form['7']['flag'] = 'reload';
+
+} else {
+	$mip_form['7']['cat'] = 'hidden';
+	$mip_form['7']['cms_var'] = 'MOD_VAR[4]';
+	$mip_form['7']['cms_val'] = $cms_mod['value']['4'];
+}
+
+//Sortierung der Seiten
+if ($cms_mod['value']['6'] == 'groupside' || $cms_mod['value']['6'] == 'side') {
+	$mip_form['4']['desc'] = 'Seiten sortieren nach';
+	$mip_form['4']['cat'] = 'option';
+	$mip_form['4']['cms_var'] = 'MOD_VAR[4]';
+	$mip_form['4']['cms_val'] = $cms_mod['value']['4'];
+	$mip_form['4']['option_desc']['0'] = 'Standard (wie backend)';
+	$mip_form['4']['option_desc']['1'] = 'Name';
+	$mip_form['4']['option_desc']['2'] = 'Erstellungsdatum';
+	$mip_form['4']['option_desc']['3'] = 'Ünderungsdatum';
+	$mip_form['4']['option_desc']['4'] = 'Besucherzahl';
+	$mip_form['4']['option_val']['0'] = 'sortindex';
+	$mip_form['4']['option_val']['1'] = 'name';
+	$mip_form['4']['option_val']['2'] = 'created';
+	$mip_form['4']['option_val']['3'] = 'lastmodified';
+	$mip_form['4']['option_val']['4'] = 'visited';
+
+	//aufsteigend-absteigend
+	$mip_form['5']['cat'] = 'radio';
+	$mip_form['5']['cms_var'] = 'MOD_VAR[5]';
+	$mip_form['5']['cms_val'] = $cms_mod['value']['5'];
+	$mip_form['5']['option_desc']['0'] = 'aufsteigend';
+	$mip_form['5']['option_val']['0'] = 'SORT_ASC';
+	$mip_form['5']['option_desc']['1'] = 'absteigend';
+	$mip_form['5']['option_val']['1'] = 'SORT_DESC';
+
+	//Mit oder ohne Startseite
+	$mip_form['8']['desc'] = 'Startseiten anzeigen';
+	$mip_form['8']['cat'] = 'chk';
+	$mip_form['8']['option_var']['0'] = 'MOD_VAR[8]';
+	$mip_form['8']['option_val']['0'] = $cms_mod['value']['8'];
+	$mip_form['8']['option_desc']['0'] = 'ja';
+	$mip_form['8']['option_val_select']['0'] = 'true';
+} else {
+	$mip_form['4']['cat'] = 'hidden';
+	$mip_form['4']['cms_var'] = 'MOD_VAR[4]';
+	$mip_form['4']['cms_val'] = $cms_mod['value']['4'];
+	$mip_form['5']['cat'] = 'hidden';
+	$mip_form['5']['cms_var'] = 'MOD_VAR[5]';
+	$mip_form['5']['cms_val'] = $cms_mod['value']['5'];
+	$mip_form['8']['cat'] = 'hidden';
+	$mip_form['8']['cms_var'] = 'MOD_VAR[8]';
+	$mip_form['8']['cms_val'] = $cms_mod['value']['8'];
+}
+
+// Advanced-Mode
+if ($cms_mod['value']['29'] == 'advanced_mode') {
+
+	// Ordner ausschliessen
+	if ($cms_mod['value']['6'] != 'side') {
+
+		// Navigation template connav_fcat
+		$mip_form['11']['cat'] = 'txtarea';
+		$mip_form['11']['type'] = 'long';
+		$mip_form['11']['rows'] = '3';
+		$mip_form['11']['desc'] = 'Layout der Ordner in der 1. Ebene &lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {space}, {link}, {name} ({s_name} Sonderzeichen!), {id}, {font1}{font2}{font3}&lt;/small&gt;';
+		$mip_form['11']['cms_var'] = 'MOD_VAR[11]';
+		$mip_form['11']['cms_val'] = $cms_mod['value']['11'];
+
+		// Navigation template connav_fcat_act
+		$mip_form['12']['cat'] = 'txtarea';
+		$mip_form['12']['type'] = 'long';
+		$mip_form['12']['rows'] = '3';
+		$mip_form['12']['desc'] = 'Layout des aktiven Ordners der 1. Ebene &lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {space}, {link}, {name} ({s_name} Sonderzeichen!), {id}, {font1}{font2}{font3}&lt;/small&gt;';
+		$mip_form['12']['cms_var'] = 'MOD_VAR[12]';
+		$mip_form['12']['cms_val'] = $cms_mod['value']['12'];
+
+		// Navigation template connav_fcat_int
+		$mip_form['13']['cat'] = 'txtarea';
+		$mip_form['13']['type'] = 'long';
+		$mip_form['13']['rows'] = '3';
+		$mip_form['13']['desc'] = 'Layout zwischen Ordnern der 1. Ebene';
+		$mip_form['13']['cms_var'] = 'MOD_VAR[13]';
+		$mip_form['13']['cms_val'] = $cms_mod['value']['13'];
+
+		if ($cms_mod['value']['7'] != 'nosub') {
+			$mip_form['25']['cat'] = 'txt';
+			$mip_form['25']['type'] = '';
+			$mip_form['25']['desc'] = 'Ordner ausschliessen &lt;small&gt;(idcat kommasepariert angeben)&lt;/small&gt;';
+			$mip_form['25']['cms_var'] = 'MOD_VAR[25]';
+			$mip_form['25']['cms_val'] = $cms_mod['value']['25'];
+
+			// Anzahl Ebenen
+			$mip_form['28']['desc'] = 'Anzahl darzustellender Ebenen';
+			$mip_form['28']['cat'] = 'option';
+			$mip_form['28']['cms_var'] = 'MOD_VAR[28]';
+			$mip_form['28']['cms_val'] = $cms_mod['value']['28'];
+			$mip_form['28']['option_desc']['0'] = 'alle';
+			$mip_form['28']['option_desc']['1'] = '2';
+			$mip_form['28']['option_desc']['2'] = '3';
+			$mip_form['28']['option_desc']['3'] = '4';
+			$mip_form['28']['option_desc']['4'] = '5';
+			$mip_form['28']['option_desc']['5'] = '6';
+			$mip_form['28']['option_desc']['6'] = '7';
+			$mip_form['28']['option_desc']['7'] = '8';
+			$mip_form['28']['option_desc']['8'] = '9';
+			$mip_form['28']['option_desc']['9'] = '10';
+			$mip_form['28']['option_val']['0'] = '0';
+			$mip_form['28']['option_val']['1'] = '2';
+			$mip_form['28']['option_val']['2'] = '3';
+			$mip_form['28']['option_val']['3'] = '4';
+			$mip_form['28']['option_val']['4'] = '5';
+			$mip_form['28']['option_val']['5'] = '6';
+			$mip_form['28']['option_val']['6'] = '7';
+			$mip_form['28']['option_val']['7'] = '8';
+			$mip_form['28']['option_val']['8'] = '9';
+			$mip_form['28']['option_val']['9'] = '10';
+
+			//Pfad als aktiv verfolgen
+			$mip_form['30']['desc'] = 'Pfad als aktiv verfolgen';
+			$mip_form['30']['cat'] = 'chk';
+			$mip_form['30']['option_var']['0'] = 'MOD_VAR[30]';
+			$mip_form['30']['option_val']['0'] = $cms_mod['value']['30'];
+			$mip_form['30']['option_desc']['0'] = 'ja';
+			$mip_form['30']['option_val_select']['0'] = 'true';
+
+			if ($cms_mod['value']['6'] != 'side') {			
+			//Pfad als aktiv verfolgen
+			$mip_form['31']['desc'] = 'Startseite bei {page_count} mitzählen?';
+			$mip_form['31']['cat'] = 'chk';
+			$mip_form['31']['option_var']['0'] = 'MOD_VAR[31]';
+			$mip_form['31']['option_val']['0'] = $cms_mod['value']['31'];
+			$mip_form['31']['option_desc']['0'] = 'ja';
+			$mip_form['31']['option_val_select']['0'] = 'true'; }
+
+			// Template Ebenenwechsel tiefer
+			$mip_form['26']['cat'] = 'txtarea';
+			$mip_form['26']['type'] = 'long';
+			$mip_form['26']['rows'] = '3';
+			$mip_form['26']['desc'] = 'Layout beim Wechsel in tiefere Ebene';
+			$mip_form['26']['cms_var'] = 'MOD_VAR[26]';
+			$mip_form['26']['cms_val'] = $cms_mod['value']['26'];
+
+			// Template Ebenenwechsel hoeher
+			$mip_form['27']['cat'] = 'txtarea';
+			$mip_form['27']['type'] = 'long';
+			$mip_form['27']['rows'] = '3';
+			$mip_form['27']['desc'] = 'Layout beim Wechsel in hoehere Ebene';
+			$mip_form['27']['cms_var'] = 'MOD_VAR[27]';
+			$mip_form['27']['cms_val'] = $cms_mod['value']['27'];
+
+			// Navigation template connav_cat
+			$mip_form['14']['cat'] = 'txtarea';
+			$mip_form['14']['type'] = 'long';
+			$mip_form['14']['rows'] = '3';
+			$mip_form['14']['desc'] = 'Layout der Ordner &lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {space}, {link}, {name} ({s_name} Sonderzeichen!), {id}, {page_count}, {font1}{font2}{font3}&lt;/small&gt;';
+			$mip_form['14']['cms_var'] = 'MOD_VAR[14]';
+			$mip_form['14']['cms_val'] = $cms_mod['value']['14'];
+
+			// Navigation template connav_cat_act
+			$mip_form['15']['cat'] = 'txtarea';
+			$mip_form['15']['type'] = 'long';
+			$mip_form['15']['rows'] = '3';
+			$mip_form['15']['desc'] = 'Layout des aktiven Ordners &lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {space}, {link}, {name} ({s_name} Sonderzeichen!), {page_count}, {id}, {font1}{font2}{font3}&lt;/small&gt;';
+			$mip_form['15']['cms_var'] = 'MOD_VAR[15]';
+			$mip_form['15']['cms_val'] = $cms_mod['value']['15'];
+
+			// Navigation template connav_cat_int
+			$mip_form['16']['cat'] = 'txtarea';
+			$mip_form['16']['type'] = 'long';
+			$mip_form['16']['rows'] = '3';
+			$mip_form['16']['desc'] = 'Layout zwischen den Ordner';
+			$mip_form['16']['cms_var'] = 'MOD_VAR[16]';
+			$mip_form['16']['cms_val'] = $cms_mod['value']['16'];
+
+			if ($cms_mod['value']['6'] == 'groupside') {
+
+				// Navigation template connav_side
+				$mip_form['17']['cat'] = 'txtarea';
+				$mip_form['17']['type'] = 'long';
+				$mip_form['17']['rows'] = '3';
+				$mip_form['17']['desc'] = 'Layout der Seiten &lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {space}, {link}, {name} ({s_name} Sonderzeichen!), {id}, {font1}{font2}{font3}&lt;/small&gt;';
+				$mip_form['17']['cms_var'] = 'MOD_VAR[17]';
+				$mip_form['17']['cms_val'] = $cms_mod['value']['17'];
+
+				// Navigation template connav_side_act
+				$mip_form['18']['cat'] = 'txtarea';
+				$mip_form['18']['type'] = 'long';
+				$mip_form['18']['rows'] = '3';
+				$mip_form['18']['desc'] = 'Layout der aktuellen Seite &lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {space}, {link}, {name} ({s_name} Sonderzeichen!), {id}, {font1}{font2}{font3}&lt;/small&gt;';
+				$mip_form['18']['cms_var'] = 'MOD_VAR[18]';
+				$mip_form['18']['cms_val'] = $cms_mod['value']['18'];
+
+				// Navigation template connav_side_int
+				$mip_form['19']['cat'] = 'txtarea';
+				$mip_form['19']['type'] = 'long';
+				$mip_form['19']['rows'] = '3';
+				$mip_form['19']['desc'] = 'Layout zwischen den Seiten';
+				$mip_form['19']['cms_var'] = 'MOD_VAR[19]';
+				$mip_form['19']['cms_val'] = $cms_mod['value']['19'];
+			} else {
+				$mip_form['17']['cat'] = 'hidden';
+				$mip_form['17']['cms_var'] = 'MOD_VAR[17]';
+				$mip_form['17']['cms_val'] = $cms_mod['value']['17'];
+				$mip_form['18']['cat'] = 'hidden';
+				$mip_form['18']['cms_var'] = 'MOD_VAR[18]';
+				$mip_form['18']['cms_val'] = $cms_mod['value']['18'];
+				$mip_form['19']['cat'] = 'hidden';
+				$mip_form['19']['cms_var'] = 'MOD_VAR[19]';
+				$mip_form['19']['cms_val'] = $cms_mod['value']['19'];
+                         }
+                 } else {
+			$mip_form['25']['cat'] = 'hidden';
+			$mip_form['25']['cms_var'] = 'MOD_VAR[25]';
+			$mip_form['25']['cms_val'] = $cms_mod['value']['25'];
+			$mip_form['28']['cat'] = 'hidden';
+			$mip_form['28']['cms_var'] = 'MOD_VAR[28]';
+			$mip_form['28']['cms_val'] = $cms_mod['value']['28'];
+			$mip_form['30']['cat'] = 'hidden';
+			$mip_form['30']['cms_var'] = 'MOD_VAR[30]';
+			$mip_form['30']['cms_val'] = $cms_mod['value']['30'];
+			$mip_form['31']['cat'] = 'hidden';
+			$mip_form['31']['cms_var'] = 'MOD_VAR[31]';
+			$mip_form['31']['cms_val'] = $cms_mod['value']['31'];
+			$mip_form['26']['cat'] = 'hidden';
+			$mip_form['26']['cms_var'] = 'MOD_VAR[26]';
+			$mip_form['26']['cms_val'] = $cms_mod['value']['26'];
+			$mip_form['27']['cat'] = 'hidden';
+			$mip_form['27']['cms_var'] = 'MOD_VAR[27]';
+			$mip_form['27']['cms_val'] = $cms_mod['value']['27'];
+			$mip_form['14']['cat'] = 'hidden';
+			$mip_form['14']['cms_var'] = 'MOD_VAR[14]';
+			$mip_form['14']['cms_val'] = $cms_mod['value']['14'];
+			$mip_form['15']['cat'] = 'hidden';
+			$mip_form['15']['cms_var'] = 'MOD_VAR[15]';
+			$mip_form['15']['cms_val'] = $cms_mod['value']['15'];
+			$mip_form['16']['cat'] = 'hidden';
+			$mip_form['16']['cms_var'] = 'MOD_VAR[16]';
+			$mip_form['16']['cms_val'] = $cms_mod['value']['16'];
+			$mip_form['17']['cat'] = 'hidden';
+			$mip_form['17']['cms_var'] = 'MOD_VAR[17]';
+			$mip_form['17']['cms_val'] = $cms_mod['value']['17'];
+			$mip_form['18']['cat'] = 'hidden';
+			$mip_form['18']['cms_var'] = 'MOD_VAR[18]';
+			$mip_form['18']['cms_val'] = $cms_mod['value']['18'];
+			$mip_form['19']['cat'] = 'hidden';
+			$mip_form['19']['cms_var'] = 'MOD_VAR[19]';
+			$mip_form['19']['cms_val'] = $cms_mod['value']['19'];
+                 }
+	} else {
+		$mip_form['11']['cat'] = 'hidden';
+		$mip_form['11']['cms_var'] = 'MOD_VAR[11]';
+		$mip_form['11']['cms_val'] = $cms_mod['value']['11'];
+		$mip_form['12']['cat'] = 'hidden';
+		$mip_form['12']['cms_var'] = 'MOD_VAR[12]';
+		$mip_form['12']['cms_val'] = $cms_mod['value']['12'];
+		$mip_form['13']['cat'] = 'hidden';
+		$mip_form['13']['cms_var'] = 'MOD_VAR[13]';
+		$mip_form['13']['cms_val'] = $cms_mod['value']['13'];
+		$mip_form['25']['cat'] = 'hidden';
+		$mip_form['25']['cms_var'] = 'MOD_VAR[25]';
+		$mip_form['25']['cms_val'] = $cms_mod['value']['25'];
+		$mip_form['28']['cat'] = 'hidden';
+		$mip_form['28']['cms_var'] = 'MOD_VAR[28]';
+		$mip_form['28']['cms_val'] = $cms_mod['value']['28'];
+		$mip_form['30']['cat'] = 'hidden';
+		$mip_form['30']['cms_var'] = 'MOD_VAR[30]';
+		$mip_form['30']['cms_val'] = $cms_mod['value']['30'];
+		$mip_form['31']['cat'] = 'hidden';
+		$mip_form['31']['cms_var'] = 'MOD_VAR[31]';
+		$mip_form['31']['cms_val'] = $cms_mod['value']['31'];
+		$mip_form['26']['cat'] = 'hidden';
+		$mip_form['26']['cms_var'] = 'MOD_VAR[26]';
+		$mip_form['26']['cms_val'] = $cms_mod['value']['26'];
+		$mip_form['27']['cat'] = 'hidden';
+		$mip_form['27']['cms_var'] = 'MOD_VAR[27]';
+		$mip_form['27']['cms_val'] = $cms_mod['value']['27'];
+		$mip_form['14']['cat'] = 'hidden';
+		$mip_form['14']['cms_var'] = 'MOD_VAR[14]';
+		$mip_form['14']['cms_val'] = $cms_mod['value']['14'];
+		$mip_form['15']['cat'] = 'hidden';
+		$mip_form['15']['cms_var'] = 'MOD_VAR[15]';
+		$mip_form['15']['cms_val'] = $cms_mod['value']['15'];
+		$mip_form['16']['cat'] = 'hidden';
+		$mip_form['16']['cms_var'] = 'MOD_VAR[16]';
+		$mip_form['16']['cms_val'] = $cms_mod['value']['16'];
+		$mip_form['17']['cat'] = 'hidden';
+		$mip_form['17']['cms_var'] = 'MOD_VAR[17]';
+		$mip_form['17']['cms_val'] = $cms_mod['value']['17'];
+		$mip_form['18']['cat'] = 'hidden';
+		$mip_form['18']['cms_var'] = 'MOD_VAR[18]';
+		$mip_form['18']['cms_val'] = $cms_mod['value']['18'];
+		$mip_form['19']['cat'] = 'hidden';
+		$mip_form['19']['cms_var'] = 'MOD_VAR[19]';
+		$mip_form['19']['cms_val'] = $cms_mod['value']['19'];
+         }
+
+	// Seiten ausschliessen
+	if ($cms_mod['value']['6'] == 'groupside' || $cms_mod['value']['6'] == 'side') {
+		$mip_form['24']['cat'] = 'txt';
+		$mip_form['24']['desc'] = 'Seiten ausschliessen &lt;small&gt;(idcatsides kommasepariert angeben)&lt;/small&gt;';
+		$mip_form['24']['cms_var'] = 'MOD_VAR[24]';
+		$mip_form['24']['cms_val'] = $cms_mod['value']['24'];
+
+		// Navigation template connav_fside
+		$mip_form['21']['cat'] = 'txtarea';
+		$mip_form['21']['type'] = 'long';
+		$mip_form['21']['rows'] = '3';
+		$mip_form['21']['desc'] = 'Layout der Seiten in der 1. Ebene&lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {space}, {link}, {name} ({s_name} Sonderzeichen!), {id}, {font1}{font2}{font3}&lt;/small&gt;';
+		$mip_form['21']['cms_var'] = 'MOD_VAR[21]';
+		$mip_form['21']['cms_val'] = $cms_mod['value']['21'];
+
+		// Navigation template connav_fside_act
+		$mip_form['22']['cat'] = 'txtarea';
+		$mip_form['22']['type'] = 'long';
+		$mip_form['22']['rows'] = '3';
+		$mip_form['22']['desc'] = 'Layout der aktuellen Seite in der 1. Ebene&lt;br&gt;&lt;small&gt;Mögliche Templatevariablen: {space}, {link}, {name} ({s_name} Sonderzeichen!), {id}, {font1}{font2}{font3}&lt;/small&gt;';
+		$mip_form['22']['cms_var'] = 'MOD_VAR[22]';
+		$mip_form['22']['cms_val'] = $cms_mod['value']['22'];
+
+		// Navigation template connav_fside_int
+		$mip_form['23']['cat'] = 'txtarea';
+		$mip_form['23']['type'] = 'long';
+		$mip_form['23']['rows'] = '3';
+		$mip_form['23']['desc'] = 'Layout zwischen den Seiten in der 1. Ebene';
+		$mip_form['23']['cms_var'] = 'MOD_VAR[23]';
+		$mip_form['23']['cms_val'] = $cms_mod['value']['23'];
+	} else {
+		$mip_form['24']['cat'] = 'hidden';
+		$mip_form['24']['cms_var'] = 'MOD_VAR[24]';
+		$mip_form['24']['cms_val'] = $cms_mod['value']['24'];
+		$mip_form['21']['cat'] = 'hidden';
+		$mip_form['21']['cms_var'] = 'MOD_VAR[21]';
+		$mip_form['21']['cms_val'] = $cms_mod['value']['21'];
+		$mip_form['22']['cat'] = 'hidden';
+		$mip_form['22']['cms_var'] = 'MOD_VAR[22]';
+		$mip_form['22']['cms_val'] = $cms_mod['value']['22'];
+		$mip_form['23']['cat'] = 'hidden';
+		$mip_form['23']['cms_var'] = 'MOD_VAR[23]';
+		$mip_form['23']['cms_val'] = $cms_mod['value']['23'];
+         }
+
+	//Schriftart 1
+	$mip_form['1']['desc'] = $mod_lang['gen_font'].&quot; {font1}&quot;;
+	$mip_form['1']['cat'] = 'app_css';
+	$mip_form['1']['output_cat'] = 'option';
+	$mip_form['1']['cms_var'] = 'MOD_VAR[1]';
+	$mip_form['1']['cms_val'] = $cms_mod['value']['1'];
+
+	//Schriftart 2
+	$mip_form['2']['desc'] = $mod_lang['gen_font'].&quot; {font2}&quot;;
+	$mip_form['2']['cat'] = 'app_css';
+	$mip_form['2']['output_cat'] = 'option';
+	$mip_form['2']['cms_var'] = 'MOD_VAR[2]';
+	$mip_form['2']['cms_val'] = $cms_mod['value']['2'];
+
+	//Schriftart 3
+	$mip_form['3']['desc'] = $mod_lang['gen_font'].&quot; {font3}&quot;;
+	$mip_form['3']['cat'] = 'app_css';
+	$mip_form['3']['output_cat'] = 'option';
+	$mip_form['3']['cms_var'] = 'MOD_VAR[3]';
+	$mip_form['3']['cms_val'] = $cms_mod['value']['3'];
+
+	// Navigation template connav_pre
+	$mip_form['10']['cat'] = 'txtarea';
+	$mip_form['10']['type'] = 'long';
+	$mip_form['10']['rows'] = '3';
+	$mip_form['10']['desc'] = 'Einleitung der Navigation';
+	$mip_form['10']['cms_var'] = 'MOD_VAR[10]';
+	$mip_form['10']['cms_val'] = $cms_mod['value']['10'];
+
+	// Navigation template connav_post
+	$mip_form['20']['cat'] = 'txtarea';
+	$mip_form['20']['type'] = 'long';
+	$mip_form['20']['rows'] = '3';
+	$mip_form['20']['desc'] = 'Ende der Navigation';
+	$mip_form['20']['cms_var'] = 'MOD_VAR[20]';
+	$mip_form['20']['cms_val'] = $cms_mod['value']['20'];
+
+// Simple-Mode
+} else {
+
+	// Navigation template connav_fcat
+	$mip_form['11']['cat'] = 'hidden';
+	$mip_form['11']['cms_var'] = 'MOD_VAR[11]';
+	$mip_form['11']['cms_val'] = $cms_mod['value']['11'];
+
+	// Navigation template connav_fcat_act
+	$mip_form['12']['cat'] = 'hidden';
+	$mip_form['12']['cms_var'] = 'MOD_VAR[12]';
+	$mip_form['12']['cms_val'] = $cms_mod['value']['12'];
+
+	// Navigation template connav_fcat_int
+	$mip_form['13']['cat'] = 'hidden';
+	$mip_form['13']['cms_var'] = 'MOD_VAR[13]';
+	$mip_form['13']['cms_val'] = $cms_mod['value']['13'];
+
+	// Navigation template connav_cat
+	$mip_form['14']['cat'] = 'hidden';
+	$mip_form['14']['cms_var'] = 'MOD_VAR[14]';
+	$mip_form['14']['cms_val'] = $cms_mod['value']['14'];
+
+	// Navigation template connav_cat_act
+	$mip_form['15']['cat'] = 'hidden';
+	$mip_form['15']['cms_var'] = 'MOD_VAR[15]';
+	$mip_form['15']['cms_val'] = $cms_mod['value']['15'];
+
+	// Navigation template connav_cat_int
+	$mip_form['16']['cat'] = 'hidden';
+	$mip_form['16']['cms_var'] = 'MOD_VAR[16]';
+	$mip_form['16']['cms_val'] = $cms_mod['value']['16'];
+
+	// Navigation template connav_side
+	$mip_form['17']['cat'] = 'hidden';
+	$mip_form['17']['cms_var'] = 'MOD_VAR[17]';
+	$mip_form['17']['cms_val'] = $cms_mod['value']['17'];
+
+	// Navigation template connav_side_act
+	$mip_form['18']['cat'] = 'hidden';
+	$mip_form['18']['cms_var'] = 'MOD_VAR[18]';
+	$mip_form['18']['cms_val'] = $cms_mod['value']['18'];
+
+	// Navigation template connav_side_int
+	$mip_form['19']['cat'] = 'hidden';
+	$mip_form['19']['cms_var'] = 'MOD_VAR[19]';
+	$mip_form['19']['cms_val'] = $cms_mod['value']['19'];
+
+	//Pfad als aktiv verfolgen
+	$mip_form['30']['cat'] = 'hidden';
+	$mip_form['30']['cms_var'] = 'MOD_VAR[30]';
+	$mip_form['30']['cms_val'] = $cms_mod['value']['30'];
+
+	//Pfad als aktiv verfolgen
+	$mip_form['31']['cat'] = 'hidden';
+	$mip_form['31']['cms_var'] = 'MOD_VAR[31]';
+	$mip_form['31']['cms_val'] = $cms_mod['value']['31'];
+
+	// Anzahl Ebenen
+	$mip_form['28']['cat'] = 'hidden';
+	$mip_form['28']['cms_var'] = 'MOD_VAR[28]';
+	$mip_form['28']['cms_val'] = $cms_mod['value']['28'];
+
+	// Ordner ausschliessen
+	$mip_form['25']['cat'] = 'hidden';
+	$mip_form['25']['cms_var'] = 'MOD_VAR[25]';
+	$mip_form['25']['cms_val'] = $cms_mod['value']['25'];
+
+	// Seiten ausschliessen
+	$mip_form['24']['cat'] = 'hidden';
+	$mip_form['24']['cms_var'] = 'MOD_VAR[24]';
+	$mip_form['24']['cms_val'] = $cms_mod['value']['24'];
+
+	// Navigation template connav_fside
+	$mip_form['21']['cat'] = 'hidden';
+	$mip_form['21']['cms_var'] = 'MOD_VAR[21]';
+	$mip_form['21']['cms_val'] = $cms_mod['value']['21'];
+
+	// Navigation template connav_fside_act
+	$mip_form['22']['cat'] = 'hidden';
+	$mip_form['22']['cms_var'] = 'MOD_VAR[22]';
+	$mip_form['22']['cms_val'] = $cms_mod['value']['22'];
+
+	// Navigation template connav_fside_int
+	$mip_form['23']['cat'] = 'hidden';
+	$mip_form['23']['cms_var'] = 'MOD_VAR[23]';
+	$mip_form['23']['cms_val'] = $cms_mod['value']['23'];
+
+	//Schriftart 1
+	$mip_form['1']['cat'] = 'hidden';
+	$mip_form['1']['cms_var'] = 'MOD_VAR[1]';
+	$mip_form['1']['cms_val'] = $cms_mod['value']['1'];
+
+	//Schriftart 2
+	$mip_form['2']['cat'] = 'hidden';
+	$mip_form['2']['cms_var'] = 'MOD_VAR[2]';
+	$mip_form['2']['cms_val'] = $cms_mod['value']['2'];
+
+	//Schriftart 3
+	$mip_form['3']['cat'] = 'hidden';
+	$mip_form['3']['cms_var'] = 'MOD_VAR[3]';
+	$mip_form['3']['cms_val'] = $cms_mod['value']['3'];
+
+	// Template Ebenenwechsel tiefer
+	$mip_form['26']['cat'] = 'hidden';
+	$mip_form['26']['cms_var'] = 'MOD_VAR[26]';
+	$mip_form['26']['cms_val'] = $cms_mod['value']['26'];
+
+	// Template Ebenenwechsel hoeher
+	$mip_form['27']['cat'] = 'hidden';
+	$mip_form['27']['cms_var'] = 'MOD_VAR[27]';
+	$mip_form['27']['cms_val'] = $cms_mod['value']['27'];
+
+	// Navigation template connav_pre
+	$mip_form['10']['cat'] = 'hidden';
+	$mip_form['10']['cms_var'] = 'MOD_VAR[10]';
+	$mip_form['10']['cms_val'] = $cms_mod['value']['10'];
+
+	// Navigation template connav_post
+	$mip_form['20']['cat'] = 'hidden';
+	$mip_form['20']['cms_var'] = 'MOD_VAR[20]';
+	$mip_form['20']['cms_val'] = $cms_mod['value']['20'];
+}
+
+mip_formsp($mip_form['29']);
+mip_formsp($mip_form['9']);
+mip_formsp($mip_form['6']);
+mip_formsp($mip_form['7']);
+mip_formsp($mip_form['8']);
+mip_formsp($mip_form['4']);
+mip_formsp($mip_form['5']);
+if ($cms_mod['value']['29'] == 'advanced_mode') echo '&lt;hr&gt;';
+mip_formsp($mip_form['28']);
+mip_formsp($mip_form['30']);
+mip_formsp($mip_form['31']);
+mip_formsp($mip_form['25']);
+mip_formsp($mip_form['24']);
+if ($cms_mod['value']['29'] == 'advanced_mode' &amp;&amp; $cms_mod['value']['7'] != 'group' &amp;&amp; $cms_mod['value']['7'] != 'nosub') echo '&lt;br&gt;';
+mip_formsp($mip_form['1']);
+mip_formsp($mip_form['2']);
+mip_formsp($mip_form['3']);
+if ($cms_mod['value']['29'] == 'advanced_mode') echo &quot;&lt;br&gt;&lt;b&gt;Templates:&lt;/b&gt;&lt;br&gt;&lt;br&gt;&quot;;
+mip_formsp($mip_form['10']);
+mip_formsp($mip_form['11']);
+mip_formsp($mip_form['12']);
+mip_formsp($mip_form['13']);
+mip_formsp($mip_form['21']);
+mip_formsp($mip_form['22']);
+mip_formsp($mip_form['23']);
+mip_formsp($mip_form['26']);
+mip_formsp($mip_form['27']);
+mip_formsp($mip_form['14']);
+mip_formsp($mip_form['15']);
+mip_formsp($mip_form['16']);
+mip_formsp($mip_form['17']);
+mip_formsp($mip_form['18']);
+mip_formsp($mip_form['19']);
+mip_formsp($mip_form['20']);
+unset($mip_form);
+?&gt;</input>
+   <output>&lt;CMSPHP:CACHE&gt;
+// (c) 2004 - 2005  Björn Brockmann
+// needs PHP 4.1+
+
+//Alle Variablen, die nur innerhalb des gecachten PHPs sichtbar sind, auch für dynamisches PHP zur Verfügung stellen
+echo '&lt;CMSPHP&gt;';
+if (is_array($cms_mod['value'])) {
+foreach($cms_mod['value'] AS $k =&gt; $v){
+	echo '$cms_mod[\'value\'][&quot;'.$k.'&quot;] = &quot;'. addslashes($v) .'&quot;;'.&quot;\n&quot;;
+}}
+echo '&lt;/CMSPHP&gt;';
+&lt;/CMSPHP:CACHE&gt;
+
+&lt;CMSPHP&gt;
+echo &quot;MOD_VALUE[31]&quot;;
+
+// INITIALISIERUNG
+echo $cms_mod['value']['10'];
+
+
+if(! function_exists('nav_cat_is_in_tree') ){
+function nav_cat_is_in_tree( $cat, $start ){
+	global $con_tree;
+	
+	//echo &quot;$cat, $start&quot;;return false;
+	if(empty($cat) || empty($start) )
+		return false;
+		
+	if($cat == $start)
+		return true;
+
+	while($cat != $start || ! empty($cat) ) {
+		$cat = $con_tree[ $cat ]['parent'];
+		if($cat == $start)
+			return true;
+		if($cat == '0') break;
+	}
+	return false;
+}}
+
+
+if($cms_mod['value']['9'] == 'root') {
+	$mod['startpt'] = '0';
+	$mod['level'] = 1;
+} elseif($cms_mod['value']['9'] == 'this') {
+	$mod['startpt'] = $idcat;
+	$mod['level'] = 2;
+} else {
+	$mod['startpt'] = $cms_mod['value']['9'];
+	$mod['level'] = 2;
+}
+
+$mod['startlevel'] = $catlist_level[ $mod['startpt'] ];
+
+// OFFENEN PFAD FINDEN
+if($cms_mod['value']['7'] != 'nosub') {
+	$a = $idcat;
+	$mod['path'] = array();
+	while($a != $mod['startpt'] &amp;&amp; $catlist_level[$a] &gt; $mod['startlevel']) {
+		sf_array_push($mod['path'],$a);
+		$a = $con_tree[$a]['parent'];
+	}
+	sf_array_push($mod['path'],$mod['startpt']);
+} else {
+	$mod['path'] = array($mod['startpt']);
+}
+
+// ORDNERLISTE VORBEREITEN
+if($mod['startpt'] == '0') {
+	$mod['temp'] = 'start';
+} else {
+	$mod['temp'] = '';
+}
+
+$mod['catlist_temp'] = array();
+$mod['tmplvl'] = '-';
+foreach ($catlist as $a){
+	switch ($cms_mod['value']['7']) {
+		case 'nosub' :
+			if ($con_tree[$a]['parent'] == $mod['startpt'] &amp;&amp; !strstr(&quot;,MOD_VALUE[25],&quot;,&quot;,$a,&quot;)) { 
+				sf_array_push($mod['catlist_temp'],$a); 
+			};
+			break;
+		case 'allsub' :
+			if($a == $mod['startpt']){
+				$mod['temp'] = 'start';
+			} elseif ($mod['temp'] != &quot;stop&quot; &amp;&amp; $catlist_level[$a] &lt;= $mod['startlevel']){
+				$mod['temp'] = &quot;stop&quot;;
+			} elseif ($mod['temp'] == 'start' &amp;&amp; strstr(&quot;,MOD_VALUE[25],&quot;,&quot;,$a,&quot;)){
+				$mod['temp'] = &quot;wait&quot;;
+				$mod['tmplvl'] = $catlist_level[$a];
+			} elseif ($mod['temp'] == 'start' &amp;&amp; &quot;MOD_VALUE[28]&quot; &gt; 0 &amp;&amp; $catlist_level[$a] &gt;= (&quot;MOD_VALUE[28]&quot;+$mod['startlevel'])){
+				$mod['temp'] = &quot;level&quot;;
+				$mod['tmplvl'] = $catlist_level[$a];
+			} elseif ($mod['temp'] == &quot;wait&quot; &amp;&amp; $mod['tmplvl'] != &quot;-&quot; &amp;&amp; $catlist_level[$a] &lt;= $mod['tmplvl']){
+				$mod['temp'] = 'start';
+				$mod['tmplvl'] = &quot;-&quot;;
+				sf_array_push($mod['catlist_temp'],$a);
+			} elseif ($mod['temp'] == &quot;level&quot; &amp;&amp; $mod['tmplvl'] != &quot;-&quot; &amp;&amp; $catlist_level[$a] &lt; $mod['tmplvl']){
+				$mod['temp'] = 'start';
+				$mod['tmplvl'] = &quot;-&quot;;
+				sf_array_push($mod['catlist_temp'],$a);
+			} else {
+				if($mod['temp'] == 'start'){
+					sf_array_push($mod['catlist_temp'],$a);
+				}
+			}
+			break;
+		case 'autosub' :
+			if (sf_in_array($con_tree[$a]['parent'],$mod['path']) &amp;&amp; !strstr(&quot;,MOD_VALUE[25],&quot;,&quot;,$a,&quot;)) { 
+				sf_array_push($mod['catlist_temp'],$a); 
+			}
+			break;
+	}
+}
+
+//vergleich auf parent
+$mod['catlist'] = array();
+if($mod['startpt'] != 0 &amp;&amp; is_array($mod['catlist_temp'])){
+	foreach ($mod['catlist_temp'] as $a) {
+		if( nav_cat_is_in_tree($a, $mod['startpt']) ){
+			sf_array_push($mod['catlist'],$a);
+		}
+	}
+} else {
+	$mod['catlist'] = $mod['catlist_temp'];
+}
+
+// SEITENLISTE VORBEREITEN
+foreach (sf_array_keys($con_side) as $a) {
+	if( isset($cms_side['view'])  || ($con_side[$a]['online'] &amp;&amp; $con_side[$a]['online'] != '0')){
+		if(!is_array($mod['sidelist'][$con_side[$a]['idcat']]))	$mod['sidelist'][$con_side[$a]['idcat']] = array();
+		sf_array_push($mod['sidelist'][$con_side[$a]['idcat']],$a);
+	}
+}
+
+
+// ORDNER AUSGEBEN
+if($cms_mod['value']['6'] != 'side') {
+	$mod['firstc'] = 1;
+	$mod['lastlevel'] = $catlist_level[ $mod['catlist']['0'] ];
+	foreach ($mod['catlist'] as $a) {
+		if( isset($cms_side['view'])  || ($con_tree[$a]['visible'] == 1 &amp;&amp; is_array($mod['sidelist'][$a]))){
+   			if($catlist_level[$a] &lt; ($mod['startlevel']+$mod['level'])) {
+				if($a == $idcat || (&quot;MOD_VALUE[30]&quot; == 'true' &amp;&amp; strstr(','.sf_implode(',',$mod['path']).',' , &quot;,$a,&quot;))) $mod['tpl'] = &quot;MOD_VALUE[12]&quot;;
+				else $mod['tpl'] = &quot;MOD_VALUE[11]&quot;;
+				$mod['tpli'] = &quot;MOD_VALUE[13]&quot;;
+				$mod['space'] = '';
+			} else {
+				if($a == $idcat || (&quot;MOD_VALUE[30]&quot; == 'true' &amp;&amp; strstr(','.sf_implode(',',$mod['path']).',' , &quot;,$a,&quot;))) $mod['tpl'] = &quot;MOD_VALUE[15]&quot;;
+				else $mod['tpl'] = &quot;MOD_VALUE[14]&quot;;
+				$mod['tpli'] = &quot;MOD_VALUE[16]&quot;;
+				$mod['space'] = str_repeat('&amp;nbsp;',$catlist_level[$a]);
+			}
+			if($mod['firstc'] == 0){
+				if($catlist_level[$a] &lt; $mod['lastlevel']) echo &quot;MOD_VALUE[27]&quot;;
+				elseif($catlist_level[$a] &gt; $mod['lastlevel']) echo &quot;MOD_VALUE[26]&quot;;
+				echo $mod['tpli'];
+			}
+			$mod['lastlevel'] = $catlist_level[$a];
+			$mod['firstc'] = 0;
+			$mod['temp'] = '';
+			$mod['temp'] = str_replace('{space}', $mod['space'], $mod['tpl']);
+			$mod['temp'] = str_replace('{name}', htmlentities($con_tree[$a]['name'], ENT_COMPAT, 'UTF-8'), $mod['temp']);
+			$mod['temp'] = str_replace('{link}', $con_tree[$a]['link'], $mod['temp']);
+			$mod['temp'] = str_replace('{id}', 'lang_'.$lang.'cat_'.$a, $mod['temp']);
+			if (&quot;MOD_VALUE[30]&quot; == true) {
+			$mod['page_count'] = sf_count($mod['sidelist'][$a]); 
+			} else {
+			$mod['page_count'] = sf_count($mod['sidelist'][$a]) - 1 ;
+			}
+			if ($mod['page_count'] &lt; 0) {
+			$mod['page_count'] = 0;
+			}
+			$mod['temp'] = str_replace('{page_count}', $mod['page_count'], $mod['temp']);
+			$mod['temp'] = str_replace('{font1}', &quot;MOD_VALUE[1]&quot;, $mod['temp']);
+			$mod['temp'] = str_replace('{font2}', &quot;MOD_VALUE[2]&quot;, $mod['temp']);
+			$mod['temp'] = str_replace('{font3}', &quot;MOD_VALUE[3]&quot;, $mod['temp']);
+			$mod['temp'] = cms_stripslashes($mod['temp']);
+			$mod['temp'] = str_replace('{s_name}', htmlentities(cms_addslashes($con_tree[$a]['name']), ENT_COMPAT, 'UTF-8'), $mod['temp']);
+			echo $mod['temp'];
+
+			// SEITEN DAZU
+			if(&quot;MOD_VALUE[6]&quot; == 'groupside' &amp;&amp; is_array($mod['sidelist'][$a]) &amp;&amp; (sf_in_array($a,$mod['path']) || &quot;MOD_VALUE[7]&quot; != 'autosub')){
+				// SEITEN SORTIEREN
+				$mod['sortarray'] = array();
+				foreach ($mod['sidelist'][$a] as $b) {
+					if ($cms_mod['value']['4'] == 'name') {
+						$sortit = strtolower($con_side[$b]['name']);
+					} else {
+						$sortit = $con_side[$b]['MOD_VALUE[4]'];
+					}
+					sf_array_push($mod['sortarray'], $sortit);
+				}
+				
+				array_multisort($mod['sortarray'], MOD_VALUE[5], $mod['sidelist'][$a], MOD_VALUE[5]);
+				
+				// SEITEN AUSGEBEN
+				$mod['firsts'] = 1;
+				foreach ($mod['sidelist'][$a] as $b) {
+					if(($con_side[$b]['is_start'] == '0' || &quot;MOD_VALUE[8]&quot; == 'true') &amp;&amp; !strstr(&quot;,MOD_VALUE[24],&quot;,&quot;,$b,&quot;)){
+						if ($catlist_level[$a] &lt; ($mod['startlevel']+$mod['level'])) {
+							$b == $idcatside ? $mod['tpl'] = &quot;MOD_VALUE[22]&quot; : $mod['tpl'] = &quot;MOD_VALUE[21]&quot;;
+							$mod['tplis'] = &quot;MOD_VALUE[23]&quot;;
+						} else {
+		                    $b == $idcatside ? $mod['tpl'] = &quot;MOD_VALUE[18]&quot; : $mod['tpl'] = &quot;MOD_VALUE[17]&quot;;
+		                    $mod['tplis'] = &quot;MOD_VALUE[19]&quot;;
+		                }
+						
+						if($mod['firsts'] == 0) { 
+							echo $mod['tplis'];
+						} 
+						
+						$mod['firsts'] = 0;
+						
+						$mod['temp'] = '';
+						$mod['temp'] = str_replace('{space}', str_repeat('&amp;nbsp;',($catlist_level[$a] + 1)), $mod['tpl']);
+						$mod['temp'] = str_replace('{name}', htmlentities($con_side[$b]['name'], ENT_COMPAT, 'UTF-8'), $mod['temp']);
+						$mod['temp'] = str_replace('{link}', $con_side[$b]['link'], $mod['temp']);
+						$mod['temp'] = str_replace('{id}', 'lang_'.$lang.'side_'.$b, $mod['temp']);
+						$mod['temp'] = str_replace('{font1}', &quot;MOD_VALUE[1]&quot;, $mod['temp']);
+						$mod['temp'] = str_replace('{font2}', &quot;MOD_VALUE[2]&quot;, $mod['temp']);
+						$mod['temp'] = str_replace('{font3}', &quot;MOD_VALUE[3]&quot;, $mod['temp']);
+						$mod['temp'] = cms_stripslashes($mod['temp']);
+						$mod['temp'] = str_replace('{s_name}', htmlentities(cms_addslashes($con_tree[$b]['name']), ENT_COMPAT, 'UTF-8'), $mod['temp']);
+			            echo $mod['temp'];
+					}
+				}
+			}
+		}
+	}
+}
+
+if($cms_mod['value']['6'] != 'group' &amp;&amp; $mod['startpt'] != '0') {
+	// SEITEN SORTIEREN
+	$mod['sortarray'] = array();
+	if (is_array($mod['sidelist'][ $mod['startpt'] ]) ) {
+		foreach($mod['sidelist'][ $mod['startpt'] ] as $b){
+			 if ($cms_mod['value']['4'] == 'name') {
+				$sortit = strtolower($con_side[$b]['name']);
+			 } elseif ($cms_mod['value']['4'] == 'created' || $cms_mod['value']['4'] == 'lastmodified') {
+				$sortit = strtotime($con_side[$b]['MOD_VALUE[4]']);
+			 } else {
+				$sortit = $con_side[$b]['MOD_VALUE[4]'];
+			 }
+
+			sf_array_push($mod['sortarray'], $sortit);
+		}
+
+		array_multisort($mod['sortarray'], MOD_VALUE[5], $mod['sidelist'][ $mod['startpt'] ], MOD_VALUE[5]);
+		//SEITEN AUSGEBEN
+		$mod['firsts'] = 1;
+		foreach($mod['sidelist'][ $mod['startpt'] ] as $b){
+			if (($con_side[$b]['is_start'] == '0' || &quot;MOD_VALUE[8]&quot; == 'true') &amp;&amp; !strstr(&quot;,MOD_VALUE[24],&quot;,&quot;,$b,&quot;)) {
+				if (&quot;MOD_VALUE[21]&quot; != &quot;&quot; &amp;&amp; &quot;MOD_VALUE[21]&quot; != &quot; &quot;){
+					$b == $idcatside ? $mod['tpl'] = &quot;MOD_VALUE[22]&quot; : $mod['tpl'] = &quot;MOD_VALUE[21]&quot;;
+					$mod['tplis'] = &quot;MOD_VALUE[23]&quot;;
+				} else {
+					$b == $idcatside ? $mod['tpl'] = &quot;MOD_VALUE[18]&quot; : $mod['tpl'] = &quot;MOD_VALUE[17]&quot;;
+					$mod['tplis'] = &quot;MOD_VALUE[19]&quot;;
+				}
+				if ($mod['firsts'] == 0) {
+					echo $mod['tplis'];
+				}
+
+				$mod['firsts'] = 0;
+				$mod['temp'] = '';
+				$mod['temp'] = str_replace('{space}','', $mod['tpl']);
+				$mod['temp'] = str_replace('{name}', htmlentities($con_side[$b]['name'], ENT_COMPAT, 'UTF-8'), $mod['temp']);
+				$mod['temp'] = str_replace('{link}', $con_side[$b]['link'], $mod['temp']);
+				$mod['temp'] = str_replace('{id}', 'lang_'.$lang.'side_'.$b, $mod['temp']);
+				$mod['temp'] = str_replace('{font1}', &quot;MOD_VALUE[1]&quot;, $mod['temp']);
+				$mod['temp'] = str_replace('{font2}', &quot;MOD_VALUE[2]&quot;, $mod['temp']);
+				$mod['temp'] = str_replace('{font3}', &quot;MOD_VALUE[3]&quot;, $mod['temp']);
+				$mod['temp'] = cms_stripslashes($mod['temp']);
+				$mod['temp'] = str_replace('{s_name}', htmlentities(cms_addslashes($con_tree[$b]['name']), ENT_COMPAT, 'UTF-8'), $mod['temp']);
+				echo $mod['temp'];
+			}
+	   }
+   }
+}
+// VARIABLEN LEEREN
+echo $cms_mod['value']['20'];
+
+sf_reset($catlist);
+unset ($mod, $a, $b);
+&lt;/CMSPHP&gt;
+</output>
+   <config></config>
+   <repository_id>mod:fd9160bbd656f75ab74e8935e4330d9e:f2431aba</repository_id>
+   <install_sql></install_sql>
+   <uninstall_sql></uninstall_sql>
+   <update_sql></update_sql>
+</modul>

@@ -1,0 +1,1621 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<modul version='0.4' date='1792759067'>
+   <name>Pic-Galerie</name>
+   <cat>Content</cat>
+   <version>3.6</version>
+   <author>1</author>
+   <created>1110349542</created>
+   <lastmodified>1509191540</lastmodified>
+   <deletable>1</deletable>
+   <description>Galerie aus ausgewähltem Ordner des Dateimanagers</description>
+   <input>&lt;?php
+
+// Version 3.5.1
+// (c) 2005 by Sascha Postner v/o saschapi
+
+//Belegt sind mip_forms 0 - 31 und 51-52 und 60-61 und 90005-90010
+
+
+
+//Config-mode ( Normal, Erweitert, Ausgeblendet)
+$mip_form['0']['desc'] = 'Konfigurationsmodus';
+$mip_form['0']['cat'] = 'option';
+$mip_form['0']['size'] = '1';
+$mip_form['0']['option_desc'][] = 'Normal';
+$mip_form['0']['option_val'][] =  '';
+$mip_form['0']['option_desc'][] = 'Erweitert';
+$mip_form['0']['option_val'][] =  'advanced';
+$mip_form['0']['option_desc'][] = 'Erweitert + Detailfeatures';
+$mip_form['0']['option_val'][] =  'detail';
+$mip_form['0']['option_desc'][] = 'Ausgeblendet';
+$mip_form['0']['option_val'][] =  'hidden';
+$mip_form['0']['cms_var'] = 'MOD_VAR[0]';
+$mip_form['0']['cms_val'] = $cms_mod['value']['0'];
+$mip_form['0']['flag'] = 'reload';
+mip_formsp($mip_form['0']);//configmode
+$mip_form['hide_in_standard_mode'] = array(1,2,3,5,6,7,10,11,12,13,14,15,16,17,18,20,21,22,23,24,25,27,28,30,31,60,61,90007,90008,90009,90010);
+$mip_form['hide_in_advanced_mode'] = array(20,23,90009,90010);
+$mip_form['hide_in_detail_mode'] = array();
+
+//hidden config
+if($cms_mod['value']['0'] == 'hidden'){
+  foreach($cms_mod['value'] AS $ke=&gt;$va){
+    if($ke != '0'){
+    ?&gt;
+      &lt;input name=&quot;MOD_VAR[&lt;?php echo $ke; ?&gt;]&quot; type=&quot;hidden&quot; value=&quot;&lt;?php echo htmlentities($va, ENT_COMPAT, 'UTF-8');?&gt;&quot;&gt;
+    &lt;?php
+     }
+  }
+}
+//simple and advanced config
+else if($cms_mod['value']['0'] == '' || $cms_mod['value']['0'] == 'advanced' || $cms_mod['value']['0'] == 'detail'){
+
+
+##############################################
+# Schriftarten
+##############################################
+
+//Schriftart 1
+$mip_form['1']['desc'] = $mod_lang['gen_font'].&quot; {font1}&quot;;
+$mip_form['1']['cat'] = 'app_css';
+$mip_form['1']['output_cat'] = 'option';
+$mip_form['1']['cms_var'] = 'MOD_VAR[1]';
+$mip_form['1']['cms_val'] = $cms_mod['value']['1'];
+
+//Schriftart 2
+$mip_form['2']['desc'] = $mod_lang['gen_font'].&quot; {font2} (Walker Seitenlink)&quot;;
+$mip_form['2']['cat'] = 'app_css';
+$mip_form['2']['output_cat'] = 'option';
+$mip_form['2']['cms_var'] = 'MOD_VAR[2]';
+$mip_form['2']['cms_val'] = $cms_mod['value']['2'];
+
+//Schriftart 3
+$mip_form['3']['desc'] = $mod_lang['gen_font'].&quot; {font3} (Aktueller Walker Seitenlink)&lt;br/&gt;&lt;br/&gt;\n&quot;;
+$mip_form['3']['cat'] = 'app_css';
+$mip_form['3']['output_cat'] = 'option';
+$mip_form['3']['cms_var'] = 'MOD_VAR[3]';
+$mip_form['3']['cms_val'] = $cms_mod['value']['3'];
+
+//Schriftart 4
+$mip_form['27']['desc'] = $mod_lang['gen_font'].&quot; {font4} (Bildtitel)&lt;br/&gt;&lt;br/&gt;\n&quot;;
+$mip_form['27']['cat'] = 'app_css';
+$mip_form['27']['output_cat'] = 'option';
+$mip_form['27']['cms_var'] = 'MOD_VAR[27]';
+$mip_form['27']['cms_val'] = $cms_mod['value']['27'];
+
+//Schriftart 4
+$mip_form['28']['desc'] = $mod_lang['gen_font'].&quot; {font5} (Bildbeschreibung)&lt;br/&gt;&lt;br/&gt;\n&quot;;
+$mip_form['28']['cat'] = 'app_css';
+$mip_form['28']['output_cat'] = 'option';
+$mip_form['28']['cms_var'] = 'MOD_VAR[28]';
+$mip_form['28']['cms_val'] = $cms_mod['value']['28'];
+
+
+##############################################
+# generelle Einstellungen
+##############################################
+
+
+// Verzeichnis im Frontend oder Backend auswählen?
+$mip_form['51']['desc'] = 'Soll der Redakteur das Verzeichnis im Frontend einstellen?';
+$mip_form['51']['cat'] = 'option';
+$mip_form['51']['cms_var'] = 'MOD_VAR[51]';
+$mip_form['51']['cms_val'] = $cms_mod['value']['51'];
+$mip_form['51']['option_desc']['0'] = 'Ja';
+$mip_form['51']['option_desc']['1'] = 'Nein';
+$mip_form['51']['option_val']['0'] = true;
+$mip_form['51']['option_val']['1'] = false;
+$mip_form['51']['cms_val_default'] = false;
+$mip_form['51']['flag'] = 'reload';
+
+
+//Ordnerauswahl
+$mip_form['4']['desc'] = 'Ordner: ';
+$mip_form['4']['cat'] = 'app_directory';
+$mip_form['4']['output_cat'] = 'option';
+$mip_form['4']['cms_var'] = 'MOD_VAR[4]';
+$mip_form['4']['cms_val'] = $cms_mod['value']['4'];
+$mip_form['4']['flag'] = 'single';
+
+//StartOrdnerauswahl
+$mip_form['52']['desc'] = 'Startverzeichnis: ';
+$mip_form['52']['cat'] = 'app_directory';
+$mip_form['52']['output_cat'] = 'option';
+$mip_form['52']['cms_var'] = 'MOD_VAR[52]';
+$mip_form['52']['cms_val'] = $cms_mod['value']['52'];
+$mip_form['52']['flag'] = 'single';
+
+// Unterordner verwenden??
+$mip_form['26']['desc'] = 'Unterordner einschließen?';
+$mip_form['26']['cat'] = 'option';
+$mip_form['26']['cms_var'] = 'MOD_VAR[26]';
+$mip_form['26']['cms_val'] = $cms_mod['value']['26'];
+$mip_form['26']['option_desc']['0'] = 'Ja';
+$mip_form['26']['option_desc']['1'] = 'Nein';
+$mip_form['26']['option_val']['0'] = true;
+$mip_form['26']['option_val']['1'] = false;
+$mip_form['26']['cms_val_default'] = false;
+
+
+//Anzahl Bilder
+$mip_form['6']['desc'] = &quot;Anzahl Bilder pro Galerie-Seite&quot;;
+$mip_form['6']['cat'] = 'txt';
+$mip_form['6']['cms_var'] = 'MOD_VAR[6]';
+$mip_form['6']['cms_val'] = $cms_mod['value']['6'];
+$mip_form['6']['cms_val_default'] = '9';
+
+// Anzahl pro Reihe
+$mip_form['7']['desc'] = &quot;Anzahl Bilder in einer Reihe&quot;;
+$mip_form['7']['cat'] = 'txt';
+$mip_form['7']['cms_var'] = 'MOD_VAR[7]';
+$mip_form['7']['cms_val'] = $cms_mod['value']['7'];
+$mip_form['7']['cms_val_default'] = '3';
+
+
+// Galerie-ID
+$mip_form['5']['desc'] = &quot;welche Seite bei Galerieaufruf: &lt;br/&gt;\n&quot;;
+$mip_form['5']['cat'] = 'txt';
+$mip_form['5']['cms_var'] = 'MOD_VAR[5]';
+$mip_form['5']['cms_val'] = $cms_mod['value']['5'];
+$mip_form['5']['cms_val_default'] = '1';
+
+//Sortierreihenfolge
+$mip_form['15']['desc'] = &quot;Sortierreihenfolge&quot;;
+$mip_form['15']['cat'] = 'option';
+$mip_form['15']['cms_var'] = 'MOD_VAR[15]';
+$mip_form['15']['cms_val'] = $cms_mod['value']['15'];
+$mip_form['15']['option_desc']['0'] = 'anhand Dateiname';
+$mip_form['15']['option_val']['0'] = 'filename';
+$mip_form['15']['option_desc']['1'] = 'anhand Titel';
+$mip_form['15']['option_val']['1'] = 'titel';
+$mip_form['15']['option_desc']['2'] = 'anhand &amp;lt;order&amp;gt-Tag; in Beschreibung';
+$mip_form['15']['option_val']['2'] = 'description';
+$mip_form['15']['option_desc']['3'] = 'anhand Erstellungsdatum';
+$mip_form['15']['option_val']['3'] = 'created';
+$mip_form['15']['option_desc']['4'] = 'anhand Änderungsdatum';
+$mip_form['15']['option_val']['4'] = 'lastmodified';
+$mip_form['15']['option_desc']['5'] = 'anhand Dateigröße';
+$mip_form['15']['option_val']['5'] = 'filesize';
+$mip_form['15']['option_desc']['6'] = 'anhand Autor';
+$mip_form['15']['option_val']['6'] = 'author';
+$mip_form['15']['cms_val_default'] = 'filename';
+
+//aufsteigend-absteigend
+$mip_form['16']['cat'] = 'radio';
+$mip_form['16']['cms_var'] = 'MOD_VAR[16]';
+$mip_form['16']['cms_val'] = $cms_mod['value']['16'];
+$mip_form['16']['cms_val_default'] = 'ASC';
+$mip_form['16']['option_desc']['0'] = 'aufsteigend';
+$mip_form['16']['option_val']['0'] = 'ASC';
+$mip_form['16']['option_desc']['1'] = 'absteigend';
+$mip_form['16']['option_val']['1'] = 'DESC';
+
+##############################################
+# Bildergrößen
+##############################################
+
+// max image size
+$mip_form['17']['desc'] = 'maximale Bild-Größe: {maximgsize} (leer = Originalgröße)';
+$mip_form['17']['cat'] = 'txt';
+$mip_form['17']['cms_var'] = 'MOD_VAR[17]';
+$mip_form['17']['cms_val'] = $cms_mod['value']['17'];
+$mip_form['17']['cms_val_default'] = '';
+
+// max image size 2
+$mip_form['21']['desc'] = 'maximale Bild-Größe: {maximgsize2} (leer = Originalgröße)';
+$mip_form['21']['cat'] = 'txt';
+$mip_form['21']['cms_var'] = 'MOD_VAR[21]';
+$mip_form['21']['cms_val'] = $cms_mod['value']['21'];
+$mip_form['21']['cms_val_default'] = '';
+
+##############################################
+# Galeriewalker
+##############################################
+
+// vor/zurück-links anzeigen
+$mip_form['10']['desc'] = 'Vor/Zur&amp;uuml;ck-Links anzeigen';
+$mip_form['10']['cat'] = 'option';
+$mip_form['10']['cms_var'] = 'MOD_VAR[10]';
+$mip_form['10']['cms_val'] = $cms_mod['value']['10'];
+$mip_form['10']['option_desc']['0'] = 'Ja';
+$mip_form['10']['option_desc']['1'] = 'Nein';
+$mip_form['10']['option_val']['0'] = 'true';
+$mip_form['10']['option_val']['1'] = 'false';
+$mip_form['10']['cms_val_default'] = 'false';
+$mip_form['10']['flag'] = 'reload';
+//
+
+// vor/zurück-linktexte definieren
+if ($cms_mod['value']['10'] == 'true') {
+        // zurück-link
+        $mip_form['13']['desc'] = &quot;Zurück-Linktext&quot;;
+        $mip_form['13']['cat'] = 'txt';
+        $mip_form['13']['cms_var'] = 'MOD_VAR[13]';
+        $mip_form['13']['cms_val'] = $cms_mod['value']['13'];
+        $mip_form['13']['cms_val_default'] = '&amp;lt;&amp;lt;';
+
+        // weiter-link
+        $mip_form['14']['desc'] = &quot;Weiter-Linktext&quot;;
+        $mip_form['14']['cat'] = 'txt';
+        $mip_form['14']['cms_var'] = 'MOD_VAR[14]';
+        $mip_form['14']['cms_val'] = $cms_mod['value']['14'];
+        $mip_form['14']['cms_val_default'] = '&amp;gt;&amp;gt;';
+} else {
+        // zurück-link
+        $mip_form['13']['cat'] = 'hidden';
+        $mip_form['13']['cms_var'] = 'MOD_VAR[13]';
+        $mip_form['13']['cms_val'] = $cms_mod['value']['13'];
+        $mip_form['13']['cms_val_default'] = '&amp;lt;&amp;lt;';
+
+        // weiter-link
+        $mip_form['14']['cat'] = 'hidden';
+        $mip_form['14']['cms_var'] = 'MOD_VAR[14]';
+        $mip_form['14']['cms_val'] = $cms_mod['value']['14'];
+        $mip_form['14']['cms_val_default'] = '&amp;gt;&amp;gt;';
+}
+
+// anzahl der angezeigten Seitenlinks
+$mip_form['11']['desc'] = &quot;Floating Galerie-Walker:&lt;br/&gt;\n (0 = Floating aus, 1-n = Max. angezeigter Links)&lt;br/&gt;&lt;br/&gt;\n&quot;;
+$mip_form['11']['cat'] = 'txt';
+$mip_form['11']['cms_var'] = 'MOD_VAR[11]';
+$mip_form['11']['cms_val'] = $cms_mod['value']['11'];
+$mip_form['11']['cms_val_default'] = '0';
+
+// separatoren
+$mip_form['12']['desc'] = &quot;Separator zwischen den Seitenlinks im Walker:&lt;br/&gt;\n (leer = default-separator)&lt;br/&gt;&lt;br/&gt;\n&quot;;
+$mip_form['12']['cat'] = 'txt';
+$mip_form['12']['cms_var'] = 'MOD_VAR[12]';
+$mip_form['12']['cms_val'] = $cms_mod['value']['12'];
+$mip_form['12']['cms_val_default'] = '';
+
+// Aktuelle Galerieseite verlinken?
+$mip_form['18']['desc'] = 'Soll die aktuelle Seite im Galerie-Walker verlinkt werden?';
+$mip_form['18']['cat'] = 'option';
+$mip_form['18']['cms_var'] = 'MOD_VAR[18]';
+$mip_form['18']['cms_val'] = $cms_mod['value']['18'];
+$mip_form['18']['option_desc']['0'] = 'Ja';
+$mip_form['18']['option_desc']['1'] = 'Nein';
+$mip_form['18']['option_val']['0'] = true;
+$mip_form['18']['option_val']['1'] = false;
+$mip_form['18']['cms_val_default'] = false;
+$mip_form['18']['flag'] = 'reload';
+//
+
+##############################################
+# Templates
+##############################################
+
+
+// Layout der Galerie Tabelle
+$mip_form['8']['desc'] = 'Layout der Galerie-Tabelle';
+$mip_form['8']['cat'] = 'txtarea';
+$mip_form['8']['type'] = 'long';
+$mip_form['8']['rows'] = '10';
+$mip_form['8']['cms_var'] = 'MOD_VAR[8]';
+$mip_form['8']['cms_val'] = $cms_mod['value']['8'];
+$mip_form['8']['cms_val_default'] = &quot;&lt;table width=\&quot;100%\&quot;&gt;
+  &lt;tr class=\&quot;{font1}\&quot;&gt;
+    &lt;td align=\&quot;center\&quot;&gt;Seite {id}&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr class=\&quot;{font2}\&quot;&gt;
+    &lt;td align=\&quot;center\&quot;&gt;{walker}&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr&gt;
+     &lt;td&gt;&lt;table width=\&quot;100%\&quot;&gt;&lt;tr&gt;{content}&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr class=\&quot;{font2}\&quot;&gt;
+    &lt;td align=\&quot;center\&quot;&gt;{walker}&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;&quot;;
+// legend Layout der Galerie Tabelle
+$mip_form['90005']['cat'] = 'desc';
+$mip_form['90005']['type'] = '';
+$mip_form['90005']['desc'] = '&lt;div id=&quot;legend1&quot; style=&quot;display:none;text-align:right;&quot;&gt;&lt;small&gt;&lt;strong&gt;Inhaltselemente&lt;/strong&gt;&lt;br/&gt;{font1},{font2},{font3},{id},{walker},&lt;b&gt;{content}&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;u&gt;Bemerkung:&lt;/u&gt; {content} ist zwingend erforderlich!&lt;/small&gt;&lt;/div&gt;
+&lt;div style=&quot;text-align:right;&quot; onclick=&quot;this.innerHTML=document.getElementById(\'legend1\').innerHTML;&quot;&gt;&lt;small style=&quot;cursor: pointer;&quot;&gt;Hilfe anzeigen&lt;br /&gt;&lt;/small&gt;&lt;/div&gt;';
+// Einzelne Tabellenelemente
+$mip_form['9']['cat'] = 'txtarea';
+$mip_form['9']['type'] = 'long';
+$mip_form['9']['rows'] = '10';
+$mip_form['9']['desc'] = 'Layout der einzelnen Tabellenelemente (also {content} im Template oben)&lt;br/&gt;';
+$mip_form['9']['cms_var'] = 'MOD_VAR[9]';
+$mip_form['9']['cms_val'] = $cms_mod['value']['9'];
+$mip_form['9']['cms_val_default'] = &quot;&lt;td align=\&quot;center\&quot;&gt;
+&lt;span class=\&quot;{font4}\&quot;&gt;{title}&lt;/span&gt;&lt;br /&gt;
+  &lt;a href=\&quot;javascript:new_imagepopup('{path}{urlencode}{file}{/urlencode}','{title}','{description}','','{width}','{height}','true')\&quot;&gt;
+    &lt;img src=\&quot;{path}{thumbfile}\&quot; {maximgsize} border=\&quot;0\&quot; alt=\&quot;{filedesc}\&quot; /&gt;
+  &lt;/a&gt;&lt;br/ &gt;
+  &lt;span class=\&quot;{font5}\&quot;&gt;{description}&lt;br/ &gt;
+  Dateigrösse: {filesize}&lt;/span&gt;
+&lt;/td&gt;&quot;;
+// legend Einzelne Tabellenelemente
+$mip_form['90006']['cat'] = 'desc';
+$mip_form['90006']['type'] = '';
+$mip_form['90006']['desc'] = '&lt;div id=&quot;legend2&quot; style=&quot;display:none;text-align:right;&quot;&gt;&lt;small&gt;&lt;strong&gt;Inhaltselemente&lt;/strong&gt;&lt;br/&gt;&lt;small&gt;{font1},{font2},{font3},&lt;br/&gt;{path},{real_path},{file},{thumbfile},{filename},&lt;br/&gt;{title},{filedesc},{description},&lt;br/&gt;{urlencode}data{/urlencode},&lt;br/&gt;{maximgsize},{maximgsize2},{filesize},&lt;br/&gt;{width},{height},{thumbwidth},{thumbheight},{detailurl},{idupl},{number}&lt;/small&gt;&lt;/div&gt;
+&lt;div style=&quot;text-align:right;&quot; onclick=&quot;this.innerHTML=document.getElementById(\'legend2\').innerHTML;&quot;&gt;&lt;small style=&quot;cursor: pointer;&quot;&gt;Hilfe anzeigen&lt;br /&gt;&lt;/small&gt;&lt;/div&gt;';
+
+        // Umschließende Templates von den einzelnen Bilderzeilen
+        $mip_form['30']['desc'] = &quot;Vor den einzelnen Bilderzeilen&quot;;
+        $mip_form['30']['cat'] = 'txt';
+        $mip_form['30']['cms_var'] = 'MOD_VAR[30]';
+        $mip_form['30']['cms_val'] = $cms_mod['value']['30'];
+        $mip_form['30']['cms_val_default'] = '&lt;tr&gt;';
+
+        $mip_form['31']['desc'] = &quot;Nach den einzelnen Bilderzeilen&quot;;
+        $mip_form['31']['cat'] = 'txt';
+        $mip_form['31']['cms_var'] = 'MOD_VAR[31]';
+        $mip_form['31']['cms_val'] = $cms_mod['value']['31'];
+        $mip_form['31']['cms_val_default'] = '&lt;/tr&gt;';
+
+
+##############################################
+# Detail Templates
+##############################################
+
+
+// Zurück Template
+$mip_form['22']['desc'] = &quot;Zurück-Link Template in der Detailansicht:&quot;;
+$mip_form['22']['cat'] = 'txtarea';
+$mip_form['22']['type'] = 'long';
+$mip_form['22']['rows'] = '1';
+$mip_form['22']['cms_var'] = 'MOD_VAR[22]';
+$mip_form['22']['cms_val'] = $cms_mod['value']['22'];
+$mip_form['22']['cms_val_default'] = &quot;&lt;a href=\&quot;{prev}\&quot;&gt;Bild zurück&lt;/a&gt;&amp;nbsp;&amp;nbsp;|&quot;;
+
+// legend Zurück Template
+$mip_form['90007']['cat'] = 'desc';
+$mip_form['90007']['type'] = '';
+$mip_form['90007']['desc'] = '&lt;div id=&quot;legend3&quot; style=&quot;display:none;text-align:right;&quot;&gt;&lt;small&gt;&lt;strong&gt;Inhaltselemente&lt;/strong&gt;&lt;br/&gt;&lt;small&gt;{font1},{font2},{font3},{prev}, {idupl}&lt;/small&gt;&lt;/div&gt;
+&lt;div style=&quot;text-align:right;&quot; onclick=&quot;this.innerHTML=document.getElementById(\'legend3\').innerHTML;&quot;&gt;&lt;small style=&quot;cursor: pointer;&quot;&gt;Hilfe anzeigen&lt;br /&gt;&lt;/small&gt;&lt;/div&gt;';
+
+// VorTemplate
+$mip_form['25']['desc'] = &quot;Vor-Link Template in der Detailansicht:&quot;;
+$mip_form['25']['cat'] = 'txtarea';
+$mip_form['25']['type'] = 'long';
+$mip_form['25']['rows'] = '1';
+$mip_form['25']['cms_var'] = 'MOD_VAR[25]';
+$mip_form['25']['cms_val'] = $cms_mod['value']['25'];
+$mip_form['25']['cms_val_default'] = &quot;|&amp;nbsp;&amp;nbsp;&lt;a href=\&quot;{next}\&quot;&gt;Bild vor&lt;/a&gt;&quot;;
+
+// legend VorTemplate
+$mip_form['90008']['cat'] = 'desc';
+$mip_form['90008']['type'] = '';
+$mip_form['90008']['desc'] = '&lt;div id=&quot;legend4&quot; style=&quot;display:none;text-align:right;&quot;&gt;&lt;small&gt;&lt;strong&gt;Inhaltselemente&lt;/strong&gt;&lt;br/&gt;&lt;small&gt;{font1},{font2},{font3},{next}, {idupl}&lt;/small&gt;&lt;/div&gt;
+&lt;div style=&quot;text-align:right;&quot; onclick=&quot;this.innerHTML=document.getElementById(\'legend4\').innerHTML;&quot;&gt;&lt;small style=&quot;cursor: pointer;&quot;&gt;Hilfe anzeigen&lt;br /&gt;&lt;/small&gt;&lt;/div&gt;';
+
+// Rücklink zur Galerie
+$mip_form['23']['desc'] = &quot;Rücklink zur Galerie&quot;;
+$mip_form['23']['cat'] = 'txtarea';
+$mip_form['23']['type'] = 'long';
+$mip_form['23']['rows'] = '1';
+$mip_form['23']['cms_var'] = 'MOD_VAR[23]';
+$mip_form['23']['cms_val'] = $cms_mod['value']['23'];
+$mip_form['23']['cms_val_default'] = &quot;&lt;a href=\&quot;{galerie}\&quot;&gt;Galerieseite {page_id}&lt;/a&gt; &lt;a href=\&quot;{galeriestart}\&quot;&gt;Galeriestartseite&lt;/a&gt;&quot;;
+
+// legend Rücklink zur Galerie
+$mip_form['90009']['cat'] = 'desc';
+$mip_form['90009']['type'] = '';
+$mip_form['90009']['desc'] = '&lt;div id=&quot;legend5&quot; style=&quot;display:none;text-align:right;&quot;&gt;&lt;small&gt;&lt;strong&gt;Inhaltselemente&lt;/strong&gt;&lt;br/&gt;&lt;small&gt;{font1},{font2},{font3},{page_id},{galerie},{galeriestart}&lt;/small&gt;&lt;/div&gt;
+&lt;div style=&quot;text-align:right;&quot; onclick=&quot;this.innerHTML=document.getElementById(\'legend5\').innerHTML;&quot;&gt;&lt;small style=&quot;cursor: pointer;&quot;&gt;Hilfe anzeigen&lt;br /&gt;&lt;/small&gt;&lt;/div&gt;';
+
+//Vor und zurück zyklisch oder endend?
+$mip_form['24']['cat'] = 'radio';
+$mip_form['24']['desc'] = 'Vor- und Zurück-Links in der Detailansicht &lt;br/&gt; zyklisch oder endend generieren?';
+$mip_form['24']['cms_var'] = 'MOD_VAR[24]';
+$mip_form['24']['cms_val'] = $cms_mod['value']['24'];
+$mip_form['24']['cms_val_default'] = 'zykl';
+$mip_form['24']['option_desc']['0'] = 'zyklisch';
+$mip_form['24']['option_val']['0'] = 'zykl';
+$mip_form['24']['option_desc']['1'] = 'endend';
+$mip_form['24']['option_val']['1'] = 'end';
+
+// Detail Template
+$mip_form['20']['cat'] = 'txtarea';
+$mip_form['20']['type'] = 'long';
+$mip_form['20']['rows'] = '10';
+$mip_form['20']['desc'] = 'Layout der optionalen Detailansicht';
+$mip_form['20']['cms_var'] = 'MOD_VAR[20]';
+$mip_form['20']['cms_val'] = $cms_mod['value']['20'];
+$mip_form['20']['cms_val_default'] = &quot;&lt;table width=\&quot;100%\&quot;&gt;
+  &lt;tr class=\&quot;{font1}\&quot;&gt;
+    &lt;td align=\&quot;center\&quot;&gt;Bild {pic_id}/{pic_count}&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr class=\&quot;{font2}\&quot;&gt;
+    &lt;td align=\&quot;center\&quot;&gt;{prev}&amp;nbsp;&amp;nbsp;{galerie}&amp;nbsp;&amp;nbsp;{next}&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr&gt;
+     &lt;td&gt;&lt;table width=\&quot;100%\&quot;&gt;&lt;tr&gt;&lt;td align=\&quot;center\&quot;&gt;&lt;img src=\&quot;{path}{file}\&quot; border=\&quot;0\&quot; alt=\&quot;{filedesc}\&quot;/ &gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr class=\&quot;{font2}\&quot;&gt;
+    &lt;td align=\&quot;center\&quot;&gt;Bild ist von Seite {page_id}&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;&quot;;
+
+// legend Detail Template
+$mip_form['90010']['cat'] = 'desc';
+$mip_form['90010']['type'] = '';
+$mip_form['90010']['desc'] = '&lt;div id=&quot;legend6&quot; style=&quot;display:none;text-align:right;&quot;&gt;&lt;small&gt;&lt;strong&gt;Inhaltselemente&lt;/strong&gt;&lt;br/&gt;&lt;small&gt;{page_id},{font1},{font2},{font3},&lt;br/&gt;{prev},{next},{galerie},{path},{real_path},{file},{thumbfile},{filename},{title},
+{filedesc},{description},&lt;br/&gt;{maximgsize},{maximgsize2},{filesize},{width},{height},{pic_id},{idupl},{pic_count}&lt;/small&gt;&lt;/div&gt;
+&lt;div style=&quot;text-align:right;&quot; onclick=&quot;this.innerHTML=document.getElementById(\'legend6\').innerHTML;&quot;&gt;&lt;small style=&quot;cursor: pointer;&quot;&gt;Hilfe anzeigen&lt;br /&gt;&lt;/small&gt;&lt;/div&gt;';
+
+
+// mit detailtemp starten
+$mip_form['60']['desc'] = 'Direkt mit der Detailansicht beginnen?';
+$mip_form['60']['cat'] = 'chk';
+$mip_form['60']['option_var']['0'] = 'MOD_VAR[60]';
+$mip_form['60']['option_val']['0'] = $cms_mod['value']['60'];
+$mip_form['60']['option_desc']['0'] = 'ja';
+$mip_form['60']['option_val_select']['0'] = 'true';
+
+// mit detailtemp starten
+$mip_form['61']['desc'] = 'Thumbnails in die Detailinsicht includen?';
+$mip_form['61']['cat'] = 'chk';
+$mip_form['61']['option_var']['0'] = 'MOD_VAR[61]';
+$mip_form['61']['option_val']['0'] = $cms_mod['value']['61'];
+$mip_form['61']['option_desc']['0'] = 'ja';
+$mip_form['61']['option_val_select']['0'] = 'true';
+
+// &lt;br&gt;
+$mip_form['99999']['cat'] = 'desc';
+$mip_form['99999']['type'] = '';
+$mip_form['99999']['desc'] = '';
+
+//if simple mode
+if($cms_mod['value']['0'] == ''){
+   foreach ($mip_form['hide_in_standard_mode']  AS $ke=&gt;$va){
+     $mip_form[$va]['cat'] = 'hidden';
+   }
+ }
+
+//if advanced mode
+if($cms_mod['value']['0'] == 'advanced'){
+   foreach ($mip_form['hide_in_advanced_mode']  AS $ke=&gt;$va){
+     $mip_form[$va]['cat'] = 'hidden';
+   }
+ }
+
+
+
+#######################################################################################################################
+
+mip_forms_tabpane_beginp();
+if($cms_mod['value']['0'] == 'advanced'||$cms_mod['value']['0'] == 'detail')
+mip_forms_tabitem_beginp('Schriftarten');
+mip_formsp($mip_form['1']);
+mip_formsp($mip_form['2']);
+mip_formsp($mip_form['3']);
+mip_formsp($mip_form['27']);
+mip_formsp($mip_form['28']);
+if($cms_mod['value']['0'] == 'advanced'||$cms_mod['value']['0'] == 'detail')
+mip_forms_tabitem_endp();
+
+if($cms_mod['value']['0'] == '' ||$cms_mod['value']['0'] == 'advanced' || $cms_mod['value']['0'] == 'detail')
+mip_forms_tabitem_beginp(' generelle Einstellungen ');
+//Verzeichnis im Frontend bearbeiten?
+mip_formsp($mip_form['51']);
+
+if ($cms_mod['value']['51'] == false)
+{
+mip_formsp($mip_form['4']);
+}
+
+if ($cms_mod['value']['51'] == true)
+{mip_formsp($mip_form['52']);
+}
+
+//Unterordner verwenden?
+mip_formsp($mip_form['26']);
+
+//Anzahl der Bilder pro seite
+mip_formsp($mip_form['6']);
+//Wieviele Bilder nebeneinander?
+mip_formsp($mip_form['7']);
+
+//Startseite dieser Galerie?
+mip_formsp($mip_form['5']);
+
+//Sortierreihenfolge der Bilder
+mip_formsp($mip_form['15']);
+//Aufsteigend Absteigend?
+mip_formsp($mip_form['16']);
+if($cms_mod['value']['0'] == '' ||$cms_mod['value']['0'] == 'advanced' || $cms_mod['value']['0'] == 'detail')
+mip_forms_tabitem_endp();
+
+if($cms_mod['value']['0'] == 'advanced' || $cms_mod['value']['0'] == 'detail')
+mip_forms_tabitem_beginp('Bildergrößen');
+mip_formsp($mip_form['17']);
+mip_formsp($mip_form['21']);
+if($cms_mod['value']['0'] == 'advanced' || $cms_mod['value']['0'] == 'detail')
+mip_forms_tabitem_endp();
+
+if($cms_mod['value']['0'] == 'advanced' || $cms_mod['value']['0'] == 'detail')
+mip_forms_tabitem_beginp('Galerie-Walker');
+//Vor und Zurücklinks
+mip_formsp($mip_form['10']);
+mip_formsp($mip_form['13']);
+mip_formsp($mip_form['14']);
+mip_formsp($mip_form['11']);
+mip_formsp($mip_form['12']);
+
+//Aktuelle Seite verlinken?
+mip_formsp($mip_form['18']);
+if($cms_mod['value']['0'] == 'advanced' || $cms_mod['value']['0'] == 'detail')
+mip_forms_tabitem_endp();
+
+if($cms_mod['value']['0'] == '' ||$cms_mod['value']['0'] == 'advanced' || $cms_mod['value']['0'] == 'detail')
+mip_forms_tabitem_beginp('Templates');
+//Galerietabelle
+mip_formsp($mip_form['8']);
+mip_formsp($mip_form['90005']);
+
+//einzelne Elemente
+mip_formsp($mip_form['9']);
+mip_formsp($mip_form['90006']);
+
+//Umschließendes Template
+mip_formsp($mip_form['30']);
+mip_formsp($mip_form['31']);
+mip_formsp($mip_form['22']);
+mip_formsp($mip_form['90007']);
+mip_formsp($mip_form['25']);
+mip_formsp($mip_form['90008']);
+mip_formsp($mip_form['23']);
+mip_formsp($mip_form['90009']);
+mip_formsp($mip_form['99999']);
+mip_formsp($mip_form['24']);
+
+//Detailtemplate
+mip_formsp($mip_form['20']);
+mip_formsp($mip_form['90010']);
+
+//Detailtemplate
+mip_formsp($mip_form['60']);
+mip_formsp($mip_form['61']);
+if($cms_mod['value']['0'] == '' ||$cms_mod['value']['0'] == 'advanced' || $cms_mod['value']['0'] == 'detail')
+mip_forms_tabitem_endp();
+
+}
+unset($mip_form);
+?&gt;</input>
+   <output>&lt;CMSPHP&gt;
+
+// Version 3.5.1
+// (c) 2005 by Sascha Postner v/o saschapi
+
+//Achtung! Es sind noch einige Wasserzeichengeschichten in dieser Version enthalten
+//Wasserzeichen werden jedoch NICHT mehr unterstützt.
+
+
+##########################################################################################################################
+//Hier lagere ich mal ein paar Funktionen aus
+##########################################################################################################################
+
+
+//Funktion zum erstellen von Wasserzeichen
+if (!function_exists('make_watermark_image_galerie')) {
+    function make_watermark_image_galerie($image, $watermarkfile, $new_image, $x, $y, $transition)
+    {
+        global $cfg_cms, $cfg_client;
+        require_once 'Image/Transform.php';
+        $cms_image = Image_Transform::factory($cfg_cms['image_mode']);
+        $cms_image-&gt;load($image);
+        $cms_watermark = Image_Transform::factory($cfg_cms['image_mode']);
+        $cms_watermark-&gt;load($watermarkfile);
+
+        //if ($x != $cms_image-&gt;img_x || $y != $cms_image-&gt;img_y) $cms_image-&gt;resize($x, $y);
+        //$watermark = imagecreatefromstring(base64_decode($watermarkfile));
+        $watermark_width = imagesx($cms_watermark-&gt;imageHandle);
+        $watermark_height = imagesy($cms_watermark-&gt;imageHandle);
+        //(Bild, Watermark, Position des Watermarks X, Position des Watermarks Y, Breite des Bilds, HÃ¶he des Bilds Y, Breite des Watermarks, HÃ¶he des Bildes, Transparenz)
+        imagecopymerge($cms_image-&gt;imageHandle, $cms_watermark-&gt;imageHandle, $x, $y, 0, 0, $watermark_width,
+            $watermark_height, $transition);
+        $cms_image-&gt;save($new_image);
+        $cms_image-&gt;free();
+        unset($cms_image);
+    }
+}
+
+
+//Funktion zum auslesen der ThumbgrÃ¶Ã¾en
+if (!function_exists('get_thumb_size')) {
+    function get_thumb_size($xy, $thumb)
+    {
+        global $cfg_cms, $cfg_client;
+        require_once 'Image/Transform.php';
+        $cms_image = Image_Transform::factory($cfg_cms['image_mode']);
+        $cms_image-&gt;load($thumb);
+
+        //if ($x != $cms_image-&gt;img_x || $y != $cms_image-&gt;img_y) $cms_image-&gt;resize($x, $y);
+        //$watermark = imagecreatefromstring(base64_decode($watermarkfile));
+        $width = imagesx($cms_image-&gt;imageHandle);
+        $height = imagesy($cms_image-&gt;imageHandle);
+        $cms_image-&gt;free();
+        unset($cms_image);
+
+        if ($xy == 'x') {
+            return $width;
+        } elseif ($xy == 'y') {
+            return $height;
+        }
+
+    }
+}
+
+
+//Funktion zum umwandeln von Bilder IDs in Pfade
+if (!function_exists('get_path')) {
+    function get_path($id)
+    {
+        global $cfg_cms, $cfg_client, $cms_db, $db, $cms_mod;
+
+        $sql = &quot;SELECT A.*, B.dirname
+    FROM
+    &quot; . $cms_db['upl'] . &quot; as A, &quot; . $cms_db['directory'] . &quot; as B
+    WHERE
+    idupl='&quot; . $id . &quot;'
+    AND
+    A.iddirectory = B.iddirectory&quot;;
+
+        $db-&gt;query($sql);
+        $db-&gt;next_record();
+        $filepath = $cfg_client[&quot;upl_path&quot;] . $db-&gt;f('dirname') . $db-&gt;f('filename');
+
+        return $filepath;
+    }
+}
+
+
+###########################################################################################################################
+#Hier ein paar Variablen, die wir Ã?berall brauchen
+###########################################################################################################################
+
+//Variable fÃ?r den Link zur aktuellen Seite mit Session ID
+$mod['idcatlink'] = $con_side[$idcatside]['link'];
+
+//Auslesen ob im Frontend-Editiert werden darf
+$mod['frontedit'] = &quot;MOD_VALUE[51]&quot;;
+
+//Auslesen ob mit Detailansicht gestartet wird
+$mod['detailid_start'] = &quot;MOD_VALUE[60]&quot;;
+
+//Auslesen ob Thumbs in der Detailansicht verwendet werden
+$mod['detailid_thumb'] = &quot;MOD_VALUE[61]&quot;;
+
+//Ordner beim Editieren im Frontend (inkl. Container fÃ?r mehrere Galerien pro Seite
+$mod['change_dir_string'] = &quot;change_dir_&quot; . $cms_mod['container']['id'];
+$mod['change_dir'] = ${$mod['change_dir_string']};
+
+//Anzahl der Bilder pro Seite
+$mod[&quot;number_of_pics_per_page&quot;] = MOD_VALUE[6];
+
+//Anzahl der Bilder pro Zeile
+$mod[&quot;break_after_number_of_pics&quot;] = MOD_VALUE[7];
+
+//Thumbtext im Projekt
+$mod[&quot;filename_suffix&quot;] = $cfg_client[&quot;thumbext&quot;];
+
+//Auslesen welche Galerieseite angezeigt werden soll
+if (isset($galerie)) {
+    $mod[&quot;galerie&quot;] = array();
+    $mod[&quot;galerie&quot;] = explode(&quot;_&quot;, $galerie);
+    for ($i = 0; $i &lt; sf_count($mod[&quot;galerie&quot;]) / 2; $i++) {
+        if ($cms_mod['container']['id'] == $mod[&quot;galerie&quot;][$i * 2]) {
+            $id = $mod[&quot;galerie&quot;][$i * 2 + 1];
+        } else {
+            $mod['query'] .= &quot;_&quot; . $mod[&quot;galerie&quot;][$i * 2] . &quot;_&quot; . $mod[&quot;galerie&quot;][$i * 2 + 1];
+        }
+    }
+}
+
+//soll eine bestimmte Galerieseite angezeigt werden?
+if (!isset($id)) {
+    if (&quot;MOD_VALUE[5]&quot; == &quot;1&quot;) {
+        $id = 1;
+    } else {
+        $id = &quot;MOD_VALUE[5]&quot;;
+    }
+}
+
+//Falls Thumbs in der Detailansicht gezeigt werden umblÃ?ttern bei Detailbildern
+if ($mod['detailid_thumb'] AND !$galerie AND $detailid) {
+    $id = ceil($detailid / $mod[&quot;number_of_pics_per_page&quot;]);
+}
+
+// Automatisch die Dateilseiten zeigen und dann beim umblÃ?ttern die neueste Detailid zeigen
+if (!isset($detailid) AND $sess-&gt;name != 'cms' AND $mod['detailid_start'] AND !$galerie) {
+    $detailid = 1;
+} elseif (!isset($detailid) AND $sess-&gt;name != 'cms' AND $mod['detailid_start'] AND $galerie) {
+    $detailid = (($id - 1) * $mod[&quot;number_of_pics_per_page&quot;]) + 1;
+}
+
+
+##########################################################################################################################
+// FRONTEND BEARBEITUNG (wird in der Detailansicht ausgeschlossen! Habe das fÃ?r nicht sinnvoll gehalten. LÃ?Ã¾t sich aber leicht wieder aktivieren.)
+##########################################################################################################################
+
+//Frontend-editieren
+if ($mod['frontedit'] == true) {
+
+    //bjoerns funktion
+    if (!function_exists('get_val')) {
+        function get_val($value_name)
+        {
+            global $idcatside, $cms_db, $db, $con_side, $cms_mod;
+
+            $sql = &quot;SELECT
+    *
+    FROM
+    &quot; . $cms_db['content_external'] . &quot;
+    WHERE
+    idsidelang='&quot; . $con_side[$idcatside]['idsidelang'] . &quot;'
+    AND container='&quot; . $cms_mod['container']['id'] . &quot;'
+    AND idtype='$value_name'&quot;;
+            $db-&gt;query($sql);
+            $db-&gt;next_record();
+
+            return $db-&gt;f('value');
+        }
+    }
+
+    if (!function_exists('set_val')) {
+        function set_val($value_name, $value)
+        {
+            global $idcatside, $cms_db, $db, $con_side, $cms_mod;
+            //Schauen, ob es den Wert schon gibt
+            $sql = &quot;SELECT
+    *
+    FROM
+    &quot; . $cms_db['content_external'] . &quot;
+    WHERE
+    idsidelang='&quot; . $con_side[$idcatside]['idsidelang'] . &quot;'
+    AND container='&quot; . $cms_mod['container']['id'] . &quot;'
+    AND idtype='$value_name'&quot;;
+            $db-&gt;query($sql);
+
+            //Es gibt den Wert schon -&gt; wert aktuallisieren
+            if ($db-&gt;next_record()) {
+                $sql = &quot;UPDATE
+    &quot; . $cms_db['content_external'] . &quot;
+    SET
+    value='$value'
+    WHERE
+    idsidelang='&quot; . $con_side[$idcatside]['idsidelang'] . &quot;'
+    AND container='&quot; . $cms_mod['container']['id'] . &quot;'
+    AND idtype='$value_name'&quot;;
+            } //Es gibt den Wert noch nicht, neu in tabelle einfÃ?gen
+            else {
+                $sql = &quot;INSERT INTO
+    &quot; . $cms_db['content_external'] . &quot;
+    (idsidelang, container, idtype, value)
+    VALUES
+    ('&quot; . $con_side[$idcatside]['idsidelang'] . &quot;',
+    '&quot; . $cms_mod['container']['id'] . &quot;',
+    '$value_name', '$value')&quot;;
+            }
+
+            $db-&gt;query($sql);
+
+            //Letzte Ã?nderung Datum Ã?ndern!
+            $sql = &quot;UPDATE &quot; . $cms_db['side_lang'] . &quot; SET lastmodified='&quot; . time() . &quot;' WHERE idsidelang='&quot; . $con_side[$idcatside]['idsidelang'] . &quot;' &quot;;
+            $db-&gt;query($sql);
+
+            //Cache lÃ¶schen
+            //Seite fÃ?rs frontend neu generieren, da sich ein Wert geÃ?ndert hat
+            change_code_status($idcatside, 1, 'idcatside');
+
+        }
+    }
+
+    //Editierwechsel beachten
+    if ($mod['change_dir']) {
+        //Formular ist abgeschickt worden
+        //Neuen Wert in die DB einfÃ?gen
+        set_val('galerie_folder', $mod['change_dir']);
+    }
+
+    //Wert aus der DB holen
+    $mod['galerie_folder'] = get_val('galerie_folder');
+
+
+    //Bearbeitenbutton
+    $aktverz = $mod['galerie_folder'];
+    if ($cms_side['edit']) {
+
+        //Startverzeichnis auslesen
+        $mod['startdir'] = &quot;MOD_VALUE[52]&quot;;
+
+        if ($mod['startdir']) {
+
+            //Startverzeichnis Namen auslesen
+            $sql = &quot;SELECT A.dirname
+    FROM
+    &quot; . $cms_db['directory'] . &quot; as A
+    WHERE
+    A.iddirectory='&quot; . $mod['startdir'] . &quot;'
+    ORDER BY dirname&quot;;
+            $db-&gt;query($sql);
+            $db-&gt;next_record();
+
+            $mod['startdirname'] = $db-&gt;f('dirname');
+
+        }
+
+
+        if ($mod['startdirname']) {
+
+            //Dateimanager Verzeichnisse auslesen mit Startverzeichnis
+            $sql = &quot;SELECT A.iddirectory, A.dirname
+    FROM
+    &quot; . $cms_db['directory'] . &quot; as A
+    WHERE
+    A.idclient='&quot; . $client . &quot;'
+    AND A.status &amp; 0x05 = 0x00
+    AND A.dirname like '&quot; . $mod['startdirname'] . &quot;%'
+
+    ORDER BY dirname&quot;;
+            $result = mysqli_query($db-&gt;Link_ID, $sql);
+
+        } else {
+
+            //Dateimanager Verzeichnisse auslesen
+            $sql = &quot;SELECT A.iddirectory, A.dirname
+    FROM
+    &quot; . $cms_db['directory'] . &quot; as A
+    WHERE
+    A.idclient='&quot; . $client . &quot;'
+    AND A.status &amp; 0x05 = 0x00
+
+    ORDER BY dirname&quot;;
+            $result = mysqli_query($db-&gt;Link_ID, $sql);
+
+        }
+
+
+        //Aktion auf aktuelle Seite legen
+        $action = $con_side[$idcatside]['link'];
+        //Bearbeitungsformular ausgeben
+        echo &quot;&lt;div align=\&quot;center\&quot;&gt;&lt;form method=\&quot;POST\&quot; action=\&quot;$action\&quot;&gt;&lt;select name=\&quot;change_dir_&quot; . $cms_mod['container']['id'] . &quot;\&quot; size=\&quot;1\&quot;&gt;&quot;;
+
+        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+
+            if ($perm-&gt;have_perm(0x01, &quot;folder&quot;, $row['iddirectory'])) {
+                if ($mod['galerie_folder'] == $row['iddirectory']) {
+                    echo &quot;&lt;option  selected value=\&quot;&quot;;
+                } else {
+                    echo &quot;&lt;option value=\&quot;&quot;;
+                }
+                echo $row['iddirectory'];
+                echo &quot;\&quot;&gt;&quot;;
+                echo $row['dirname'];
+                echo &quot;&lt;/option&gt;&quot;;
+            }
+        }
+        echo &quot;&lt;/select&gt;&quot;;
+        echo &quot;&lt;input type=\&quot;submit\&quot; value=\&quot;Submit\&quot;&gt;&quot;;
+
+        //KÃ?stchen fÃ?r Watermark neu Berechnung einfÃ?gen wenn Watermarkpfad vorhanden
+        if (($mod['watermark_thumb_id']) OR ($mod['watermark_thumb_id'])) {
+            echo &quot;&lt;input type=\&quot;checkbox\&quot; name=\&quot;resample_watermarks\&quot;&gt; Wasserzeichen neu berechnen?&quot;;
+        }
+
+        echo &quot;&lt;/form&gt;&lt;/div&gt;&quot;;
+
+
+        unset($cms_side['edit']);
+    }
+
+
+} //END-Frontend-Editieren
+else {
+    //Wenn der Ordner in der Konfiguration eingestellt wird
+    $mod['galerie_folder'] = &quot;MOD_VALUE[4]&quot;;
+}
+
+
+##########################################################################################################################
+// Daten ermitteln
+##########################################################################################################################
+//Ist das Verzeichnis in der Datenbank? False bedeutet ja! Weiter unten in der if schleife wird das nochmal mÃ¶glichweise nochmal Ã?berschrieben!
+//Das ist wichtig fÃ?r das Bearbeiten im Frontend. When false wird die Galerie angezeigt, wenn true bedeutet das, dass der Wert in der DB noch nicht
+//gesetzt ist, was zu einem SQL-Fehler fÃ?hren wÃ?rde, der so abgefangen wird!
+$mod['no_dir'] = false;
+
+
+//diese if-schleife fÃ?ngt den SQL-Fehler ab wenn im FE noch kein Verzeicnis festgelegt wurde
+if (($mod['galerie_folder'] == false) AND ($mod['frontedit'] == true)) {
+    $mod['error_no_dir'] = &quot;&lt;div align=\&quot;center\&quot; class=\&quot;{font1}\&quot;&gt;Diese Galerie ist noch nicht eingerichtet worden.&lt;/div&gt;&quot;;
+    $mod['error_no_dir'] = str_replace(&quot;{font1}&quot;, &quot;MOD_VALUE[1]&quot;, $mod['error_no_dir']);
+    echo $mod['error_no_dir'];
+    $mod['no_dir'] = true;
+} else {
+    //Mit dieser if-Schleife wird fÃ?r Unterordner gesorgt und fÃ?r &quot;Alle Ordner&quot;
+    if (($mod['galerie_folder'] == false) AND ($mod['frontedit'] == false)) {
+        $sql = &quot;SELECT A.*, B.dirname
+    FROM &quot; . $cms_db['upl'] . &quot; as A, &quot; . $cms_db['directory'] . &quot; as B
+
+    WHERE
+    A.idclient = '$client'
+    AND
+    A.iddirectory = B.iddirectory
+    AND
+    idfiletype = 3
+    ORDER BY
+    A.&quot; . &quot;MOD_VALUE[15]&quot; . &quot; &quot; . &quot;MOD_VALUE[16]&quot;;
+    } else {
+        //Unterordner berÃ?cksichtigen?
+        if (&quot;MOD_VALUE[26]&quot; == true) {
+
+            //Name des eingestellten Verzeichnisses auslesen
+            $sqlsub = &quot;SELECT A.dirname
+    FROM
+    &quot; . $cms_db['directory'] . &quot; as A
+    WHERE
+    A.iddirectory='&quot; . $mod['galerie_folder'] . &quot;'
+    ORDER BY dirname&quot;;
+            $db-&gt;query($sqlsub);
+            $db-&gt;next_record();
+            $mod['name_of_galerie_folder'] = $db-&gt;f('dirname');
+
+            //IDs der Unterordner auslesen
+            $sqlsub = &quot;SELECT A.iddirectory
+    FROM
+    &quot; . $cms_db['directory'] . &quot; as A
+    WHERE
+    A.idclient='&quot; . $client . &quot;'
+    AND A.dirname like '&quot; . $mod['name_of_galerie_folder'] . &quot;%'&quot;;
+            $mod['sub_dirs'] = mysqli_query($db-&gt;Link_ID, $sqlsub);
+
+            //array mit den ids fÃ?llen
+            $mod['sub_dirs_ids'] = array();
+            while ($row = mysqli_fetch_array($mod['sub_dirs'], MYSQLI_ASSOC)) {
+                sf_array_push($mod['sub_dirs_ids'], &quot;OR B.parentid = &quot; . $row['iddirectory'] . &quot;&quot;);
+            }
+            $mod['sub_dirs_ids'] = sf_implode(&quot; &quot;, $mod['sub_dirs_ids']);
+
+            //SQL Where Abfrage fÃ?r Unterverzeichnisse fÃ?llen
+            $mod['where'] = &quot;(A.iddirectory = &quot; . $mod['galerie_folder'] . &quot; &quot; . $mod['sub_dirs_ids'] . &quot;)&quot;;
+        } else {
+            $mod['where'] = &quot;A.iddirectory = &quot; . $mod['galerie_folder'] . &quot; &quot;;
+        }
+
+        $sql = &quot;SELECT A.*, B.dirname
+    FROM &quot; . $cms_db['upl'] . &quot; as A, &quot; . $cms_db['directory'] . &quot; as B
+
+    WHERE
+    &quot; . $mod['where'] . &quot;
+    AND
+    A.idclient = '$client'
+    AND
+    A.iddirectory = B.iddirectory
+    ORDER BY
+    A.&quot; . &quot;MOD_VALUE[15]&quot; . &quot; &quot; . &quot;MOD_VALUE[16]&quot;;
+    }
+
+    $db-&gt;query($sql);
+    $i = 0;
+
+    //Anfang von while
+    while ($db-&gt;next_record()) {
+        $mod[&quot;file&quot;][$i][&quot;title&quot;] = $db-&gt;f('titel');
+        $mod[&quot;file&quot;][$i][&quot;filename&quot;] = $db-&gt;f('filename');
+        $mod[&quot;file&quot;][$i][&quot;idupl&quot;] = $db-&gt;f('idupl');
+        $mod[&quot;file&quot;][$i][&quot;description&quot;] = $db-&gt;f('description');
+        $mod[&quot;file&quot;][$i][&quot;dirname&quot;] = $db-&gt;f('dirname');
+        $mod[&quot;file&quot;][$i][&quot;filesize&quot;] = $db-&gt;f('filesize');
+        $mod[&quot;file&quot;][$i][&quot;width&quot;] = $db-&gt;f('pictwidth');
+        $mod[&quot;file&quot;][$i][&quot;height&quot;] = $db-&gt;f('pictheight');
+        $mod[&quot;file&quot;][$i][&quot;thumbwidth&quot;] = $db-&gt;f('pictthumbwidth');
+        $mod[&quot;file&quot;][$i][&quot;thumbheight&quot;] = $db-&gt;f('pictthumbheight');
+        ### BEGIN filter  fÃ?r &lt;order&gt;
+        if (strstr($mod[&quot;file&quot;][$i][&quot;description&quot;], &quot;&lt;order&gt;&quot;)) {
+            $mod['order_firstpos'] = strpos($mod[&quot;file&quot;][$i][&quot;description&quot;], &quot;&lt;order&gt;&quot;) + 7;
+            $mod['order_lastpos'] = strpos($mod[&quot;file&quot;][$i][&quot;description&quot;], &quot;&lt;/order&gt;&quot;);
+            $mod[&quot;file&quot;][$i]['order'] = substr($mod[&quot;file&quot;][$i][&quot;description&quot;], $mod['order_firstpos'],
+                $mod['order_lastpos'] - $mod['order_firstpos']);
+            $mod['order_tag'] = &quot;&lt;order&gt;&quot; . $mod[&quot;file&quot;][$i]['order'] . &quot;&lt;/order&gt;&quot;;
+            $mod[&quot;file&quot;][$i][&quot;description&quot;] = str_replace($mod['order_tag'], &quot;&quot;, $mod[&quot;file&quot;][$i][&quot;description&quot;]);
+        } else {
+            $mod[&quot;file&quot;][$i]['order'] = &quot;ZZZ&quot;;   // wenn keine Reihenfolge definiert, dann hinten dran
+        }
+        ### END filter  fÃ?r &lt;order&gt;
+
+        ### BEGIN  maximgsize
+        if (&quot;MOD_VALUE[17]&quot; != &quot;&quot;) {
+            if (($mod[&quot;file&quot;][$i][&quot;width&quot;] &gt; &quot;MOD_VALUE[17]&quot;) OR ($mod[&quot;file&quot;][$i][&quot;height&quot;] &gt; &quot;MOD_VALUE[17]&quot;)) {
+                if ($mod[&quot;file&quot;][$i][&quot;width&quot;] &gt; $mod[&quot;file&quot;][$i][&quot;height&quot;]) {
+                    $mod[&quot;file&quot;][$i][&quot;h_show&quot;] = round($mod[&quot;file&quot;][$i][&quot;height&quot;] * &quot;MOD_VALUE[17]&quot; / $mod[&quot;file&quot;][$i][&quot;width&quot;]);
+                    $mod[&quot;file&quot;][$i][&quot;w_show&quot;] = &quot;MOD_VALUE[17]&quot;;
+                } ELSE {
+                    $mod[&quot;file&quot;][$i][&quot;w_show&quot;] = round($mod[&quot;file&quot;][$i][&quot;width&quot;] * &quot;MOD_VALUE[17]&quot; / $mod[&quot;file&quot;][$i][&quot;height&quot;]);
+                    $mod[&quot;file&quot;][$i][&quot;h_show&quot;] = &quot;MOD_VALUE[17]&quot;;
+                }
+            } ELSE {
+                $mod[&quot;file&quot;][$i][&quot;w_show&quot;] = $mod[&quot;file&quot;][$i][&quot;width&quot;];
+                $mod[&quot;file&quot;][$i][&quot;h_show&quot;] = $mod[&quot;file&quot;][$i][&quot;height&quot;];
+            }
+            $mod[&quot;file&quot;][$i][&quot;maximgsize&quot;] = &quot;width=\&quot;&quot; . $mod[&quot;file&quot;][$i][&quot;w_show&quot;] . &quot;\&quot; height=\&quot;&quot; . $mod[&quot;file&quot;][$i][&quot;h_show&quot;] . &quot;\&quot;&quot;;
+        }
+        ### END maximgsize
+        ### BEGIN  maximgsize2
+        if (&quot;MOD_VALUE[21]&quot; != &quot;&quot;) {
+            if (($mod[&quot;file&quot;][$i][&quot;width&quot;] &gt; &quot;MOD_VALUE[21]&quot;) OR ($mod[&quot;file&quot;][$i][&quot;height&quot;] &gt; &quot;MOD_VALUE[21]&quot;)) {
+                if ($mod[&quot;file&quot;][$i][&quot;width&quot;] &gt; $mod[&quot;file&quot;][$i][&quot;height&quot;]) {
+                    $mod[&quot;file&quot;][$i][&quot;h_show&quot;] = round($mod[&quot;file&quot;][$i][&quot;height&quot;] * &quot;MOD_VALUE[21]&quot; / $mod[&quot;file&quot;][$i][&quot;width&quot;]);
+                    $mod[&quot;file&quot;][$i][&quot;w_show&quot;] = &quot;MOD_VALUE[21]&quot;;
+                } ELSE {
+                    $mod[&quot;file&quot;][$i][&quot;w_show&quot;] = round($mod[&quot;file&quot;][$i][&quot;width&quot;] * &quot;MOD_VALUE[21]&quot; / $mod[&quot;file&quot;][$i][&quot;height&quot;]);
+                    $mod[&quot;file&quot;][$i][&quot;h_show&quot;] = &quot;MOD_VALUE[21]&quot;;
+                }
+            } ELSE {
+                $mod[&quot;file&quot;][$i][&quot;w_show&quot;] = $mod[&quot;file&quot;][$i][&quot;width&quot;];
+                $mod[&quot;file&quot;][$i][&quot;h_show&quot;] = $mod[&quot;file&quot;][$i][&quot;height&quot;];
+            }
+            $mod[&quot;file&quot;][$i][&quot;maximgsize2&quot;] = &quot;width=\&quot;&quot; . $mod[&quot;file&quot;][$i][&quot;w_show&quot;] . &quot;\&quot; height=\&quot;&quot; . $mod[&quot;file&quot;][$i][&quot;h_show&quot;] . &quot;\&quot;&quot;;
+        }
+        ### END maximgsize2
+
+        $i++;
+
+        // Ende von while
+    }
+
+    //Ende der if-else-schleife fÃ?r das Abfangen des SQL-Fehlers bei nicht vergebenem Verzeichnis
+}
+
+
+### BEGIN individual order
+if (&quot;MOD_VALUE[15]&quot; == &quot;description&quot;) {
+    function cmp($a, $b)
+    {
+        return strcmp($a[&quot;order&quot;], $b[&quot;order&quot;]);
+    }
+
+    function rcmp($a, $b)
+    {
+        return strcmp($b[&quot;order&quot;], $a[&quot;order&quot;]);
+    }
+
+    if (&quot;MOD_VALUE[16]&quot; == &quot;ASC&quot;) {
+        sf_usort($mod[&quot;file&quot;], &quot;cmp&quot;);
+    } else {
+        sf_usort($mod[&quot;file&quot;], &quot;rcmp&quot;);
+    }
+}
+###  // END individual order
+
+
+$i = ($id - 1) * $mod[&quot;number_of_pics_per_page&quot;];
+$mod[&quot;last_pic&quot;] = $id * $mod[&quot;number_of_pics_per_page&quot;];
+if ($mod[&quot;last_pic&quot;] &gt; sf_count($mod[&quot;file&quot;])) {
+    $mod[&quot;last_pic&quot;] = sf_count($mod[&quot;file&quot;]);
+}
+
+##########################################################################################################################
+// Galerie-Walker:
+##########################################################################################################################
+
+if (!function_exists('galeriecreatePageLinks')) {
+    function galeriecreatePageLinks($isFloating, $separator, $showNavLinks)
+    {
+        global $mod, $cfg_client, $idcatside, $id, $cms_mod;
+        $returnvalue = '';
+
+        if ($isFloating &gt; 0) {
+            $floatdiff = ceil($isFloating / 2);
+
+            $start = $id - $floatdiff;
+            if ($start &gt; $mod[&quot;anz&quot;]) {
+                $start = $mod[&quot;anz&quot;] - $floatdiff;
+            }
+            if ($start &lt; 1) {
+                $start = 1;
+            }
+
+            $stop = $id + $floatdiff;
+            if ($stop &gt; $mod[&quot;anz&quot;]) {
+                $stop = $mod[&quot;anz&quot;];
+            }
+        } else {
+            $start = 1;
+            $stop = $mod[&quot;anz&quot;];
+        }
+
+        if ($id &gt; 1 &amp;&amp; $showNavLinks == 'true') {
+            $previd = $id - 1;
+            $returnvalue .= &quot;&lt;a href=\&quot;&quot; . $mod['idcatlink'] . &quot;&amp;amp;galerie=&quot; . $cms_mod['container']['id'] . &quot;_&quot; . $previd . $mod['query'] . &quot;\&quot;&gt;MOD_VALUE[13]&lt;/a&gt;&quot;;
+        }
+
+        for ($mod[&quot;pagecounter&quot;] = $start; $mod[&quot;pagecounter&quot;] &lt;= $stop; $mod[&quot;pagecounter&quot;]++) {
+            if ($mod[&quot;pagecounter&quot;] &gt; $start) {
+                $returnvalue .= $separator;
+            }
+            if ($mod[&quot;pagecounter&quot;] == $id) {
+                if (&quot;MOD_VALUE[18]&quot; == false) {
+                    $returnvalue .= &quot;&lt;span class=\&quot;MOD_VALUE[3]\&quot;&gt;[&quot; . $mod[&quot;pagecounter&quot;] . &quot;]&lt;/span&gt;&quot;;
+                } else {
+                    $returnvalue .= &quot;&lt;a href=\&quot;&quot; . $mod['idcatlink'] . &quot;&amp;amp;galerie=&quot; . $cms_mod['container']['id'] . &quot;_&quot; . $mod[&quot;pagecounter&quot;] . $mod['query'] . &quot;\&quot;&gt;&lt;span class=\&quot;MOD_VALUE[3]\&quot;&gt;[&quot; . $mod[&quot;pagecounter&quot;] . &quot;]&lt;/span&gt;&lt;/a&gt;&quot;;
+                }
+            } else {
+                $returnvalue .= &quot;&lt;a href=\&quot;&quot; . $mod['idcatlink'] . &quot;&amp;amp;galerie=&quot; . $cms_mod['container']['id'] . &quot;_&quot; . $mod[&quot;pagecounter&quot;] . $mod['query'] . &quot;\&quot;&gt;&lt;span class=\&quot;MOD_VALUE[2]\&quot;&gt;&quot; . $mod[&quot;pagecounter&quot;] . &quot;&lt;/span&gt;&lt;/a&gt;&quot;;
+            }
+        }
+
+        if ($id &lt; $mod[&quot;anz&quot;] &amp;&amp; $showNavLinks == 'true') {
+            $nextid = $id + 1;
+            $returnvalue .= &quot;&lt;a href=\&quot;&quot; . $mod['idcatlink'] . &quot;&amp;amp;galerie=&quot; . $cms_mod['container']['id'] . &quot;_&quot; . $nextid . $mod['query'] . &quot;\&quot;&gt;MOD_VALUE[14]&lt;/a&gt;&quot;;
+        }
+
+        return $returnvalue;
+    }  // end function
+
+} // end if exist
+
+// gesamtanzahl der seiten herausfinden
+$mod[&quot;anz&quot;] = ceil(sf_count($mod[&quot;file&quot;]) / $mod[&quot;number_of_pics_per_page&quot;]);
+
+// wenn mod_value_12 leer ist, default-separator verwenden.
+if (&quot;MOD_VALUE[12]&quot; == &quot;&quot;) {
+    $separator = &quot;&amp;nbsp;&amp;nbsp;|&amp;nbsp;&amp;nbsp;&quot;;
+} else {
+    $separator = &quot;MOD_VALUE[12]&quot;;
+}
+
+// vor/zurÃ?ck-links anzeigen?
+if ($mod[&quot;anz&quot;] &gt; 1) {
+    $mod[&quot;walker&quot;] .= galeriecreatePageLinks(&quot;MOD_VALUE[11]&quot;, $separator, &quot;MOD_VALUE[10]&quot;);
+}
+
+##########################################################################################################################
+// Ausgabe
+##########################################################################################################################
+for ($i; $i &lt; $mod[&quot;last_pic&quot;]; $i++) {
+    //
+
+
+    $mod['temp'] = &quot;MOD_VALUE[9]&quot;;
+
+    $mod[&quot;file&quot;][$i][&quot;filename&quot;] = trim($mod[&quot;file&quot;][$i][&quot;filename&quot;]);
+
+    $mod[&quot;file_ext&quot;] = substr(strrchr($mod[&quot;file&quot;][$i][&quot;filename&quot;], &quot;.&quot;), 1);
+    $mod[&quot;filename&quot;] = substr($mod[&quot;file&quot;][$i][&quot;filename&quot;], 0, -(strlen($mod[&quot;file_ext&quot;])) - 1);
+
+
+    //Wasserzeichen
+
+
+    //Wasserzeichenposition errechnen
+
+    //links oben
+    if ($mod['watermark_image_location'] == 'lo') {
+
+    } //mitte oben
+    elseif ($mod['watermark_image_location'] == 'mo') {
+        $mod['watermark_image_positionxx'] = (($mod[&quot;file&quot;][$i][&quot;width&quot;] / 2) + ($mod['watermark_image_positionx']));
+    } //rechts oben
+    elseif ($mod['watermark_image_location'] == 'ro') {
+        $mod['watermark_image_positionxx'] = ($mod[&quot;file&quot;][$i][&quot;width&quot;] + ($mod['watermark_image_positionx']));
+    } //links mitte
+    elseif ($mod['watermark_image_location'] == 'lm') {
+        $mod['watermark_image_positionyy'] = (($mod[&quot;file&quot;][$i][&quot;height&quot;] / 2) + ($mod['watermark_image_positiony']));
+    } //mitte mitte
+    elseif ($mod['watermark_image_location'] == 'mm') {
+        $mod['watermark_image_positionxx'] = (($mod[&quot;file&quot;][$i][&quot;width&quot;] / 2) + ($mod['watermark_image_positionx']));
+        $mod['watermark_image_positionyy'] = (($mod[&quot;file&quot;][$i][&quot;height&quot;] / 2) + ($mod['watermark_image_positiony']));
+    } //rechts mitte
+    elseif ($mod['watermark_image_location'] == 'rm') {
+        $mod['watermark_image_positionxx'] = ($mod[&quot;file&quot;][$i][&quot;width&quot;] + ($mod['watermark_image_positionx']));
+        $mod['watermark_image_positionyy'] = (($mod[&quot;file&quot;][$i][&quot;height&quot;] / 2) + ($mod['watermark_image_positiony']));
+    } //links unten
+    elseif ($mod['watermark_image_location'] == 'lu') {
+        $mod['watermark_image_positionyy'] = ($mod[&quot;file&quot;][$i][&quot;height&quot;] + ($mod['watermark_image_positiony']));
+    } //mitte unten
+    elseif ($mod['watermark_image_location'] == 'mu') {
+        $mod['watermark_image_positionxx'] = (($mod[&quot;file&quot;][$i][&quot;width&quot;] / 2) + ($mod['watermark_image_positionx']));
+        $mod['watermark_image_positionyy'] = ($mod[&quot;file&quot;][$i][&quot;height&quot;] + ($mod['watermark_image_positiony']));
+    } //rechts unten
+    elseif ($mod['watermark_image_location'] == 'ru') {
+        $mod['watermark_image_positionxx'] = ($mod[&quot;file&quot;][$i][&quot;width&quot;] + ($mod['watermark_image_positionx']));
+        $mod['watermark_image_positionyy'] = ($mod[&quot;file&quot;][$i][&quot;height&quot;] + ($mod['watermark_image_positiony']));
+    }
+
+
+    if ($mod['watermark_image_id']) {
+
+        //Bildformat fÃ?r die Bilder bereitstellen
+        $mod['watermark_image'] = $mod[&quot;file&quot;][$i][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . '_watermark_image.' . strtolower($mod[&quot;file_ext&quot;]);
+
+
+        //If Wasserzeichen ist nicht vorhanden aber Thumb ist vorhanden
+        if ((!@file_exists($cfg_client[&quot;upl_path&quot;] . $mod['watermark_image'])) OR ($resample_watermarks)) {
+            make_watermark_image_galerie($cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][$i][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . &quot;.&quot; . strtolower($mod[&quot;file_ext&quot;]),
+                $mod['watermark_image_path'],
+                $cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][$i][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . '_watermark_image.' . strtolower($mod[&quot;file_ext&quot;]),
+                $mod['watermark_image_positionxx'], $mod['watermark_image_positionyy'],
+                $mod['watermark_image_transparent']);
+            $mod['temp'] = str_replace(&quot;{file}&quot;,
+                $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . '_watermark_image.' . strtolower($mod[&quot;file_ext&quot;]),
+                $mod['temp']);
+        } elseif ((strtolower($mod[&quot;file_ext&quot;])) == &quot;gif&quot;) {
+            $mod['temp'] = str_replace(&quot;{file}&quot;, $mod[&quot;file&quot;][$i][&quot;filename&quot;], $mod['temp']);
+        } else {
+            $mod['temp'] = str_replace(&quot;{file}&quot;,
+                $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . '_watermark_image.' . strtolower($mod[&quot;file_ext&quot;]),
+                $mod['temp']);
+        }
+
+
+    } else {
+
+        $mod['temp'] = str_replace(&quot;{file}&quot;, $mod[&quot;file&quot;][$i][&quot;filename&quot;], $mod['temp']);
+
+    }
+
+
+    //filedesc
+    if ($mod[&quot;file&quot;][$i][&quot;title&quot;] != &quot;&quot;) {
+        $mod[&quot;filedesc&quot;] = $mod[&quot;file&quot;][$i][&quot;title&quot;];
+    } else {
+        $mod[&quot;filedesc&quot;] = $mod[&quot;file&quot;][$i][&quot;filename&quot;];
+    }
+    $mod['temp'] = str_replace(&quot;{filedesc}&quot;, $mod[&quot;filedesc&quot;], $mod['temp']);
+
+    //filename
+    $mod['temp'] = str_replace(&quot;{filename}&quot;, $mod[&quot;filename&quot;], $mod['temp']);
+
+    // path
+    $mod['temp'] = str_replace(&quot;{path}&quot;, $cfg_client[&quot;upl_htmlpath&quot;] . $mod[&quot;file&quot;][$i][&quot;dirname&quot;], $mod['temp']);
+    $mod['temp'] = str_replace(&quot;{real_path}&quot;, $cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][$i][&quot;dirname&quot;], $mod['temp']);
+
+    // file
+    //$mod['temp'] = str_replace(&quot;{file}&quot;, $mod[&quot;file&quot;][$i][&quot;filename&quot;] ,$mod['temp']);
+
+    // idupl
+    $mod['temp'] = str_replace(&quot;{idupl}&quot;, $mod[&quot;file&quot;][$i][&quot;idupl&quot;], $mod['temp']);
+
+    // filesize
+    $mod['temp'] = str_replace(&quot;{filesize}&quot;, round(($mod[&quot;file&quot;][$i][&quot;filesize&quot;] / 1024), 1) . &quot; kb&quot;, $mod['temp']);
+
+    // maximgsize
+    $mod['temp'] = str_replace(&quot;{maximgsize}&quot;, $mod[&quot;file&quot;][$i][&quot;maximgsize&quot;], $mod['temp']);
+
+    // maximgsize2
+    $mod['temp'] = str_replace(&quot;{maximgsize2}&quot;, $mod[&quot;file&quot;][$i][&quot;maximgsize2&quot;], $mod['temp']);
+
+    // width
+    $mod['temp'] = str_replace(&quot;{width}&quot;, $mod[&quot;file&quot;][$i][&quot;width&quot;], $mod['temp']);
+
+    // height
+    $mod['temp'] = str_replace(&quot;{height}&quot;, $mod[&quot;file&quot;][$i][&quot;height&quot;], $mod['temp']);
+
+    // title
+    $mod['temp'] = str_replace(&quot;{title}&quot;, $mod[&quot;file&quot;][$i][&quot;title&quot;], $mod['temp']);
+
+    // desc
+    $mod['temp'] = str_replace(&quot;{description}&quot;, $mod[&quot;file&quot;][$i][&quot;description&quot;], $mod['temp']);
+
+    // detailurl
+    $mod['temp'] = str_replace(&quot;{detailurl}&quot;, $mod['idcatlink'] . &quot;&amp;amp;detailid=&quot; . ($i + 1), $mod['temp']);
+
+    // number
+    $mod['temp'] = str_replace(&quot;{number}&quot;, $i + 1, $mod['temp']);
+
+    ###################################################################################################################
+    #WASSERZEICHENERSTELLUNG
+    ###################################################################################################################
+    //Wasserzeichen fÃ?r Thumbs erstellen?
+
+
+    //Wasserzeichenposition errechnen
+
+    if (file_exists($cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][$i][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . &quot;.&quot; . strtolower($mod[&quot;file_ext&quot;]))) {
+        $mod[&quot;thumb_width&quot;] = get_thumb_size('x',
+            $cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][$i][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . &quot;.&quot; . strtolower($mod[&quot;file_ext&quot;]));
+        $mod[&quot;thumb_height&quot;] = get_thumb_size('y',
+            $cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][$i][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . &quot;.&quot; . strtolower($mod[&quot;file_ext&quot;]));
+    } else {
+        $mod[&quot;thumb_width&quot;] = $mod[&quot;file&quot;][$i][&quot;width&quot;];
+        $mod[&quot;thumb_height&quot;] = $mod[&quot;file&quot;][$i][&quot;height&quot;];
+    }
+
+    // thumbheight
+    $mod['temp'] = str_replace(&quot;{thumbheight}&quot;, $mod[&quot;thumb_height&quot;], $mod['temp']);
+
+    // thumbwidth
+    $mod['temp'] = str_replace(&quot;{thumbwidth}&quot;, $mod[&quot;thumb_width&quot;], $mod['temp']);
+
+
+    //links oben
+    if ($mod['watermark_thumb_location'] == 'lo') {
+
+    } //mitte oben
+    elseif ($mod['watermark_thumb_location'] == 'mo') {
+        $mod['watermark_thumb_positionxx'] = (($mod[&quot;thumb_width&quot;] / 2) + ($mod['watermark_thumb_positionx']));
+    } //rechts oben
+    elseif ($mod['watermark_thumb_location'] == 'ro') {
+        $mod['watermark_thumb_positionxx'] = ($mod[&quot;thumb_width&quot;] + ($mod['watermark_thumb_positionx']));
+    } //links mitte
+    elseif ($mod['watermark_thumb_location'] == 'lm') {
+        $mod['watermark_thumb_positionyy'] = (($mod[&quot;thumb_height&quot;] / 2) + ($mod['watermark_thumb_positiony']));
+    } //mitte mitte
+    elseif ($mod['watermark_thumb_location'] == 'mm') {
+        $mod['watermark_thumb_positionxx'] = (($mod[&quot;thumb_width&quot;] / 2) + ($mod['watermark_thumb_positionx']));
+        $mod['watermark_thumb_positionyy'] = (($mod[&quot;thumb_height&quot;] / 2) + ($mod['watermark_thumb_positiony']));
+    } //rechts mitte
+    elseif ($mod['watermark_thumb_location'] == 'rm') {
+        $mod['watermark_thumb_positionxx'] = ($mod[&quot;thumb_width&quot;] + ($mod['watermark_thumb_positionx']));
+        $mod['watermark_thumb_positionyy'] = (($mod[&quot;thumb_height&quot;] / 2) + ($mod['watermark_thumb_positiony']));
+    } //links unten
+    elseif ($mod['watermark_thumb_location'] == 'lu') {
+        $mod['watermark_thumb_positionyy'] = ($mod[&quot;thumb_height&quot;] + ($mod['watermark_thumb_positiony']));
+    } //mitte unten
+    elseif ($mod['watermark_thumb_location'] == 'mu') {
+        $mod['watermark_thumb_positionxx'] = (($mod[&quot;thumb_width&quot;] / 2) + ($mod['watermark_thumb_positionx']));
+        $mod['watermark_thumb_positionyy'] = ($mod[&quot;thumb_height&quot;] + ($mod['watermark_thumb_positiony']));
+    } //rechts unten
+    elseif ($mod['watermark_thumb_location'] == 'ru') {
+        $mod['watermark_thumb_positionxx'] = ($mod[&quot;thumb_width&quot;] + ($mod['watermark_thumb_positionx']));
+        $mod['watermark_thumb_positionyy'] = ($mod[&quot;thumb_height&quot;] + ($mod['watermark_thumb_positiony']));
+    }
+
+
+    //Wasserzeichen in Thumbs einfÃ?gen?
+    if ($mod['watermark_thumb_id']) {
+
+
+        //Bildformat fÃ?r die Thumbs bereitstellen
+        $mod['watermark_thumb'] = $mod[&quot;file&quot;][$i][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . '_watermark_thumb.' . strtolower($mod[&quot;file_ext&quot;]);
+
+
+        //If Wasserzeichen ist nicht vorhanden aber Thumb ist vorhanden
+        if (((!@file_exists($cfg_client[&quot;upl_path&quot;] . $mod['watermark_thumb'])) AND (file_exists($cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][$i][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . &quot;.&quot; . strtolower($mod[&quot;file_ext&quot;]))) OR ($resample_watermarks))) {
+
+            make_watermark_image_galerie($cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][$i][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . &quot;.&quot; . strtolower($mod[&quot;file_ext&quot;]),
+                $mod['watermark_thumb_path'],
+                $cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][$i][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . '_watermark_thumb.' . strtolower($mod[&quot;file_ext&quot;]),
+                $mod['watermark_thumb_positionxx'], $mod['watermark_thumb_positionyy'],
+                $mod['watermark_thumb_transparent']);
+            $mod['temp'] = str_replace(&quot;{thumbfile}&quot;,
+                $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . '_watermark_thumb.' . strtolower($mod[&quot;file_ext&quot;]),
+                $mod['temp']);
+        } elseif ((strtolower($mod[&quot;file_ext&quot;])) == &quot;gif&quot;) {
+            $mod['temp'] = str_replace(&quot;{thumbfile}&quot;, $mod[&quot;file&quot;][$i][&quot;filename&quot;], $mod['temp']);
+        } //Elseif Wasserzeichen ist nicht vorhanden und Thumb ist nicht vorhanden
+        elseif (((!@file_exists($cfg_client[&quot;upl_path&quot;] . $mod['watermark_thumb'])) AND (!@file_exists($cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][$i][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . &quot;.&quot; . strtolower($mod[&quot;file_ext&quot;]))) OR ($resample_watermarks))) {
+            make_watermark_image_galerie($cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][$i][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . &quot;.&quot; . strtolower($mod[&quot;file_ext&quot;]),
+                $mod['watermark_thumb_path'],
+                $cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][$i][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . '_watermark_thumb.' . strtolower($mod[&quot;file_ext&quot;]),
+                $mod['watermark_thumb_positionxx'], $mod['watermark_thumb_positionyy'],
+                $mod['watermark_thumb_transparent']);
+            $mod['temp'] = str_replace(&quot;{thumbfile}&quot;,
+                $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . '_watermark_thumb.' . strtolower($mod[&quot;file_ext&quot;]),
+                $mod['temp']);
+
+
+        } else {
+            $mod['temp'] = str_replace(&quot;{thumbfile}&quot;,
+                $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . '_watermark_thumb.' . strtolower($mod[&quot;file_ext&quot;]),
+                $mod['temp']);
+        }
+
+
+    } else {
+
+
+        // thumb
+        if (is_file($cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][$i][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . $mod[&quot;filename_suffix&quot;] . &quot;.&quot; . strtolower($mod[&quot;file_ext&quot;]))) {
+            $mod['temp'] = str_replace(&quot;{thumbfile}&quot;,
+                $mod[&quot;filename&quot;] . $mod[&quot;filename_suffix&quot;] . &quot;.&quot; . strtolower($mod[&quot;file_ext&quot;]), $mod['temp']);
+        } else {
+            $mod['temp'] = str_replace(&quot;{thumbfile}&quot;, $mod[&quot;file&quot;][$i][&quot;filename&quot;], $mod['temp']);
+        }
+
+    }
+
+
+    // URLencode
+    while (strstr($mod['temp'], &quot;{urlencode}&quot;)) {
+        $mod['url_firstpos'] = strpos($mod['temp'], &quot;{urlencode}&quot;) + 11;
+        $mod['url_lastpos'] = strpos($mod['temp'], &quot;{/urlencode}&quot;);
+        $mod['url'] = substr($mod['temp'], $mod['url_firstpos'], $mod['url_lastpos'] - $mod['url_firstpos']);
+        $mod['url_tag'] = &quot;{urlencode}&quot; . $mod['url'] . &quot;{/urlencode}&quot;;
+        $mod['url'] = rawurlencode($mod['url']);
+        $mod['temp'] = str_replace($mod['url_tag'], $mod['url'], $mod['temp']);
+    }
+
+    //
+    $mod['out'] .= $mod['temp'];
+
+    //
+    if (((($i + 1) / $mod[&quot;break_after_number_of_pics&quot;]) - round((($i + 1) / $mod[&quot;break_after_number_of_pics&quot;]),
+                0)) == 0) {
+        $mod['out'] .= &quot;MOD_VALUE[31] \n&quot;;
+        $mod['out'] .= &quot;MOD_VALUE[30] \n&quot;;
+    }
+
+}
+
+##########################################################################################################################
+//  Detailansicht Ausgabe
+##########################################################################################################################
+$mod['dtpl'] = &quot;MOD_VALUE[20]&quot;;
+
+//Id der Galerieseite generieren auf der das Bild ist
+$mod['pic_is_from_page'] = ceil($detailid / $mod[&quot;number_of_pics_per_page&quot;]);
+
+//Links im Wlaker
+$mod['dtplwalker_prev'] = &quot;&quot; . $mod['idcatlink'] . &quot;&amp;amp;detailid=&quot; . ($detailid - 1) . &quot;&quot;;
+$mod['dtplwalker_prev_first'] = &quot;&quot; . $mod['idcatlink'] . &quot;&amp;amp;detailid=&quot; . (sf_count($mod[&quot;file&quot;])) . &quot;&quot;;
+$mod['dtplwalker_galerie'] = &quot;&quot; . $mod['idcatlink'] . &quot;&amp;amp;galerie=&quot; . $cms_mod['container']['id'] . &quot;_&quot; . $mod['pic_is_from_page'] . &quot;&quot;;
+$mod['dtplwalker_galeriestart'] = &quot;&quot; . $mod['idcatlink'] . &quot;&quot;;
+$mod['dtplwalker_next'] = &quot;&quot; . $mod['idcatlink'] . &quot;&amp;amp;detailid=&quot; . ($detailid + 1) . &quot;&quot;;
+$mod['dtplwalker_next_last'] = &quot;&quot; . $mod['idcatlink'] . &quot;&amp;amp;detailid=1&quot;;
+
+//Tags fÃ?r die Links ersetzen
+$mod['dtplwalker_22'] = &quot;MOD_VALUE[22]&quot;;
+$mod['dtplwalker_25'] = &quot;MOD_VALUE[25]&quot;;
+$mod['dtplwalker_23'] = &quot;MOD_VALUE[23]&quot;;
+$mod['dtplwalker_22'] = str_replace(&quot;{font1}&quot;, &quot;MOD_VALUE[1]&quot;, $mod['dtplwalker_22']);
+$mod['dtplwalker_22'] = str_replace(&quot;{font2}&quot;, &quot;MOD_VALUE[2]&quot;, $mod['dtplwalker_22']);
+$mod['dtplwalker_22'] = str_replace(&quot;{font3}&quot;, &quot;MOD_VALUE[3]&quot;, $mod['dtplwalker_22']);
+$mod['dtplwalker_25'] = str_replace(&quot;{font1}&quot;, &quot;MOD_VALUE[1]&quot;, $mod['dtplwalker_25']);
+$mod['dtplwalker_25'] = str_replace(&quot;{font2}&quot;, &quot;MOD_VALUE[2]&quot;, $mod['dtplwalker_25']);
+$mod['dtplwalker_25'] = str_replace(&quot;{font3}&quot;, &quot;MOD_VALUE[3]&quot;, $mod['dtplwalker_25']);
+$mod['dtplwalker_23'] = str_replace(&quot;{font1}&quot;, &quot;MOD_VALUE[1]&quot;, $mod['dtplwalker_23']);
+$mod['dtplwalker_23'] = str_replace(&quot;{font2}&quot;, &quot;MOD_VALUE[2]&quot;, $mod['dtplwalker_23']);
+$mod['dtplwalker_23'] = str_replace(&quot;{font3}&quot;, &quot;MOD_VALUE[3]&quot;, $mod['dtplwalker_23']);
+$mod['dtplwalker_23'] = str_replace(&quot;{page_id}&quot;, $mod['pic_is_from_page'], $mod['dtplwalker_23']);
+$mod['dtplwalker_23'] = str_replace(&quot;{galerie}&quot;, $mod['dtplwalker_galerie'], $mod['dtplwalker_23']);
+$mod['dtplwalker_23'] = str_replace(&quot;{galeriestart}&quot;, $mod['dtplwalker_galeriestart'], $mod['dtplwalker_23']);
+$mod['dtpl'] = str_replace(&quot;{galerie}&quot;, $mod['dtplwalker_23'], $mod['dtpl']);
+
+$mod['dtplwalker_prevtag'] = $mod['dtplwalker_22'];
+$mod['dtplwalker_nexttag'] = $mod['dtplwalker_25'];
+$mod['dtplwalker_nexttag'] = str_replace(&quot;{next}&quot;, $mod['dtplwalker_next'], $mod['dtplwalker_nexttag']);
+$mod['dtplwalker_prevtag'] = str_replace(&quot;{prev}&quot;, $mod['dtplwalker_prev'], $mod['dtplwalker_prevtag']);
+$mod['dtplwalker_nexttag'] = str_replace(&quot;{idupl}&quot;, $mod[&quot;file&quot;][($detailid)][&quot;idupl&quot;], $mod['dtplwalker_nexttag']);
+$mod['dtplwalker_prevtag'] = str_replace(&quot;{idupl}&quot;, $mod[&quot;file&quot;][($detailid - 2)][&quot;idupl&quot;], $mod['dtplwalker_prevtag']);
+
+//Hier wird zwischen zyklisch und endend entschieden
+if (&quot;MOD_VALUE[24]&quot; == &quot;end&quot;) //ab hier wenn endend
+
+{
+    //ZurÃ?ck und Vor nicht anzeigen wenn Anfang oder Ende
+    if ($detailid == 1) {
+        $mod['dtpl'] = str_replace(&quot;{prev}&quot;, &quot;&quot;, $mod['dtpl']);
+        $mod['dtpl'] = str_replace(&quot;{next}&quot;, $mod['dtplwalker_nexttag'], $mod['dtpl']);
+    } elseif ($detailid == sf_count($mod[&quot;file&quot;])) {
+        $mod['dtpl'] = str_replace(&quot;{prev}&quot;, $mod['dtplwalker_prevtag'], $mod['dtpl']);
+        $mod['dtpl'] = str_replace(&quot;{next}&quot;, &quot;&quot;, $mod['dtpl']);
+    } else {
+        $mod['dtpl'] = str_replace(&quot;{prev}&quot;, $mod['dtplwalker_prevtag'], $mod['dtpl']);
+        $mod['dtpl'] = str_replace(&quot;{next}&quot;, $mod['dtplwalker_nexttag'], $mod['dtpl']);
+    }
+
+    //ab hier wenn zyklisch
+} else {
+    //FÃ?r erste und letzte Variablen definieren
+    $mod['dtplwalker_prev_firsttag'] = $mod['dtplwalker_22'];
+    $mod['dtplwalker_next_lasttag'] = $mod['dtplwalker_25'];
+    $mod['dtplwalker_next_lasttag'] = str_replace(&quot;{next}&quot;, $mod['dtplwalker_next_last'],
+        $mod['dtplwalker_next_lasttag']);
+    $mod['dtplwalker_prev_firsttag'] = str_replace(&quot;{prev}&quot;, $mod['dtplwalker_prev_first'],
+        $mod['dtplwalker_prev_firsttag']);
+    if ($detailid == 1) {
+        $mod['dtpl'] = str_replace(&quot;{prev}&quot;, $mod['dtplwalker_prev_firsttag'], $mod['dtpl']);
+        $mod['dtpl'] = str_replace(&quot;{next}&quot;, $mod['dtplwalker_nexttag'], $mod['dtpl']);
+    } elseif ($detailid == sf_count($mod[&quot;file&quot;])) {
+        $mod['dtpl'] = str_replace(&quot;{prev}&quot;, $mod['dtplwalker_prevtag'], $mod['dtpl']);
+        $mod['dtpl'] = str_replace(&quot;{next}&quot;, $mod['dtplwalker_next_lasttag'], $mod['dtpl']);
+    } else {
+        $mod['dtpl'] = str_replace(&quot;{prev}&quot;, $mod['dtplwalker_prevtag'], $mod['dtpl']);
+        $mod['dtpl'] = str_replace(&quot;{next}&quot;, $mod['dtplwalker_nexttag'], $mod['dtpl']);
+    }
+
+}
+
+
+##########################################################################################################################
+//  Templatevariablen ersetzen
+##########################################################################################################################
+//no_dir ist true, wenn im Frontencmst der Ordner noch nicht in die DB geschrieben wurde!
+if ($mod['no_dir'] == false) {
+    //Galerie-Template
+    $mod['tpl'] = &quot;MOD_VALUE[8]&quot;;
+    $mod['tpl'] = str_replace(&quot;{content}&quot;, $mod['out'], $mod['tpl']);
+    $mod['tpl'] = str_replace(&quot;{id}&quot;, $id, $mod['tpl']);
+    $mod['tpl'] = str_replace(&quot;{walker}&quot;, $mod['walker'], $mod['tpl']);
+    $mod['tpl'] = str_replace(&quot;{font1}&quot;, &quot;MOD_VALUE[1]&quot;, $mod['tpl']);
+    $mod['tpl'] = str_replace(&quot;{font2}&quot;, &quot;MOD_VALUE[2]&quot;, $mod['tpl']);
+    $mod['tpl'] = str_replace(&quot;{font3}&quot;, &quot;MOD_VALUE[3]&quot;, $mod['tpl']);
+    $mod['tpl'] = str_replace(&quot;{font4}&quot;, &quot;MOD_VALUE[27]&quot;, $mod['tpl']);
+    $mod['tpl'] = str_replace(&quot;{font5}&quot;, &quot;MOD_VALUE[28]&quot;, $mod['tpl']);
+}
+
+
+//Detailansichts-Template
+$mod['dtpl'] = str_replace(&quot;{pic_id}&quot;, $detailid, $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{page_id}&quot;, $mod['pic_is_from_page'], $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{pic_count}&quot;, sf_count($mod[&quot;file&quot;]), $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{path}&quot;, $cfg_client[&quot;upl_htmlpath&quot;] . $mod[&quot;file&quot;][($detailid - 1)][&quot;dirname&quot;],
+    $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{real_path}&quot;, $cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][($detailid - 1)][&quot;dirname&quot;],
+    $mod['dtpl']);
+
+//Normales Bild oder Watermark nutzen?
+if ($mod['watermark_image_id']) {
+    $mod[&quot;file_ext&quot;] = substr(strrchr($mod[&quot;file&quot;][$detailid - 1][&quot;filename&quot;], &quot;.&quot;), 1);
+    $mod[&quot;filename&quot;] = substr($mod[&quot;file&quot;][$detailid - 1][&quot;filename&quot;], 0, -(strlen($mod[&quot;file_ext&quot;])) - 1);
+    $mod['dtpl'] = str_replace(&quot;{file}&quot;,
+        $mod[&quot;filename&quot;] . $cfg_client['thumbext'] . '_watermark_image.' . strtolower($mod[&quot;file_ext&quot;]), $mod['dtpl']);
+} else {
+    $mod['dtpl'] = str_replace(&quot;{file}&quot;, $mod[&quot;file&quot;][($detailid - 1)][&quot;filename&quot;], $mod['dtpl']);
+}
+$mod['dtpl'] = str_replace(&quot;{idupl}&quot;, $mod[&quot;file&quot;][($detailid - 1)][&quot;idupl&quot;], $mod['dtpl']);
+
+
+$mod['dtpl'] = str_replace(&quot;{font1}&quot;, &quot;MOD_VALUE[1]&quot;, $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{font2}&quot;, &quot;MOD_VALUE[2]&quot;, $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{font3}&quot;, &quot;MOD_VALUE[3]&quot;, $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{font4}&quot;, &quot;MOD_VALUE[27]&quot;, $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{font5}&quot;, &quot;MOD_VALUE[28]&quot;, $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{maximgsize}&quot;, $mod[&quot;file&quot;][($detailid - 1)][&quot;maximgsize&quot;], $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{maximgsize2}&quot;, $mod[&quot;file&quot;][($detailid - 1)][&quot;maximgsize2&quot;], $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{filesize}&quot;, round(($mod[&quot;file&quot;][($detailid - 1)][&quot;filesize&quot;] / 1024), 1) . &quot; kb&quot;,
+    $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{width}&quot;, $mod[&quot;file&quot;][($detailid - 1)][&quot;width&quot;], $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{height}&quot;, $mod[&quot;file&quot;][($detailid - 1)][&quot;height&quot;], $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{title}&quot;, $mod[&quot;file&quot;][($detailid - 1)][&quot;title&quot;], $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{description}&quot;, $mod[&quot;file&quot;][($detailid - 1)][&quot;description&quot;], $mod['dtpl']);
+
+$mod[&quot;file_ext&quot;] = substr(strrchr($mod[&quot;file&quot;][($detailid - 1)][&quot;filename&quot;], &quot;.&quot;), 1);
+$mod[&quot;filename&quot;] = substr($mod[&quot;file&quot;][($detailid - 1)][&quot;filename&quot;], 0, -(strlen($mod[&quot;file_ext&quot;])) - 1);
+//filedesc
+if ($mod[&quot;file&quot;][($detailid - 1)][&quot;title&quot;] != &quot;&quot;) {
+    $mod[&quot;filedesc&quot;] = $mod[&quot;file&quot;][($detailid - 1)][&quot;title&quot;];
+} else {
+    $mod[&quot;filedesc&quot;] = $mod[&quot;file&quot;][($detailid - 1)][&quot;filename&quot;];
+}
+$mod['dtpl'] = str_replace(&quot;{filedesc}&quot;, $mod[&quot;filedesc&quot;], $mod['dtpl']);
+$mod['dtpl'] = str_replace(&quot;{filename}&quot;, $mod[&quot;filename&quot;], $mod['dtpl']);
+
+// thumb oder watermark Thumb nutzen
+if ($mod['watermark_thumb_id']) {
+
+    if (is_file($cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][($detailid - 1)][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . $mod[&quot;filename_suffix&quot;] . &quot;.&quot; . strtolower($mod[&quot;file_ext&quot;]))) {
+        $mod['dtpl'] = str_replace(&quot;{thumbfile}&quot;,
+            $mod[&quot;filename&quot;] . $mod[&quot;filename_suffix&quot;] . &quot;_watermark_thumb.&quot; . strtolower($mod[&quot;file_ext&quot;]),
+            $mod['dtpl']);
+    }
+
+} else {
+
+    if (is_file($cfg_client[&quot;upl_path&quot;] . $mod[&quot;file&quot;][($detailid - 1)][&quot;dirname&quot;] . $mod[&quot;filename&quot;] . $mod[&quot;filename_suffix&quot;] . &quot;.&quot; . strtolower($mod[&quot;file_ext&quot;]))) {
+        $mod['dtpl'] = str_replace(&quot;{thumbfile}&quot;,
+            $mod[&quot;filename&quot;] . $mod[&quot;filename_suffix&quot;] . &quot;.&quot; . strtolower($mod[&quot;file_ext&quot;]), $mod['dtpl']);
+    } else {
+        $mod['dtpl'] = str_replace(&quot;{thumbfile}&quot;, $mod[&quot;file&quot;][($detailid - 1)][&quot;filename&quot;], $mod['dtpl']);
+    }
+}
+
+
+//Ausgabe Detail-Template
+if ($detailid) {
+
+    echo $mod['dtpl'];
+}
+
+if ($mod['detailid_thumb'] OR !$detailid) {
+    echo $mod['tpl'];
+}
+
+// VARIABLEN LEEREN
+unset($size);
+unset($id);
+unset($mod);
+unset($detailid);
+&lt;/CMSPHP&gt;</output>
+   <config></config>
+   <repository_id>mod:844f16bb5bb7c43344209685afeccea4:76b292e0</repository_id>
+   <install_sql></install_sql>
+   <uninstall_sql></uninstall_sql>
+   <update_sql></update_sql>
+</modul>

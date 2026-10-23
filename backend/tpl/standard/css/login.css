@@ -1,0 +1,187 @@
+/*
+File: login.css
++----------------------------------------------------------------------+
+| Version: Sefrengo 1.0.3 Beta2
++----------------------------------------------------------------------+
+| Copyright (c) 2005 the sefrengo-group <sefrengo-group@sefrengo.de>   |
++----------------------------------------------------------------------+
+| This program is free software; you can redistribute it and/or modify |
+| it under the terms of the GNU General Public License V2              |
+|                                                                      |
+| This program is subject to the GPL license, that is bundled with     |
+| this package in the file LICENSE.TXT.                                |
+| If you did not receive a copy of the GNU General Public License      |
+| along with this program write to the Free Software Foundation, Inc., |
+| 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA                |
+|                                                                      |
+| This program is distributed in the hope that it will be useful,      |
+| but WITHOUT ANY WARRANTY; without even the implied warranty of       |
+| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the         |
+| GNU General Public License for more details.                         |
+|                                                                      |
++----------------------------------------------------------------------+
++ Autor: Olaf Bosch                       http:olaf-bosch.de/
++----------------------------------------------------------------------+
++ Revision: 1.0.0
++----------------------------------------------------------------------+
++ Description: Backend Login/Logout
++----------------------------------------------------------------------+
++ Changes:
++----------------------------------------------------------------------+
++ ToDo:
++----------------------------------------------------------------------+
+ */
+
+*{
+	margin:0;
+	padding:0;
+}
+
+body{
+	background:#EFEFEF;
+	color:#000000;
+	font:.8em Verdana,Arial,Helvetica,sans-serif;
+	text-align:center;
+}
+
+input.sf_buttonAction {
+	border: 1px solid #8E8E8E;
+	color: #000000;
+	cursor: pointer;
+	font: bold 10px verdana, helvetica, arial, geneva, sans-serif;
+	margin: 5px 0;
+	padding: 5px 0;
+	width: 70px;
+	background: #fbfbfb; /* Old browsers */
+	background: -moz-linear-gradient(top, #fbfbfb 44%, #e2e2e2 56%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(44%,#fbfbfb), color-stop(56%,#e2e2e2)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #fbfbfb 44%,#e2e2e2 56%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #fbfbfb 44%,#e2e2e2 56%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #fbfbfb 44%,#e2e2e2 56%); /* IE10+ */
+	background: linear-gradient(top, #fbfbfb 44%,#e2e2e2 56%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fbfbfb', endColorstr='#e2e2e2',GradientType=0 ); /* IE6-9 */
+}
+
+input.sf_buttonAction:active,
+input.sf_buttonAction:focus,
+input.sf_buttonAction:hover {
+	border: 1px solid #99CC01;
+	background: #f8fbec; /* Old browsers */
+	background: -moz-linear-gradient(top, #f8fbec 44%, #e1efb4 56%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(44%,#f8fbec), color-stop(56%,#e1efb4)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #f8fbec 44%,#e1efb4 56%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #f8fbec 44%,#e1efb4 56%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #f8fbec 44%,#e1efb4 56%); /* IE10+ */
+	background: linear-gradient(top, #f8fbec 44%,#e1efb4 56%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8fbec', endColorstr='#e1efb4',GradientType=0 ); /* IE6-9 */
+}
+
+.breit{
+	border:1px solid #144282;
+	font-size:14px;
+	padding:5px 4px 5px 28px;
+	width:266px;
+}
+
+.floatl{
+	float:left;
+	font-size:10px;
+	width:230px;
+}
+
+.floatr{
+	float:right;
+	text-align:right;
+	width:70px;
+}
+
+.footer{
+	background:#EFEFEF;
+	color:#979797;
+	font-size:10px;
+	margin:15px auto 0 auto;
+	width:361px;
+}
+
+.footer a{
+	background:#EFEFEF;
+	color:#979797;
+}
+
+.hide{
+	display:none;
+}
+
+.nojs{
+	background:#FFF5CE;
+	border-bottom:1px solid #FBC900;
+	color:#B00000;
+	font-size:.8em;
+	font-weight:bold;
+	padding:5px;
+	text-align:center;
+}
+
+.info{
+	margin:8px 0;
+	text-align:center;
+}
+
+#content .info a{
+	color:#5A7BAD;
+	display:block;
+	margin:25px 0 15px 0;
+}
+
+.warning{
+	background:#FFF5CE;
+	border-bottom:1px solid #FBC900;
+	color:#B00000;
+	font-size:10px;
+	font-weight:bold;
+	padding:6px;
+	text-align:center;
+}
+
+#content{
+	padding:26px 30px 15px 30px;
+}
+
+#header{
+	background:url(../img/login/header.png) #144282 no-repeat top left;
+	border-bottom:3px solid #FBC900;
+	height:48px;
+}
+
+#header h2{
+	background:#144282;
+	color:#FBC900;
+	font-size:.8em;
+	font-weight:bold;
+	padding:10px 6px 4px 10px;
+}
+
+#navi{
+	height:40px;
+	margin-top:10px;
+}
+
+#password{
+	background:url(../img/login/pass.gif) no-repeat 2px center;
+	margin-top:8px;
+	outline: 0;
+}
+
+#username{
+	background:url(../img/login/user.gif) no-repeat 2px center;
+	outline: 0;
+}
+
+#wrapper{
+	background:#FFFFFF;
+	border:2px solid #144282;
+	color:#000000;
+	margin:60px auto 0 auto;
+	text-align:left;
+	width:361px;
+}

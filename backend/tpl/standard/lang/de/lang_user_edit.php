@@ -1,0 +1,11 @@
+<?php
+if(! defined('CMS_CONFIGFILE_INCLUDED')){
+	die('NO CONFIGFILE FOUND');
+}
+
+	include_once($cfg_cms['cms_path'] .'tpl/standard/lang/'.$cfg_cms['backend_lang'].'/lang_user.php');
+$cms_lang['err_incorrect']				= 'Passworteingabe falsch, oder zu kurz.';
+$cms_lang['err_nologinname']	     			= 'Es wurde kein Benutzername angegeben.';
+$cms_lang['err_passwordpolicy']				= 'Das Passwort muss mindestens 10 Zeichen lang sein.';
+$cms_lang['err_existusername']	     			= 'Der Benutzername existiert schon.';
+?>

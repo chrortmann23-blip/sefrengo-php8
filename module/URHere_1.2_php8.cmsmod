@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<modul version='0.4' date='1792759062'>
+   <name>URHere</name>
+   <cat>Navigation</cat>
+   <version>1.2</version>
+   <author>1</author>
+   <created>1122308829</created>
+   <lastmodified>1156774073</lastmodified>
+   <deletable>1</deletable>
+   <description>Horizontale Pfad- Navigation in der Atrt von Oberpunkt -&gt; Unterpunkt -&gt; Unterpunkt</description>
+   <input>&lt;?PHP
+//Schriftart
+$mip_form['0']['desc'] = 'Schriftart Links {font1}';
+$mip_form['0']['cat'] = 'app_css';
+$mip_form['0']['output_cat'] = 'option';
+$mip_form['0']['cms_var'] = 'MOD_VAR[0]';
+$mip_form['0']['cms_val'] = $cms_mod['value']['0'];
+$mip_form['0']['cms_val_default'] = '';
+$mip_form['0']['type'] = '';
+
+//Schriftart
+$mip_form['1']['desc'] = 'Schritart  Non-Links {font1}';
+$mip_form['1']['cat'] = 'app_css';
+$mip_form['1']['output_cat'] = 'option';
+$mip_form['1']['cms_var'] = 'MOD_VAR[1]';
+$mip_form['1']['cms_val'] = $cms_mod['value']['1'];
+$mip_form['1']['cms_val_default'] = '';
+$mip_form['1']['type'] = '';
+
+//Schriftart Trennzeichen
+$mip_form['2']['desc'] = 'Schriftart des Trennzeichens {font2}';
+$mip_form['2']['cat'] = 'app_css';
+$mip_form['2']['output_cat'] = 'option';
+$mip_form['2']['cms_var'] = 'MOD_VAR[2]';
+$mip_form['2']['cms_val'] = $cms_mod['value']['2'];
+$mip_form['2']['cms_val_default'] = '';
+$mip_form['2']['type'] = '';
+
+
+//Mit Ebene 0
+$mip_form['3']['desc'] = 'Ebene 0 mit anzeigen? (1. Ordner)';
+$mip_form['3']['cat'] = 'chk';
+$mip_form['3']['option_var']['0'] = 'MOD_VAR[3]';
+$mip_form['3']['option_val']['0'] = $cms_mod['value']['3'];
+$mip_form['3']['option_desc']['0'] = 'ja';
+$mip_form['3']['option_val_select']['0'] = 'true';
+
+//Mit aktueller Seite
+$mip_form['4']['desc'] = 'aktuelle Seite mit anzeigen?';
+$mip_form['4']['cat'] = 'chk';
+$mip_form['4']['option_var']['0'] = 'MOD_VAR[4]';
+$mip_form['4']['option_val']['0'] = $cms_mod['value']['4'];
+$mip_form['4']['option_desc']['0'] = 'ja';
+$mip_form['4']['option_val_select']['0'] = 'true';
+
+//aktuelle Seite als Link?
+$mip_form['5']['desc'] = 'aktuelle Seite als Link anzeigen?';
+$mip_form['5']['cat'] = 'chk';
+$mip_form['5']['option_var']['0'] = 'MOD_VAR[5]';
+$mip_form['5']['option_val']['0'] = $cms_mod['value']['5'];
+$mip_form['5']['option_desc']['0'] = 'ja';
+$mip_form['5']['option_val_select']['0'] = 'true';
+
+//Startseiten ausblenden?
+$mip_form['8']['desc'] = 'Startseiten ausblenden?';
+$mip_form['8']['cat'] = 'chk';
+$mip_form['8']['option_var']['0'] = 'MOD_VAR[8]';
+$mip_form['8']['option_val']['0'] = $cms_mod['value']['8'];
+$mip_form['8']['option_desc']['0'] = 'ja';
+$mip_form['8']['option_val_select']['0'] = 'true';
+
+// Trennsymbol
+$mip_form['6']['desc'] = 'Trennzeichen zwischen Links';
+$mip_form['6']['cat'] = 'txt';
+$mip_form['6']['cms_var'] = 'MOD_VAR[6]';
+$mip_form['6']['cms_val'] = $cms_mod['value']['6'];
+$mip_form['6']['cms_val_default'] = ' &amp;rArr; ';
+
+//Ausgaben umkehren
+$mip_form['10']['desc'] = 'Ausgaben umkehren';
+$mip_form['10']['cat'] = 'chk';
+$mip_form['10']['option_var']['0'] = 'MOD_VAR[10]';
+$mip_form['10']['option_val']['0'] = $cms_mod['value']['10'];
+$mip_form['10']['option_desc']['0'] = 'ja';
+$mip_form['10']['option_val_select']['0'] = 'true';
+
+// Template der Links
+$mip_form['9']['cat'] = 'txtarea';
+$mip_form['9']['type'] = 'long';
+$mip_form['9']['rows'] = '1';
+$mip_form['9']['desc'] = 'Link-Template &lt;small&gt;{name}, {link}, {font1}&lt;/small&gt;';
+$mip_form['9']['cms_var'] = 'MOD_VAR[9]';
+$mip_form['9']['cms_val'] = $cms_mod['value']['9'];
+$mip_form['9']['cms_val_default'] = '&lt;a href=&quot;{link}&quot; class=&quot;{font1}&quot;&gt;{name}&lt;/a&gt;';
+
+// Gesamt - Template
+$mip_form['7']['cat'] = 'txtarea';
+$mip_form['7']['type'] = 'long';
+$mip_form['7']['rows'] = '1';
+$mip_form['7']['desc'] = 'Template &lt;small&gt;{nav}&lt;/small&gt;';
+$mip_form['7']['cms_var'] = 'MOD_VAR[7]';
+$mip_form['7']['cms_val'] = $cms_mod['value']['7'];
+$mip_form['7']['cms_val_default'] = '&lt;nobr&gt;{nav}&lt;/nobr&gt;';
+
+
+mip_formsp($mip_form['0']);
+mip_formsp($mip_form['1']);
+mip_formsp($mip_form['2']);
+mip_formsp($mip_form['3']);
+mip_formsp($mip_form['4']);
+mip_formsp($mip_form['5']);
+mip_formsp($mip_form['8']);
+mip_formsp($mip_form['6']);
+mip_formsp($mip_form['10']);
+mip_formsp($mip_form['9']);
+mip_formsp($mip_form['7']);
+unset($mip_form);
+?&gt;</input>
+   <output>&lt;CMSPHP&gt;
+$a = $idcat;
+$mod['path'] = array();
+
+while($a &gt; 0 &amp;&amp; $catlist_level[$a] &gt; 0){
+	sf_array_push($mod['path'],$a);
+	$a = $con_tree[$a]['parent'];
+}
+if(&quot;MOD_VALUE[3]&quot; == 'true') { sf_array_push($mod['path'],$a); };
+
+$mod['rpath'] = array_reverse($mod['path']);
+$mod['array'] = array();
+foreach ($mod['rpath'] as $a){
+	$mod['tmp'] = str_replace(&quot;{font1}&quot;,&quot;MOD_VALUE[0]&quot;,&quot;MOD_VALUE[9]&quot;);
+	$mod['tmp'] = str_replace(&quot;{name}&quot;,$con_tree[$a]['name'],$mod['tmp']);
+	$mod['tmp'] = str_replace(&quot;{link}&quot;,$con_tree[$a]['link'],$mod['tmp']);
+	sf_array_push($mod['array'] , $mod['tmp']);
+};
+if(&quot;MOD_VALUE[4]&quot; == 'true') {
+	if (&quot;MOD_VALUE[8]&quot; != 'true' || $con_side[$idcatside]['is_start'] != '1') {
+		if(&quot;MOD_VALUE[5]&quot; == 'true'){
+			$mod['tmp'] = str_replace(&quot;{font1}&quot;,&quot;MOD_VALUE[0]&quot;,&quot;MOD_VALUE[9]&quot;);
+			$mod['tmp'] = str_replace(&quot;{name}&quot;,$con_side[$idcatside]['name'],$mod['tmp']);
+			$mod['tmp'] = str_replace(&quot;{link}&quot;,$con_side[$idcatside]['link'],$mod['tmp']);
+		} else {
+			$mod['tmp'] = $con_side[$idcatside]['name'];
+		};
+		sf_array_push($mod['array'], $mod['tmp']);
+	};
+};
+
+if(&quot;MOD_VALUE[10]&quot; == 'true') { $mod['array'] = array_reverse($mod['array']); };
+$mod['output'] = sf_implode(&quot;MOD_VALUE[6]&quot;, $mod['array']);
+echo str_replace('{nav}', $mod['output'], &quot;MOD_VALUE[7]&quot;);
+
+unset($a, $mod);
+&lt;/CMSPHP&gt;</output>
+   <config></config>
+   <repository_id>mod:f85bd11a7839e81e5e787bee97693b9a:8dd6fb04</repository_id>
+   <install_sql></install_sql>
+   <uninstall_sql></uninstall_sql>
+   <update_sql></update_sql>
+</modul>
