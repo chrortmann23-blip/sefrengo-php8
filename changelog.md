@@ -1,6 +1,22 @@
 Changelog
 ================================================================================================
 
+Sefrengo v2.0.2
+------------------------------------------------------------------------------------------------
+Internal versionnumber: 02.00.02<br/>
+
+Fix release after the first production updates
+
+* NEW: config option $cfg_cms['db_charset'] (e.g. 'latin1') sets the connection charset explicitly; fixes wrong umlauts
+  on installations whose database content is latin1 while db_utf8 was false (db_utf8 = true still works)
+* FIXED: download of css/js files in the backend read the file through its url (readfile on http://...) and delivered
+  empty files when allow_url_fopen is off; the filesystem path is used now. The download looks at several path
+  candidates and shows the tried paths instead of an empty file / a silent error
+* FIXED: fatal error when configuring a folder (inc.con_configcat.php) if the system has no groups
+* NEW: tools/diagnose.php - read-only diagnostic script for updates to PHP 8 (environment, charset recommendation,
+  outdated client files, db code scan, error log). Delete it after use
+* NOTE: after the update all backend users should log out and in once (sessions of 1.6.9 are not valid in 2.x)
+
 Sefrengo v2.0.1
 ------------------------------------------------------------------------------------------------
 Internal versionnumber: 02.00.01<br/>

@@ -205,7 +205,7 @@ if (!empty($idcat) && ($perm->have_perm(6, 'cat', $idcat) || $perm->have_perm(14
 	$panel1 = $panel2 = '';
 	if ($perm->have_perm(6, 'cat', $idcat)) {
 		$panel1 = $perm->get_right_panel('cat', $idcat, array( 'formname'=>'editform' ), 'Backendrechte bearbeiten', false, false, 0, 'backend_' );
-		$panel1['spaces'] =  "&nbsp;&nbsp;&nbsp;&nbsp;\n";
+		if (is_array($panel1)) $panel1['spaces'] =  "&nbsp;&nbsp;&nbsp;&nbsp;\n";
 	}
 	if ($perm->have_perm(14, 'cat', $idcat)) {
 		$panel2 = $perm->get_right_panel('frontendcat', $idcat, array( 'formname'=>'editform' ), 'Frontendrechte bearbeiten', false, false, 0,  'frontend_');

@@ -1,6 +1,6 @@
 <?php
 /**
- * Sefrengo 2.0.1 - Diagnose nach dem Update auf PHP 8 (nur lesend, aendert nichts)
+ * Sefrengo 2.0.2 - Diagnose nach dem Update auf PHP 8 (nur lesend, aendert nichts)
  *
  * Prueft: PHP-Umgebung, Datenbank-Zeichensatz (Umlaute!), veraltete Dateien im Projektordner,
  * PHP-8-Probleme im Code der Datenbank (Module, Layouts), letzte Eintraege des Fehlerlogs.
@@ -102,7 +102,7 @@ $row = mysqli_fetch_row($r);
 out('  ' . $pre . 'users.password: ' . $row[0] . (strpos($row[0], '255') === false ? '   <-- MUSS varchar(255) sein (Setup im Modus Update ausfuehren)' : '  ok'));
 $r = mysqli_query($db, "SELECT value FROM " . $pre . "values WHERE group_name = 'cfg' AND key1 = 'version'");
 $row = $r ? mysqli_fetch_row($r) : null;
-out('  Datenbank-Version (cfg/version): ' . ($row ? $row[0] : '?') . '   (erwartet: 02.00.01)');
+out('  Datenbank-Version (cfg/version): ' . ($row ? $row[0] : '?') . '   (erwartet: 02.00.02)');
 
 /* Wie sehen Texte unter den moeglichen Verbindungszeichensaetzen aus? */
 title('4. Umlaut-Test: welche Verbindungskodierung passt zu den Daten?');
