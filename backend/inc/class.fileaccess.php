@@ -550,9 +550,25 @@ class fileaccess {
 
  	function download_file($dir, $filename, $idupl){
 
-		if (!is_file($dir.$filename) || !is_readable($dir.$filename)) {
+		// find the file in the filesystem: given dir, upload/client path, or via the document root
+		$dirname = isset($this->tmp_filedata[$idupl]['dirname']) ? $this->tmp_filedata[$idupl]['dirname'] : '';
+		$candidates = array($dir.$filename);
+		if (isset($this->cfg_client['upl_path'])) $candidates[] = $this->cfg_client['upl_path'].$dirname.$filename;
+		if (isset($this->cfg_client['path'])) $candidates[] = $this->cfg_client['path'].$dirname.$filename;
+		if (!empty($_SERVER['DOCUMENT_ROOT']) && isset($this->cfg_client['htmlpath'])) {
+			$urlpath = parse_url($this->cfg_client['htmlpath'], PHP_URL_PATH);
+			if ($urlpath) $candidates[] = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\').'/'.trim($urlpath, '/').'/'.$dirname.$filename;
+		}
+		$file = '';
+		foreach ($candidates as $c) {
+			if (@is_file($c) && @is_readable($c)) { $file = $c; break; }
+		}
+		if ($file === '') {
+			error_log('Sefrengo download_file: file not found, tried: '.implode(' | ', $candidates));
 			$this->errno = '1405';
-			return false;
+			header('Content-Type: text/plain; charset=UTF-8');
+			echo 'Datei nicht gefunden. Gepruefte Pfade: '.implode(' | ', $candidates);
+			exit;
 		}
 
 		// write header for download
@@ -564,7 +580,7 @@ class fileaccess {
 		header('Content-disposition: attachment; filename='.basename($filename));
 
 		// write file and leave
-		readfile($dir.$filename);
+		readfile($file);
 		exit;
 	}
 
