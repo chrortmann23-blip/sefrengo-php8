@@ -266,7 +266,7 @@ function js_downloadfile(){
 
 	$fm->get_file((int)$idjsfile);
 	// so far no error conditions ... get directory and filename
-	$dir = $cfg_client['htmlpath'] . $fm->tmp_filedata[(int)$idjsfile]['dirname'];
+	$dir = $cfg_client['path'] . $fm->tmp_filedata[(int)$idjsfile]['dirname'];
 	$filename = $fm->tmp_filedata[(int)$idjsfile]['filename'];
 	$fm->download_file($dir, $filename, (int)$idjsfile);
 }

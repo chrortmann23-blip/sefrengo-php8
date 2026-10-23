@@ -422,7 +422,7 @@ function css_downloadfile(){
 
 	$fm->get_file((int)$idcssfile);
 	// so far no error conditions ... get directory and filename
-	$dir = $cfg_client['htmlpath'] . $fm->tmp_filedata[(int)$idcssfile]['dirname'];
+	$dir = $cfg_client['path'] . $fm->tmp_filedata[(int)$idcssfile]['dirname'];
 	$filename = $fm->tmp_filedata[(int)$idcssfile]['filename'];
 	$fm->download_file($dir, $filename, (int)$idcssfile);
 	// return filemanager error code

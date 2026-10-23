@@ -550,8 +550,13 @@ class fileaccess {
 
  	function download_file($dir, $filename, $idupl){
 
+		if (!is_file($dir.$filename) || !is_readable($dir.$filename)) {
+			$this->errno = '1405';
+			return false;
+		}
+
 		// write header for download
-		ob_end_clean();
+		while (ob_get_level() > 0) ob_end_clean();
 		header("Expires: Mon, 01 Jan 2000 01:00:00 GMT");
 		header("Last-Modified: " . gmdate ("D, d M Y H:i:s", $this->tmp_filedata[$idupl]['lastmodified'] ) . " GMT");
 		header("Pragma: no-cache");
