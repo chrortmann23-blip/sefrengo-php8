@@ -54,9 +54,12 @@ class SF_DATABASE_Ado extends SF_API_Object{
 		if ($cfg_cms['debug_active'] ) {
 			$this->conn_ado->LogSQL();
 		}
-		if ($cfg_cms['db_utf8'] === true) {
-      		$this->conn_ado->Execute("SET NAMES 'utf8'");
-      	}
+		// same rule as backend/external/phplib/db_mysql.inc
+		$sf_cs = isset($cfg_cms['db_charset']) ? trim((string) $cfg_cms['db_charset']) : '';
+		if ($sf_cs === '' && isset($cfg_cms['db_utf8']) && $cfg_cms['db_utf8'] === true) $sf_cs = 'utf8';
+		if (preg_match('/^[A-Za-z0-9_]+$/', $sf_cs)) {
+			$this->conn_ado->Execute("SET NAMES '" . $sf_cs . "'");
+		}
 		
 		
 	}

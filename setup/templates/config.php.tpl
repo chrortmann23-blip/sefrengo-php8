@@ -42,6 +42,8 @@ $cfg_cms['db_user']		= '<!--{user}-->';
 $cfg_cms['db_password']		= '<!--{pass}-->';
 $cfg_cms['db_table_prefix'] 	= '<!--{prefix}-->';
 $cfg_cms['db_utf8'] 	= true;
+// optional: connection charset, overrides db_utf8 (e.g. 'latin1' if umlauts are wrong after the update to PHP 8)
+$cfg_cms['db_charset'] 	= '';
 $cfg_cms['db_mysql_pconnect'] 	= false;
 
 if (empty($cms_db) || !is_array($cms_db)) {

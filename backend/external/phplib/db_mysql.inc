@@ -95,8 +95,12 @@ class DB_Sql {
       if ($this->Link_ID) {
         mysqli_query($this->Link_ID, "SET SESSION sql_mode=''");
       }
-      if ($GLOBALS['cfg_cms']['db_utf8'] === true) {
-      	mysqli_query($this->Link_ID, "SET NAMES 'utf8'");
+      // connection charset: $cfg_cms['db_charset'] (e.g. 'latin1', 'utf8', 'utf8mb4') wins, else 'utf8' if db_utf8 is true.
+      // Without any setting the default of the php/mysql client is used (utf8mb4 with PHP 8).
+      $sf_cs = isset($GLOBALS['cfg_cms']['db_charset']) ? trim((string) $GLOBALS['cfg_cms']['db_charset']) : '';
+      if ($sf_cs === '' && isset($GLOBALS['cfg_cms']['db_utf8']) && $GLOBALS['cfg_cms']['db_utf8'] === true) $sf_cs = 'utf8';
+      if ($this->Link_ID && preg_match('/^[A-Za-z0-9_]+$/', $sf_cs)) {
+        mysqli_set_charset($this->Link_ID, $sf_cs);
       }
       
       if (!$this->Link_ID) {
